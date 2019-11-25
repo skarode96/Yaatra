@@ -88,7 +88,12 @@ public class FindActivity extends AppCompatActivity implements WifiP2pManager.Gr
 
 
     public void setPeers(List<WifiP2pDevice> p){
-        peers = p;
+
+        for(WifiP2pDevice device: p){
+            if(connectedPeers.indexOf(device) == -1 && peers.indexOf(device) == -1) {
+                peers.add(device);
+            }
+        }
     }
 
 
@@ -241,27 +246,33 @@ public class FindActivity extends AppCompatActivity implements WifiP2pManager.Gr
 
         if(group != null) {
 
-            System.out.println(group.toString());
+            //System.out.println(group.toString());
             List<WifiP2pDevice> list = new ArrayList<WifiP2pDevice>();
 
             if(isOwner)
                 list.addAll(group.getClientList());
             else
                 list.add(group.getOwner());
+
             if(list!=null && list.size()>0){
-                Toast.makeText(FindActivity.this, list.get(0).deviceName + "Connected",
-                        Toast.LENGTH_SHORT).show();
-                connectedPeers.add(list.get(0));
-                showConnectedPeers();
-                if (t!=null) {
-                    t.cancel();
-                    t = null;
+
+                WifiP2pDevice device = list.get(0);
+
+                if(peers.indexOf(device) != -1){
+                    peers.remove(peers.indexOf(device));
+                    showPeers();
                 }
-                buttonDiscoverPeers.setText("Discover");
-                isPeerDiscoveryStarted = false;
+
+                if(connectedPeers.indexOf(device) == -1) {
+                    connectedPeers.add(device);
+                    showConnectedPeers();
+
+                    Toast.makeText(FindActivity.this, device.deviceName + "Connected",
+                            Toast.LENGTH_SHORT).show();
+                }
+
+                stopPeerDiscovery(false);
             }
-
-
             // InetAddress from WifiP2pInfo struct.
         }
 
@@ -272,10 +283,6 @@ public class FindActivity extends AppCompatActivity implements WifiP2pManager.Gr
     //    @Override
     public void connect(final long deviceId) {
         // Picking the first device found on the network.
-        if(t!=null){
-            t.cancel();
-            t=null;
-        }
         final WifiP2pDevice device = peers.get((int)deviceId);
 
         WifiP2pConfig config = new WifiP2pConfig();
@@ -289,10 +296,16 @@ public class FindActivity extends AppCompatActivity implements WifiP2pManager.Gr
                 // WiFiDirectBroadcastReceiver notifies us. Ignore for now.
                 Toast.makeText(FindActivity.this, "Connect Done.",
                         Toast.LENGTH_SHORT).show();
+
                 peers.remove((int)deviceId);
-                showPeers(peers);
-                connectedPeers.add(device);
-                showConnectedPeers();
+                showPeers();
+
+                if(connectedPeers.indexOf(device) == -1) {
+                    connectedPeers.add(device);
+                    showConnectedPeers();
+                }
+
+                //stopPeerDiscovery(false);
             }
 
             @Override
@@ -313,25 +326,7 @@ public class FindActivity extends AppCompatActivity implements WifiP2pManager.Gr
     @Override
     public void onPause() {
         super.onPause();
-        if(isPeerDiscoveryStarted){
-
-            unregisterReceiver(receiver);
-            buttonDiscoverPeers.setText("Discover");
-            isPeerDiscoveryStarted = false;
-
-            if(t!=null){
-                t.cancel();
-                t = null;
-            }
-
-            channel.close();
-            channel = null;
-            manager = null;
-            peers.clear();
-            showPeers(new ArrayList<WifiP2pDevice>());
-            connectedPeers.clear();
-            showConnectedPeers();
-        }
+        stopPeerDiscovery(true);
         //unregisterReceiver(receiver);
     }
 
@@ -352,12 +347,15 @@ public class FindActivity extends AppCompatActivity implements WifiP2pManager.Gr
         builder.show();
     }
 
-    public void showPeers(List<WifiP2pDevice> p){
+    public void showPeers(){
 //        this.peers = p;
-        final ListView list = findViewById(R.id.listNearbyDevices);
+
         ArrayList<String> arrayList = new ArrayList<>();
-        for(int i=0; i<p.size(); i++){
-            arrayList.add(p.get(i).deviceName);
+
+        final ListView list = findViewById(R.id.listNearbyDevices);
+
+        for(int i=0; i<peers.size(); i++){
+            arrayList.add(peers.get(i).deviceName);
         }
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, arrayList);
         list.setAdapter(arrayAdapter);
@@ -405,8 +403,6 @@ public class FindActivity extends AppCompatActivity implements WifiP2pManager.Gr
             @Override
             public void onClick(View v) {
 
-
-
                 mWifiMgr = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
                 if(!mWifiMgr.isWifiEnabled()){
 
@@ -435,92 +431,105 @@ public class FindActivity extends AppCompatActivity implements WifiP2pManager.Gr
                                            isPeerDiscoveryStarted = false;
                                        }
 
-                                       manager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
-                                       channel = manager.initialize(activity, getMainLooper(), null);
-
-                                       manager.discoverPeers(channel, new WifiP2pManager.ActionListener() {
-
-                                           @Override
-                                           public void onSuccess() {
-                                               // Code for when the discovery initiation is successful goes here.
-                                               // No services have actually been discovered yet, so this method
-                                               // can often be left blank. Code for peer discovery goes in the
-                                               // onReceive method, detailed below.
-                                               //activity.displayDialog("Success");
-
-                                               // Request available peers from the wifi p2p manager. This is an
-                                               // asynchronous call and the calling activity is notified with a
-                                               // callback on PeerListListener.onPeersAvailable()
-                                                            /*if (wifiP2pManager != null) {
-                                                                wifiP2pManager.requestPeers(channel, peerListListener);
-                                                            }*/
-
-                                               Toast.makeText(getApplicationContext(), "Searching..", Toast.LENGTH_SHORT).show();
-                                               buttonDiscoverPeers.setText("Stop Discovery");
-                                               isPeerDiscoveryStarted = true;
-
-                                               receiver = new WifiDirectBroadcastReceiver(manager, channel, activity);
-
-                                               registerReceiver(receiver, intentFilter);
-                                           }
-
-                                           @Override
-                                           public void onFailure(int reasonCode) {
-                                               // Code for when the discovery initiation fails goes here.
-                                               // Alert the user that something went wrong.
-                                               Toast.makeText(getApplicationContext(), "Failed to start discovery", Toast.LENGTH_SHORT).show();
-                                               buttonDiscoverPeers.setText("Discover");
-                                               isPeerDiscoveryStarted = false;
-
-                                               channel.close();
-                                               channel = null;
-                                               manager = null;
-                                           }
-                                       });
-
+                                       startPeerDiscovery(activity);
                                    }
 
                                },
                             //Set how long before to start calling the TimerTask (in milliseconds)
                             0,
                             //Set the amount of time between each execution (in milliseconds)
-                            30000);
+                            10000);
                 }
                 else{
-                    if(manager!=null && isPeerDiscoveryStarted){
-                        manager.stopPeerDiscovery(channel, new WifiP2pManager.ActionListener() {
-                            @Override
-                            public void onSuccess() {
-
-                                unregisterReceiver(receiver);
-                                buttonDiscoverPeers.setText("Discover");
-                                isPeerDiscoveryStarted = false;
-                            }
-
-                            @Override
-                            public void onFailure(int reason) {
-                                Toast.makeText(getApplicationContext(), "Failed to stop discovery", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-
-                        if(t!=null) {
-
-                            t.cancel();
-                            t=null;
-                        }
-
-                        channel.close();
-                        channel = null;
-                        manager = null;
-                        peers.clear();
-                        showPeers(new ArrayList<WifiP2pDevice>());
-                        connectedPeers.clear();
-                        showConnectedPeers();
-                    }
+                    stopPeerDiscovery(true);
                 }
             }
         });
 
 
+    }
+
+    private void startPeerDiscovery(final FindActivity activity){
+        manager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
+        channel = manager.initialize(activity, getMainLooper(), null);
+
+        manager.discoverPeers(channel, new WifiP2pManager.ActionListener() {
+
+            @Override
+            public void onSuccess() {
+                // Code for when the discovery initiation is successful goes here.
+                // No services have actually been discovered yet, so this method
+                // can often be left blank. Code for peer discovery goes in the
+                // onReceive method, detailed below.
+                //activity.displayDialog("Success");
+
+                // Request available peers from the wifi p2p manager. This is an
+                // asynchronous call and the calling activity is notified with a
+                // callback on PeerListListener.onPeersAvailable()
+                                                            /*if (wifiP2pManager != null) {
+                                                                wifiP2pManager.requestPeers(channel, peerListListener);
+                                                            }*/
+
+                Toast.makeText(getApplicationContext(), "Searching..", Toast.LENGTH_SHORT).show();
+                buttonDiscoverPeers.setText("Stop Discovery");
+                isPeerDiscoveryStarted = true;
+
+                receiver = new WifiDirectBroadcastReceiver(manager, channel, activity);
+
+                registerReceiver(receiver, intentFilter);
+            }
+
+            @Override
+            public void onFailure(int reasonCode) {
+                // Code for when the discovery initiation fails goes here.
+                // Alert the user that something went wrong.
+                Toast.makeText(getApplicationContext(), "Failed to start discovery", Toast.LENGTH_SHORT).show();
+                buttonDiscoverPeers.setText("Discover");
+                isPeerDiscoveryStarted = false;
+
+                channel.close();
+                channel = null;
+                manager = null;
+            }
+        });
+    }
+
+    private void stopPeerDiscovery(final boolean closeChannel){
+        if(manager!=null && isPeerDiscoveryStarted){
+            manager.stopPeerDiscovery(channel, new WifiP2pManager.ActionListener() {
+                @Override
+                public void onSuccess() {
+                    if(closeChannel){
+                        unregisterReceiver(receiver);
+                    }
+                }
+
+                @Override
+                public void onFailure(int reason) {
+                    Toast.makeText(getApplicationContext(), "Failed to stop discovery", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            if (t != null) {
+
+                t.cancel();
+                t = null;
+            }
+
+            if(closeChannel) {
+
+                channel.close();
+                channel = null;
+                manager = null;
+                peers.clear();
+                connectedPeers.clear();
+
+                showPeers();
+                showConnectedPeers();
+            }
+
+            buttonDiscoverPeers.setText("Discover");
+            isPeerDiscoveryStarted = false;
+        }
     }
 }

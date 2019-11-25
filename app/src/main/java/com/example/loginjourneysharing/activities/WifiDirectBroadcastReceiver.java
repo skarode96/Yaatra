@@ -46,7 +46,7 @@ public class WifiDirectBroadcastReceiver extends BroadcastReceiver {
                 List<WifiP2pDevice> peers = new ArrayList<WifiP2pDevice>();
                 peers.addAll(deviceList.getDeviceList());
                 activity.setPeers(peers);
-                activity.showPeers(peers);
+                activity.showPeers();
             }
             catch (Exception e){
             }
@@ -90,7 +90,7 @@ public class WifiDirectBroadcastReceiver extends BroadcastReceiver {
 
             List<WifiP2pDevice> peers = new ArrayList<WifiP2pDevice>();
             activity.setPeers(peers);
-            activity.showPeers(peers);
+            activity.showPeers();
 
         }
     }
