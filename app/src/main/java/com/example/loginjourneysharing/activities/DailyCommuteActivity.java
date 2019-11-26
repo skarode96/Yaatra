@@ -53,7 +53,7 @@ public class DailyCommuteActivity extends AppCompatActivity {
             textViewToChange.setText(tokenValue);
 
             final RequestQueue requestQueue = Volley.newRequestQueue(this);
-            final String url = "https://yaatra-services.herokuapp.com/dailycommute/v1";
+            final String url = "https://yaatra-services.herokuapp.com/dailycommute/v1/";
             getReq = (Button) findViewById(R.id.btnDailyCommute);
 
             final ArrayList<HashMap<String, String>> commuteList = new ArrayList<>();
