@@ -1,45 +1,26 @@
 package com.tcd.yaatra.ui.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Toast;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.WindowManager;
-
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.databinding.ActivityLoginBinding;
 
-import android.view.View;
-import android.widget.AutoCompleteTextView;
-import android.widget.Button;
-import android.widget.Toast;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.Map;
-
 public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
-
-    private static final String TAG = "Response";
-    Button postReq;
-
 
     @Override
     int getLayoutResourceId() {
         return R.layout.activity_login;
     }
 
-//    @Override
+    @Override
+    public void initEventHandlers() {
+        super.initEventHandlers();
+
+        layoutDataBinding.login.setOnClickListener(view -> Toast.makeText(LoginActivity.this, "Clicked", Toast.LENGTH_SHORT).show());
+    }
+
+    //    @Override
 //    protected void onCreate(Bundle savedInstanceState) {
 //        super.onCreate(savedInstanceState);
 //        setContentView(R.layout.activity_login);
