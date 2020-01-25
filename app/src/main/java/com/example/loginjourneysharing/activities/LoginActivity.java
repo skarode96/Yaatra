@@ -50,9 +50,9 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                final String usernameEntered = username.getText().toString();
+                final String usernameEntered = "test";
                 Log.d("Tag: ", usernameEntered);
-                final String passwordEntered = password.getText().toString();
+                final String passwordEntered = "qwerty12340";
                 Log.d("Tag: ", passwordEntered);
                 if (!usernameEntered.equals("test") || !passwordEntered.equals("qwerty12340")) {
                     Toast.makeText(LoginActivity.this, "" + "User name or password doesn't exists. Please Sign-Up", Toast.LENGTH_SHORT).show();

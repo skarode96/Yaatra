@@ -14,4 +14,7 @@
     <string name="login_failed">"Login failed"</string>
     <string name="access_token">pk.eyJ1Ijoic2h1Y2hpMDciLCJhIjoiY2sydnBoMmQ4MDZ6azNobGpqMmx2ZWFnZiJ9.kfIZF0GCcZhK0nhl0OqKAQ</string>
     <string name="start_navigating">Start Navigating</string>
+    <string name="show_routes">Show Routes</string>
+    <string name="simple_offline_end_progress_success">Downloaded</string>
+    <string name="basic_offline_deleted_toast">Offline</string>
 </resources>

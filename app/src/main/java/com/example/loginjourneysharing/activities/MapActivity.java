@@ -119,25 +119,26 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public void showRoute() {
 
         Bundle bundle = getIntent().getExtras();
-        String dest = bundle.getString("Destination");
-        Geocoder coder = new Geocoder(this);
-        List<Address> address;
-        try {
-            address = coder.getFromLocationName(dest, 5);
-            if (address == null) {
-                return;
-            }
-            Address loc = address.get(0);
+//        Geocoder coder = new Geocoder(this);
+//        List<Address> address;
+//        try {
+//            address = coder.getFromLocationName(dest, 5);
+//            if (address == null) {
+//                return;
+//            }
+//            Address loc = address.get(0);
 
-            destinationPosition = Point.fromLngLat(loc.getLongitude(),loc.getLatitude());
+            double latitude = bundle.getDouble("Latitude");
+            double longitude = bundle.getDouble("Longitude");
+            destinationPosition = Point.fromLngLat(longitude,latitude);
             originPosition = Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),locationComponent.getLastKnownLocation().getLatitude());
             getRoute(originPosition,destinationPosition);
 
             startButton.setEnabled(true);
             startButton.setBackgroundResource(R.color.mapbox_blue);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 
     private void getRoute(Point origin, Point destination){

@@ -115,7 +115,7 @@ public class DailyCommuteActivity extends AppCompatActivity {
             btnRoute.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent myIntent = new Intent(DailyCommuteActivity.this, DirectActivity.class);
+                    Intent myIntent = new Intent(DailyCommuteActivity.this, GetSetDestination.class);
                     startActivity(myIntent);
                 }
             });
