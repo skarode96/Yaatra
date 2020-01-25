@@ -1,15 +1,11 @@
-package com.example.loginjourneysharing.activities;
+package com.tcd.yaatra.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.TextView;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
-import com.example.loginjourneysharing.R;
+import com.tcd.yaatra.R;
 
 public class UserActivity extends AppCompatActivity {
 

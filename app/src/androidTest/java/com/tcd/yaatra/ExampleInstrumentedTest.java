@@ -1,4 +1,4 @@
-package com.example.loginjourneysharing;
+package com.tcd.yaatra;
 
 import android.content.Context;
 

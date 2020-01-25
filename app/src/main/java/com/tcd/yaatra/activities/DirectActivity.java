@@ -1,4 +1,4 @@
-package com.example.loginjourneysharing.activities;
+package com.tcd.yaatra.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -8,7 +8,7 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.view.View;
 
-import com.example.loginjourneysharing.R;
+import com.tcd.yaatra.R;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;

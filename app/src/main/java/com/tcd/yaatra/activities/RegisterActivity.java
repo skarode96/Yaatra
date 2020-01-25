@@ -1,17 +1,14 @@
-package com.example.loginjourneysharing.activities;
+package com.tcd.yaatra.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.TextView;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.loginjourneysharing.R;
+import com.tcd.yaatra.R;
 
 public class RegisterActivity extends AppCompatActivity {
     @Override
