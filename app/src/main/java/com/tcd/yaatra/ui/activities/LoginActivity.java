@@ -1,6 +1,5 @@
 package com.tcd.yaatra.ui.activities;
 
-import android.view.View;
 import android.widget.Toast;
 
 import com.tcd.yaatra.R;
