@@ -1,4 +1,4 @@
-package com.tcd.yaatra.activities;
+package com.tcd.yaatra.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;

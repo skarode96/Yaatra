@@ -1,4 +1,4 @@
-package com.tcd.yaatra.activities;
+package com.tcd.yaatra.ui.activities;
 
 import android.annotation.SuppressLint;
 import android.location.Address;
