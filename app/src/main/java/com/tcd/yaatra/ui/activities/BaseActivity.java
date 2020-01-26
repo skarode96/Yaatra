@@ -8,6 +8,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 
+import dagger.android.AndroidInjection;
+
 public abstract class BaseActivity<DataBindingClass extends ViewDataBinding> extends AppCompatActivity {
 
     protected DataBindingClass layoutDataBinding;
@@ -29,8 +31,14 @@ public abstract class BaseActivity<DataBindingClass extends ViewDataBinding> ext
     }
 
     protected void handleOnCreate(){
+        configureDagger();
+
         this.layoutDataBinding = DataBindingUtil.setContentView(this, this.getLayoutResourceId());
 
         initEventHandlers();
+    }
+
+    private void configureDagger(){
+        AndroidInjection.inject(this);
     }
 }

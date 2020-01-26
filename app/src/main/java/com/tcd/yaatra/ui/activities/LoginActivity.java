@@ -1,11 +1,23 @@
 package com.tcd.yaatra.ui.activities;
 
-import android.widget.Toast;
+import android.util.Log;
 
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.databinding.ActivityLoginBinding;
+import com.tcd.yaatra.services.api.yaatra.api.LoginApi;
+import com.tcd.yaatra.services.api.yaatra.models.LoginResponse;
+
+import javax.inject.Inject;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
+
+    @Inject
+    LoginApi loginApi;
+
 
     @Override
     int getLayoutResourceId() {
@@ -16,7 +28,20 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
     public void initEventHandlers() {
         super.initEventHandlers();
 
-        layoutDataBinding.login.setOnClickListener(view -> Toast.makeText(LoginActivity.this, "Clicked", Toast.LENGTH_SHORT).show());
+        layoutDataBinding.login.setOnClickListener(view -> {
+            Call<LoginResponse> loginRequest = loginApi.getToken("test", "qwerty12340");
+            loginRequest.enqueue(new Callback<LoginResponse>() {
+                @Override
+                public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                    Log.e("SUNIT", "SUCCESS "+ response.body().toString());
+                }
+
+                @Override
+                public void onFailure(Call<LoginResponse> call, Throwable t) {
+                    Log.e("SUNIT", "FAILED");
+                }
+            });
+        });
     }
 
     //    @Override
