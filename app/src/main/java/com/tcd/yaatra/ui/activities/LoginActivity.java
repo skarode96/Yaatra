@@ -25,28 +25,35 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
         super.initEventHandlers();
 
         // Login Button onClick
-        layoutDataBinding.login.setOnClickListener(view -> loginActivityViewModel.authenticateUser(
-                layoutDataBinding.username.getText().toString(),
-                layoutDataBinding.password.getText().toString()
-        ).observe(this, loginResponse -> {
-            switch (loginResponse.getState()){
-                case LOADING:
-                    layoutDataBinding.progressBarOverlay.setVisibility(View.VISIBLE);
-                    break;
-
-                case SUCCESS:
-                    layoutDataBinding.progressBarOverlay.setVisibility(View.GONE);
-                    Intent myIntent = new Intent(LoginActivity.this, DailyCommuteActivity.class);
-                    myIntent.putExtra("token", loginResponse.getData().getToken());
-                    startActivity(myIntent);
-                    break;
-                case FAILURE:
-                    layoutDataBinding.progressBarOverlay.setVisibility(View.GONE);
-                    Toast.makeText(this, "Invalid Credentials", Toast.LENGTH_SHORT).show();
-                    break;
-            }
-        }));
+        layoutDataBinding.login.setOnClickListener(view -> handleOnLoginButtonClick());
     }
 
+    private void handleOnLoginButtonClick() {
+
+
+        String username = layoutDataBinding.username.getText().toString();
+        String password = layoutDataBinding.password.getText().toString();
+
+        loginActivityViewModel.authenticateUser(username, password)
+                .observe(this, loginResponse -> {
+                    switch (loginResponse.getState()) {
+                        case LOADING:
+                            layoutDataBinding.progressBarOverlay.setVisibility(View.VISIBLE);
+                            break;
+
+                        case SUCCESS:
+                            layoutDataBinding.progressBarOverlay.setVisibility(View.GONE);
+                            Intent myIntent = new Intent(LoginActivity.this, DailyCommuteActivity.class);
+                            myIntent.putExtra("token", loginResponse.getData().getToken());
+                            startActivity(myIntent);
+                            break;
+
+                        case FAILURE:
+                            layoutDataBinding.progressBarOverlay.setVisibility(View.GONE);
+                            Toast.makeText(this, "Invalid Credentials", Toast.LENGTH_SHORT).show();
+                            break;
+                    }
+                });
+    }
 
 }
