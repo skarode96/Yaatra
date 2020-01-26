@@ -5,6 +5,7 @@ import android.app.Application;
 import com.tcd.yaatra.App;
 import com.tcd.yaatra.di.modules.ActivityModule;
 import com.tcd.yaatra.di.modules.AppModule;
+import com.tcd.yaatra.di.modules.RepositoryModule;
 import com.tcd.yaatra.di.modules.YaatraApiModule;
 
 import javax.inject.Singleton;
@@ -19,6 +20,8 @@ import dagger.android.AndroidInjectionModule;
         AppModule.class,
         ActivityModule.class,
         YaatraApiModule.class,
+        RepositoryModule.class,
+        ViewModelModule.class,
         AndroidInjectionModule.class
 })
 public interface AppComponent {
