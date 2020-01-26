@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.tcd.yaatra.repository.UserRepository;
+import com.tcd.yaatra.repository.models.AsyncData;
 import com.tcd.yaatra.services.api.yaatra.models.LoginResponse;
 
 import javax.inject.Inject;
@@ -17,7 +18,7 @@ public class LoginActivityViewModel extends ViewModel {
         this.userRepository = userRepository;
     }
 
-    public LiveData<LoginResponse> authenticateUser(String username, String password){
+    public LiveData<AsyncData<LoginResponse>> authenticateUser(String username, String password){
         return this.userRepository.authenticateUser(username, password);
     }
 }

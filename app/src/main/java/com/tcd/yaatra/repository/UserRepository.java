@@ -3,6 +3,7 @@ package com.tcd.yaatra.repository;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.tcd.yaatra.repository.models.AsyncData;
 import com.tcd.yaatra.services.api.yaatra.api.LoginApi;
 import com.tcd.yaatra.services.api.yaatra.models.LoginResponse;
 
@@ -22,21 +23,27 @@ public class UserRepository {
     }
 
 
-    public LiveData<LoginResponse> authenticateUser(String username, String password){
-        MutableLiveData<LoginResponse> loginResponseLiveData = new MutableLiveData<>();
+    public LiveData<AsyncData<LoginResponse>> authenticateUser(String username, String password){
+
+        MutableLiveData<AsyncData<LoginResponse>> loginResponseLiveData = new MutableLiveData<>();
 
         this.loginApi.getToken(username, password).enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-                loginResponseLiveData.postValue(response.body());
+                if(response.code() == 200) {
+                    loginResponseLiveData.postValue(AsyncData.getSuccessState(response.body()));
+                }else{
+                    loginResponseLiveData.postValue(AsyncData.getFailureState(null));
+                }
             }
 
             @Override
             public void onFailure(Call<LoginResponse> call, Throwable t) {
-
+                loginResponseLiveData.postValue(AsyncData.getFailureState(null));
             }
         });
 
+        loginResponseLiveData.postValue(AsyncData.getLoadingState());
 
         return loginResponseLiveData;
     }

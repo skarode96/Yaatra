@@ -1,5 +1,7 @@
 package com.tcd.yaatra.ui.activities;
 
+import android.content.Intent;
+import android.view.View;
 import android.widget.Toast;
 
 import com.tcd.yaatra.R;
@@ -22,11 +24,27 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
     public void initEventHandlers() {
         super.initEventHandlers();
 
+        // Login Button onClick
         layoutDataBinding.login.setOnClickListener(view -> loginActivityViewModel.authenticateUser(
                 layoutDataBinding.username.getText().toString(),
                 layoutDataBinding.password.getText().toString()
         ).observe(this, loginResponse -> {
-            Toast.makeText(this, "Response "+ loginResponse.toString(), Toast.LENGTH_SHORT).show();
+            switch (loginResponse.getState()){
+                case LOADING:
+                    layoutDataBinding.progressBarOverlay.setVisibility(View.VISIBLE);
+                    break;
+
+                case SUCCESS:
+                    layoutDataBinding.progressBarOverlay.setVisibility(View.GONE);
+                    Intent myIntent = new Intent(LoginActivity.this, DailyCommuteActivity.class);
+                    myIntent.putExtra("token", loginResponse.getData().getToken());
+                    startActivity(myIntent);
+                    break;
+                case FAILURE:
+                    layoutDataBinding.progressBarOverlay.setVisibility(View.GONE);
+                    Toast.makeText(this, "Invalid Credentials", Toast.LENGTH_SHORT).show();
+                    break;
+            }
         }));
     }
 
