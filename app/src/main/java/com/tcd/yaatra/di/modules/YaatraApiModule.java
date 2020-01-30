@@ -1,8 +1,8 @@
 package com.tcd.yaatra.di.modules;
 
+import com.tcd.yaatra.services.api.yaatra.api.DailyCommuteApi;
 import com.tcd.yaatra.services.api.yaatra.api.LoginApi;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -31,6 +31,12 @@ public class YaatraApiModule {
     @Singleton
     LoginApi providesLoginApi(@Named("yaatraRetrofit") Retrofit retrofit){
         return retrofit.create(LoginApi.class);
+    }
+
+    @Provides
+    @Singleton
+    DailyCommuteApi providesDailyCommuteApi(@Named("yaatraRetrofit") Retrofit retrofit) {
+        return retrofit.create(DailyCommuteApi.class);
     }
 
 

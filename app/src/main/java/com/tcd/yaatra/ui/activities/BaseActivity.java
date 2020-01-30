@@ -32,9 +32,7 @@ public abstract class BaseActivity<DataBindingClass extends ViewDataBinding> ext
 
     protected void handleOnCreate(){
         configureDagger();
-
         this.layoutDataBinding = DataBindingUtil.setContentView(this, this.getLayoutResourceId());
-
         initEventHandlers();
     }
 
