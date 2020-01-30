@@ -54,7 +54,7 @@ public class DailyCommuteActivity extends BaseActivity<ActivityDailyCommuteBindi
     }
 
     private void handleDailyCommuteClick() {
-        dailyCommuteActivityViewModel.getDailyCommute(authToken).observe(this, dailyCommuteResponse -> {
+        dailyCommuteActivityViewModel.getDailyCommute(this.authToken).observe(this, dailyCommuteResponse -> {
             switch (dailyCommuteResponse.getState()) {
                 case LOADING:
                     layoutDataBinding.progressBarOverlay.setVisibility(View.VISIBLE);

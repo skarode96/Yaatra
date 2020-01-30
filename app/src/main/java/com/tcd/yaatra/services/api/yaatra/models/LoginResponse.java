@@ -4,12 +4,12 @@ public class LoginResponse {
 
     private String message;
     private String response;
-    private String auth_token;
+    private String authToken;
 
-    public LoginResponse(String message, String response, String auth_token) {
+    public LoginResponse(String message, String response, String authToken) {
         this.message = message;
         this.response = response;
-        this.auth_token = auth_token;
+        this.authToken = authToken;
     }
 
     public String getResponse() {
@@ -21,11 +21,11 @@ public class LoginResponse {
     }
 
     public String getAuthToken() {
-        return auth_token;
+        return authToken;
     }
 
-    public void setAuthToken(String auth_token) {
-        this.auth_token = auth_token;
+    public void setAuthToken(String authToken) {
+        this.authToken = authToken;
     }
 
 
@@ -34,7 +34,7 @@ public class LoginResponse {
         return "LoginResponse{" +
                 "token='" + message + '\'' +
                 ", response='" + response + '\'' +
-                ", auth_token='" + auth_token + '\'' +
+                ", authToken='" + authToken + '\'' +
                 '}';
     }
 }
