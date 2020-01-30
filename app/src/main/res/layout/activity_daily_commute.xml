@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<layout>
+
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -39,19 +41,6 @@
             android:background="@drawable/trans_white_rectangle"
             android:orientation="vertical">
             <TextView
-                android:id="@+id/textView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:paddingStart="10dp"
-                android:paddingTop="10dp"
-                android:paddingEnd="10dp"
-                android:text="Logged-In User Token:"
-                android:gravity="center"
-                android:textColor="#003989"
-                android:textSize="20sp"
-                android:textStyle="bold"/>
-            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
@@ -76,7 +65,7 @@
                 android:textColor="@color/white"
                 android:textStyle="bold" />
             <Button
-                android:id="@+id/btnMapBox"
+                android:id="@+id/btn_show_route"
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
                 android:layout_gravity="center"
@@ -88,7 +77,7 @@
                 android:textColor="@color/white"
                 android:textStyle="bold" />
             <Button
-                android:id="@+id/btnFind"
+                android:id="@+id/btn_find_co_traveller"
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
                 android:layout_gravity="center"
@@ -103,5 +92,24 @@
     </LinearLayout>
 
 </ScrollView>
+    <FrameLayout
+            android:id="@+id/progressBarOverlay"
+            android:animateLayoutChanges="true"
+            android:visibility="gone"
+            android:alpha="0.4"
+            android:background="#000000"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <ProgressBar
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                android:layout_gravity="center"
+                android:indeterminateTint="#003989"/>
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

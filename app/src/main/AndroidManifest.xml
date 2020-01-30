@@ -21,10 +21,10 @@
         android:theme="@style/AppTheme"
         android:name=".App"
         android:usesCleartextTraffic="true">
-        <activity android:name="com.tcd.yaatra.ui.activities.FindActivity"></activity>
+        <activity android:name="com.tcd.yaatra.ui.activities.PeerToPeerActivity"></activity>
         <activity android:name="com.tcd.yaatra.ui.activities.MapActivity" />
-        <activity android:name="com.tcd.yaatra.ui.activities.DirectActivity" />
-        <activity android:name="com.tcd.yaatra.ui.activities.UserActivity" />
+        <activity android:name="com.tcd.yaatra.ui.activities.MapBoxActivity" />
+        <activity android:name="com.tcd.yaatra.ui.activities.DailyCommuteListActivity" />
         <activity android:name="com.tcd.yaatra.ui.activities.DailyCommuteActivity" />
         <activity
             android:name="com.tcd.yaatra.ui.activities.LoginActivity"

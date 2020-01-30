@@ -23,8 +23,6 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
     @Override
     public void initEventHandlers() {
         super.initEventHandlers();
-
-        // Login Button onClick
         layoutDataBinding.login.setOnClickListener(view -> handleOnLoginButtonClick());
     }
 
@@ -44,7 +42,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
                         case SUCCESS:
                             layoutDataBinding.progressBarOverlay.setVisibility(View.GONE);
                             Intent myIntent = new Intent(LoginActivity.this, DailyCommuteActivity.class);
-                            myIntent.putExtra("token", loginResponse.getData().getToken());
+                            myIntent.putExtra("authToken", loginResponse.getData().getAuthToken());
                             startActivity(myIntent);
                             break;
 

@@ -1,10 +1,5 @@
 package com.tcd.yaatra.ui.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.os.Bundle;
-
-import com.tcd.yaatra.R;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,6 +12,7 @@ import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pGroup;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -27,6 +23,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.tcd.yaatra.R;
 
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -35,7 +34,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class FindActivity extends AppCompatActivity implements WifiP2pManager.GroupInfoListener{
+public class PeerToPeerActivity extends AppCompatActivity implements WifiP2pManager.GroupInfoListener{
 
     private final IntentFilter intentFilter = new IntentFilter();
     WifiP2pManager.Channel channel;
@@ -101,7 +100,7 @@ public class FindActivity extends AppCompatActivity implements WifiP2pManager.Gr
 
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_find);
+        setContentView(R.layout.activity_peer_to_peer);
         //buttonTurnOnWifi = findViewById(R.id.buttonTurnOnWiFi);
         buttonDiscoverPeers = findViewById(R.id.buttonDiscoverPeers);
 
@@ -265,7 +264,7 @@ public class FindActivity extends AppCompatActivity implements WifiP2pManager.Gr
                     connectedPeers.add(device);
                     showConnectedPeers();
 
-                    Toast.makeText(FindActivity.this, device.deviceName + "Connected",
+                    Toast.makeText(PeerToPeerActivity.this, device.deviceName + "Connected",
                             Toast.LENGTH_SHORT).show();
                 }
 
@@ -292,7 +291,7 @@ public class FindActivity extends AppCompatActivity implements WifiP2pManager.Gr
             @Override
             public void onSuccess() {
                 // WiFiDirectBroadcastReceiver notifies us. Ignore for now.
-                Toast.makeText(FindActivity.this, "Connect Done.",
+                Toast.makeText(PeerToPeerActivity.this, "Connect Done.",
                         Toast.LENGTH_SHORT).show();
 
                 peers.remove((int)deviceId);
@@ -308,7 +307,7 @@ public class FindActivity extends AppCompatActivity implements WifiP2pManager.Gr
 
             @Override
             public void onFailure(int reason) {
-                Toast.makeText(FindActivity.this, "Connect failed. Retry.",
+                Toast.makeText(PeerToPeerActivity.this, "Connect failed. Retry.",
                         Toast.LENGTH_SHORT).show();
             }
         });
@@ -395,7 +394,7 @@ public class FindActivity extends AppCompatActivity implements WifiP2pManager.Gr
     }
 
     private void addClickListenerForDiscoverPeers(){
-        final FindActivity activity = this;
+        final PeerToPeerActivity activity = this;
 
         buttonDiscoverPeers.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -447,7 +446,7 @@ public class FindActivity extends AppCompatActivity implements WifiP2pManager.Gr
 
     }
 
-    private void startPeerDiscovery(final FindActivity activity){
+    private void startPeerDiscovery(final PeerToPeerActivity activity){
         manager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         channel = manager.initialize(activity, getMainLooper(), null);
 

@@ -14,9 +14,9 @@ import java.util.List;
 public class WifiDirectBroadcastReceiver extends BroadcastReceiver {
     WifiP2pManager wifiP2pManager;
     WifiP2pManager.Channel channel;
-    FindActivity activity;
+    PeerToPeerActivity activity;
 
-    public WifiDirectBroadcastReceiver(WifiP2pManager wifiP2pManager, WifiP2pManager.Channel channel, FindActivity activity) {
+    public WifiDirectBroadcastReceiver(WifiP2pManager wifiP2pManager, WifiP2pManager.Channel channel, PeerToPeerActivity activity) {
         this.wifiP2pManager = wifiP2pManager;
         this.channel = channel;
         this.activity = activity;
