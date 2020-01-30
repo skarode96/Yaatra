@@ -56,9 +56,11 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.List;
 import android.content.BroadcastReceiver;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class GetSetDestination extends AppCompatActivity implements OnMapReadyCallback, PermissionsListener, MapboxMap.OnMapClickListener, SearchView.OnQueryTextListener {
@@ -70,12 +72,18 @@ public class GetSetDestination extends AppCompatActivity implements OnMapReadyCa
     private Point destination;
     private Marker destinationMarker;
     SearchView destinationArea;
-//    private BroadcastReceiver MyReceiver = null;
-    OfflineManager offlineManager;
+    private BroadcastReceiver MyReceiver = null;
+
+    //offline Objects
+    private OfflineManager offlineManager;
     public static final String JSON_CHARSET = "UTF-8";
     public static final String JSON_FIELD_REGION_NAME = "FIELD_REGION_NAME";
-    private boolean isEndNotified;
-    private ProgressBar progressBar;
+    private OfflineRegion offlineRegion;
+    private int regionSelected = 0;
+    private Button downloadButton;
+    private Button listButton;
+
+    private static final String TAG = "GetSetDestinationActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,14 +95,14 @@ public class GetSetDestination extends AppCompatActivity implements OnMapReadyCa
         mapView.getMapAsync(this);
         destinationArea = (SearchView) findViewById(R.id.searchDest);
         destinationArea.setOnQueryTextListener(this);
-//        MyReceiver= new MyReceiver();
-//        broadcastIntent();
+        MyReceiver= new MyReceiver();
+        broadcastIntent();
 
     }
 
-//    public void broadcastIntent() {
-//        registerReceiver(MyReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-//    }
+    public void broadcastIntent() {
+        registerReceiver(MyReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+    }
 
     @Override
     public void onMapReady(MapboxMap mapboxMap) {
@@ -106,9 +114,6 @@ public class GetSetDestination extends AppCompatActivity implements OnMapReadyCa
             @Override
             public void onStyleLoaded(@NonNull Style style) {
                 enableLocation(style);
-
-
-
 
             }
         });
@@ -123,113 +128,16 @@ public class GetSetDestination extends AppCompatActivity implements OnMapReadyCa
             locationComponent = map.getLocationComponent();
             locationComponent.activateLocationComponent(LocationComponentActivationOptions.builder(this, map.getStyle()).build());
             locationComponent.setLocationComponentEnabled(true);
-            //locationComponent.setCameraMode(CameraMode.TRACKING);
+            locationComponent.setCameraMode(CameraMode.TRACKING);
 
-            offlineManager = OfflineManager.getInstance(GetSetDestination.this);
-            // Create a bounding box for the offline region
-            LatLngBounds latLngBounds = new LatLngBounds.Builder()
-                    .include(new LatLng(53.2747, -6.2253)) // Northeast
-                    .include(new LatLng(53.2747, -7.2253)) // Southwest
-                    .build();
+            offlineManager = offlineManager.getInstance(GetSetDestination.this);
+            downloadButton = findViewById(R.id.downloadButton);
+            downloadButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
-            // Define the offline region
-            OfflineTilePyramidRegionDefinition definition = new OfflineTilePyramidRegionDefinition(
-                    loadedMapStyle.getUri(),
-                    latLngBounds,
-                    10,
-                    20,
-                    GetSetDestination.this.getResources().getDisplayMetrics().density);
-            // Set the metadata
-            byte[] metadata;
-            try {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put(JSON_FIELD_REGION_NAME, "Yosemite National Park");
-                String json = jsonObject.toString();
-                metadata = json.getBytes(JSON_CHARSET);
-            } catch (Exception exception) {
-                Timber.e("Failed to encode metadata: %s", exception.getMessage());
-                metadata = null;
-            }
-            // Create the region asynchronously
-            if (metadata != null) {
-                offlineManager.createOfflineRegion(
-                        definition,
-                        metadata,
-                        new OfflineManager.CreateOfflineRegionCallback() {
-                            @Override
-                            public void onCreate(OfflineRegion offlineRegion) {
-                                offlineRegion.setDownloadState(OfflineRegion.STATE_ACTIVE);
-
-// Display the download progress bar
-                                progressBar = findViewById(R.id.progress_bar);
-                                startProgress();
-
-// Monitor the download progress using setObserver
-                                offlineRegion.setObserver(new OfflineRegion.OfflineRegionObserver() {
-                                    @Override
-                                    public void onStatusChanged(OfflineRegionStatus status) {
-
-// Calculate the download percentage and update the progress bar
-                                        double percentage = status.getRequiredResourceCount() >= 0
-                                                ? (100.0 * status.getCompletedResourceCount() / status.getRequiredResourceCount()) :
-                                                0.0;
-
-                                        if (status.isComplete()) {
-// Download complete
-                                            endProgress(getString(R.string.simple_offline_end_progress_success));
-                                        } else if (status.isRequiredResourceCountPrecise()) {
-// Switch to determinate state
-                                            setPercentage((int) Math.round(percentage));
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onError(OfflineRegionError error) {
-// If an error occurs, print to logcat
-                                        Timber.e("onError reason: %s", error.getReason());
-                                        Timber.e("onError message: %s", error.getMessage());
-                                    }
-
-                                    @Override
-                                    public void mapboxTileCountLimitExceeded(long limit) {
-// Notify if offline region exceeds maximum tile count
-                                        Timber.e("Mapbox tile count limit exceeded: %s", limit);
-                                    }
-                                });
-                            }
-
-                            @Override
-                            public void onError(String error) {
-                                Timber.e("Error: %s", error);
-                            }
-                        });
-            }
-            if (offlineManager != null) {
-                offlineManager.listOfflineRegions(new OfflineManager.ListOfflineRegionsCallback() {
-                    @Override
-                    public void onList(OfflineRegion[] offlineRegions) {
-                        LatLngBounds bounds = ((OfflineTilePyramidRegionDefinition)
-                                offlineRegions[0].getDefinition()).getBounds();
-                        double regionZoom = ((OfflineTilePyramidRegionDefinition)
-                                offlineRegions[0].getDefinition()).getMinZoom();
-
-// Create new camera position
-                        CameraPosition cameraPosition = new CameraPosition.Builder()
-                                .target(bounds.getCenter())
-                                .zoom(regionZoom)
-                                .build();
-
-// Move camera to new position
-                        map.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-
-                    }
-
-                    @Override
-                    public void onError(String error) {
-                        Timber.e("onListError: %s", error);
-                    }
-                });
-            }
+                }
+            });
 
         } else{
             permissionsManager = new PermissionsManager(this);
@@ -275,37 +183,7 @@ public class GetSetDestination extends AppCompatActivity implements OnMapReadyCa
     protected void onPause() {
         super.onPause();
         mapView.onPause();
-//        unregisterReceiver(MyReceiver);
-        if (offlineManager != null) {
-            offlineManager.listOfflineRegions(new OfflineManager.ListOfflineRegionsCallback() {
-                @Override
-                public void onList(OfflineRegion[] offlineRegions) {
-                    if (offlineRegions.length > 0) {
-// delete the last item in the offlineRegions list which will be yosemite offline map
-                        offlineRegions[(offlineRegions.length - 1)].delete(new OfflineRegion.OfflineRegionDeleteCallback() {
-                            @Override
-                            public void onDelete() {
-                                Toast.makeText(
-                                        GetSetDestination.this,
-                                        getString(R.string.basic_offline_deleted_toast),
-                                        Toast.LENGTH_LONG
-                                ).show();
-                            }
-
-                            @Override
-                            public void onError(String error) {
-                                Timber.e("On delete error: %s", error);
-                            }
-                        });
-                    }
-                }
-
-                @Override
-                public void onError(String error) {
-                    Timber.e("onListError: %s", error);
-                }
-            });
-        }
+        unregisterReceiver(MyReceiver);
     }
 
     @Override
@@ -348,20 +226,82 @@ public class GetSetDestination extends AppCompatActivity implements OnMapReadyCa
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        query = query + ","+locationComponent.getLastKnownLocation().getLongitude()+","+locationComponent.getLastKnownLocation().getLatitude();
-        Toast.makeText(this, query, Toast.LENGTH_SHORT).show();
-//        if(isInternetAvailable()){
+
+        final String name = query;
         Geocoder coder = new Geocoder(this);
         List<Address> address;
+        List<Address> countries;
         try {
+
+
+            //query = query + ","+locationComponent.getLastKnownLocation().getLongitude()+","+locationComponent.getLastKnownLocation().getLatitude();
+            countries = coder.getFromLocation(locationComponent.getLastKnownLocation().getLatitude(),locationComponent.getLastKnownLocation().getLongitude(),1);
+            if(countries.size()>0)
+            {
+                query = query + "," + countries.get(0).getCountryName();
+            }
+            else
+            {
+                Toast.makeText(this, "No country found", Toast.LENGTH_SHORT).show();
+                return false;
+                //query = query + ","+locationComponent.getLastKnownLocation().getLongitude()+","+locationComponent.getLastKnownLocation().getLatitude();
+            }
+            final String regionName = query;
+            Toast.makeText(this, query, Toast.LENGTH_SHORT).show();
+//        if(isInternetAvailable()){
+
+
             address = coder.getFromLocationName(query, 5);
             if (address == null) {
                 Toast.makeText(this, "No place found", Toast.LENGTH_SHORT).show();
+                return false;
             }
             Address loc = address.get(0);
+
             map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(loc.getLatitude(), loc.getLongitude()), 13.0));
-            destinationMarker = map.addMarker(new MarkerOptions().position(new LatLng(loc.getLatitude(), loc.getLongitude())));
+//            destinationMarker = map.addMarker(new MarkerOptions().position(new LatLng(loc.getLatitude(), loc.getLongitude())));
             destination = Point.fromLngLat(loc.getLongitude(),loc.getLatitude());
+
+            map.getStyle(new Style.OnStyleLoaded() {
+                @Override
+                public void onStyleLoaded(@NonNull Style style) {
+                    String styleUrl = style.getUri();
+                    LatLngBounds bounds = map.getProjection().getVisibleRegion().latLngBounds;
+                    double minZoom = map.getMinZoomLevel();
+                    double maxZoom = map.getMaxZoomLevel();
+                    float pixelRatio = GetSetDestination.this.getResources().getDisplayMetrics().density;
+                    OfflineTilePyramidRegionDefinition definition = new OfflineTilePyramidRegionDefinition(styleUrl,bounds,minZoom,maxZoom,pixelRatio);
+
+                    byte[] metadata = null;
+                    try{
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put(JSON_FIELD_REGION_NAME,regionName);
+                        String json = jsonObject.toString();
+                        metadata = json.getBytes(JSON_CHARSET);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                        metadata = null;
+                    }
+
+                    offlineManager.createOfflineRegion(definition, metadata, new OfflineManager.CreateOfflineRegionCallback() {
+                        @Override
+                        public void onCreate(OfflineRegion offlineRegion) {
+                            Log.d(TAG, "onCreate: Offline region to be created"+regionName);
+                            GetSetDestination.this.offlineRegion = offlineRegion;
+                            launchDownload();
+                        }
+
+                        @Override
+                        public void onError(String error) {
+
+                        }
+                    });
+
+                }
+            });
 
 
         } catch (IOException e) {
@@ -369,17 +309,102 @@ public class GetSetDestination extends AppCompatActivity implements OnMapReadyCa
             // Get the region bounds and zoom and move the camera.
 
 
+                offlineManager.listOfflineRegions(new OfflineManager.ListOfflineRegionsCallback() {
+                    @Override
+                    public void onList(OfflineRegion[] offlineRegions) {
+                        if (offlineRegions == null || offlineRegions.length == 0) {
+                            Toast.makeText(getApplicationContext(), "You have no regions yet.", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        ArrayList<String> offlineRegionNames = new ArrayList<>();
+                        ArrayList<String> offlineSelectedRegionNames = new ArrayList<>();
+                        for (OfflineRegion offlineRegion : offlineRegions) {
+                            String regName = getRegionName(offlineRegion);
+                            offlineRegionNames.add(regName);
+                            if (regName.toLowerCase().contains(name.toLowerCase())) {
+                                offlineSelectedRegionNames.add(regName);
+                            }
+                        }
+                        if (offlineSelectedRegionNames.size() == 0) {
+                            Toast.makeText(getApplicationContext(), "No offline region found", Toast.LENGTH_SHORT).show();
+                            return;
+                        } else if (offlineSelectedRegionNames.size() == 1) {
+                            int index = offlineRegionNames.indexOf(offlineSelectedRegionNames.get(0));
+                            LatLngBounds bounds = (offlineRegions[index].getDefinition().getBounds());
+                            double regionZoom = (offlineRegions[index].getDefinition().getMinZoom());
+
+                            CameraPosition cameraPosition = new CameraPosition.Builder()
+                                    .target(bounds.getCenter())
+                                    .zoom(regionZoom)
+                                    .build();
+
+                            map.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                        } else {
+                            final CharSequence[] items = offlineSelectedRegionNames.toArray(new CharSequence[offlineRegionNames.size()]);
+
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        Toast.makeText(getApplicationContext(), error, Toast.LENGTH_SHORT).show();
+                    }
+                });
 //        }
 //        else
 //        {
 //            Toast.makeText(this,String.valueOf(isInternetAvailable()),Toast.LENGTH_SHORT).show();
 //        }
-                e.printStackTrace();
+                //e.printStackTrace();
             }
         return true;
     }
 
-        @Override
+
+
+    private String getRegionName(OfflineRegion offlineRegion) {
+        String regionName;
+         try{
+             byte[] metadata = offlineRegion.getMetadata();
+             String json = new String(metadata, JSON_CHARSET);
+             JSONObject jsonObject = new JSONObject(json);
+             regionName = jsonObject.getString(JSON_FIELD_REGION_NAME);
+         } catch (Exception e) {
+             Log.d(TAG, "getRegionName: Failed to decode metadata "+e.getMessage());
+             regionName = String.format("Region %1$d", offlineRegion.getID());
+         }
+         return regionName;
+    }
+
+    private void launchDownload() {
+
+        offlineRegion.setObserver(new OfflineRegion.OfflineRegionObserver() {
+            @Override
+            public void onStatusChanged(OfflineRegionStatus status) {
+                if(status.isComplete())
+                {
+                    Log.d(TAG, "onStatusChanged: Offline region downloaded successfully");
+                }
+            }
+
+            @Override
+            public void onError(OfflineRegionError error) {
+                Log.d(TAG, "onError message: "+error.getMessage());
+                Log.d(TAG, "onError reason: "+error.getReason());
+
+            }
+
+            @Override
+            public void mapboxTileCountLimitExceeded(long limit) {
+                Log.d(TAG, "mapboxTileCountLimitExceeded: "+limit);
+            }
+        });
+        offlineRegion.setDownloadState(offlineRegion.STATE_ACTIVE);
+    }
+
+    @Override
     public boolean onQueryTextChange(String newText) {
         return false;
     }
@@ -396,34 +421,6 @@ public class GetSetDestination extends AppCompatActivity implements OnMapReadyCa
         mapIntent.putExtras(bundle);
         startActivity(mapIntent);
 
-    }
-    // Progress bar methods
-    private void startProgress() {
-
-// Start and show the progress bar
-        isEndNotified = false;
-        progressBar.setIndeterminate(true);
-        progressBar.setVisibility(View.VISIBLE);
-    }
-
-    private void setPercentage(final int percentage) {
-        progressBar.setIndeterminate(false);
-        progressBar.setProgress(percentage);
-    }
-
-    private void endProgress(final String message) {
-// Don't notify more than once
-        if (isEndNotified) {
-            return;
-        }
-
-// Stop and hide the progress bar
-        isEndNotified = true;
-        progressBar.setIndeterminate(false);
-        progressBar.setVisibility(View.GONE);
-
-// Show a toast
-        Toast.makeText(GetSetDestination.this, message, Toast.LENGTH_LONG).show();
     }
 
 }
