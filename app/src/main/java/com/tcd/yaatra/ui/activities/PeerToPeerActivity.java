@@ -1,40 +1,46 @@
 package com.tcd.yaatra.ui.activities;
 
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.net.wifi.WifiManager;
-import android.net.wifi.WpsInfo;
-import android.net.wifi.p2p.WifiP2pConfig;
-import android.net.wifi.p2p.WifiP2pDevice;
-import android.net.wifi.p2p.WifiP2pDeviceList;
-import android.net.wifi.p2p.WifiP2pGroup;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.tcd.yaatra.R;
+import com.tcd.yaatra.databinding.ActivityPeerToPeerBinding;
 
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> implements WifiP2pManager.ConnectionInfoListener{
 
-public class PeerToPeerActivity extends AppCompatActivity implements WifiP2pManager.GroupInfoListener{
+    @Override
+    int getLayoutResourceId() {
+        return R.layout.activity_peer_to_peer;
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+
+        }
+    }
+
+    @Override
+    public void onConnectionInfoAvailable(WifiP2pInfo wifiP2pInfo) {
+
+        /*Log.v(TAG, Build.MANUFACTURER + ". Conn info available" + wifiP2pInfo);
+        Log.v(TAG, Build.MANUFACTURER + ". peer port: " + peerPort);
+
+        if (wifiP2pInfo.groupFormed) {
+            peerIP = wifiP2pInfo.groupOwnerAddress.getHostAddress();
+        }
+
+        if (!isConnectionInfoSent && peerPort > 0 && wifiP2pInfo != null && wifiP2pInfo.groupFormed) {
+            //DataSender.sendCurrentDeviceData(LocalDashWiFiP2PSD.this, peerIP, peerPort, true);
+            isConnectionInfoSent = true;
+        }*/
+    }
+}
+
+/*public class PeerToPeerActivity extends AppCompatActivity implements WifiP2pManager.GroupInfoListener{
 
     private final IntentFilter intentFilter = new IntentFilter();
     WifiP2pManager.Channel channel;
@@ -118,13 +124,13 @@ public class PeerToPeerActivity extends AppCompatActivity implements WifiP2pMana
         // Indicates this device's details have changed.
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 
-        /*manager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
+        *//*manager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         channel = manager.initialize(this, getMainLooper(), null);
 
         mWifiMgr = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
-        mWifiMgr.setWifiEnabled(false);*/
+        mWifiMgr.setWifiEnabled(false);*//*
 
-        /*button = findViewById(R.id.button);
+        *//*button = findViewById(R.id.button);
 
         mWifiP2pMgr = (WifiP2pManager) getApplicationContext().getSystemService(WIFI_P2P_SERVICE);
         mChannel = mWifiP2pMgr.initialize(this, getMainLooper(), null);
@@ -133,7 +139,7 @@ public class PeerToPeerActivity extends AppCompatActivity implements WifiP2pMana
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
-        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);*/
+        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);*//*
 
 //        buttonTurnOnWifi.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -150,7 +156,7 @@ public class PeerToPeerActivity extends AppCompatActivity implements WifiP2pMana
 //            }
 //        });
 
-        /*buttonDiscoverPeers.setOnClickListener(new View.OnClickListener() {
+        *//*buttonDiscoverPeers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -177,9 +183,9 @@ public class PeerToPeerActivity extends AppCompatActivity implements WifiP2pMana
                         // Request available peers from the wifi p2p manager. This is an
                         // asynchronous call and the calling activity is notified with a
                         // callback on PeerListListener.onPeersAvailable()
-                        *//*if (wifiP2pManager != null) {
+                        *//**//*if (wifiP2pManager != null) {
                             wifiP2pManager.requestPeers(channel, peerListListener);
-                        }*//*
+                        }*//**//*
 
                         Toast.makeText(getApplicationContext(), "Discovery started", Toast.LENGTH_SHORT).show();
                         buttonDiscoverPeers.setText("Started");
@@ -196,7 +202,7 @@ public class PeerToPeerActivity extends AppCompatActivity implements WifiP2pMana
             }
         });
 
-        receiver = new WifiDirectBroadcastReceiver(manager, channel, this);*/
+        receiver = new WifiDirectBroadcastReceiver(manager, channel, this);*//*
 
         addClickListenerForDiscoverPeers();
     }
@@ -313,7 +319,7 @@ public class PeerToPeerActivity extends AppCompatActivity implements WifiP2pMana
         });
     }
 
-    /** register the BroadcastReceiver with the intent values to be matched */
+    *//** register the BroadcastReceiver with the intent values to be matched *//*
     @Override
     public void onResume() {
         super.onResume();
@@ -463,9 +469,9 @@ public class PeerToPeerActivity extends AppCompatActivity implements WifiP2pMana
                 // Request available peers from the wifi p2p manager. This is an
                 // asynchronous call and the calling activity is notified with a
                 // callback on PeerListListener.onPeersAvailable()
-                                                            /*if (wifiP2pManager != null) {
+                                                            *//*if (wifiP2pManager != null) {
                                                                 wifiP2pManager.requestPeers(channel, peerListListener);
-                                                            }*/
+                                                            }*//*
 
                 Toast.makeText(getApplicationContext(), "Searching..", Toast.LENGTH_SHORT).show();
                 buttonDiscoverPeers.setText("Stop Discovery");
@@ -529,4 +535,4 @@ public class PeerToPeerActivity extends AppCompatActivity implements WifiP2pMana
             isPeerDiscoveryStarted = false;
         }
     }
-}
+}*/

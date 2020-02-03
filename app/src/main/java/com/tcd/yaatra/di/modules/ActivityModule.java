@@ -5,6 +5,8 @@ import com.tcd.yaatra.ui.activities.LaunchActivity;
 import com.tcd.yaatra.ui.activities.LoginActivity;
 
 import com.tcd.yaatra.ui.activities.DailyCommuteListActivity;
+import com.tcd.yaatra.ui.activities.PeerToPeerActivity;
+
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
 
@@ -22,4 +24,7 @@ public interface ActivityModule {
 
     @ContributesAndroidInjector
     LaunchActivity contributeLaunchActivity();
+
+    @ContributesAndroidInjector
+    PeerToPeerActivity contributePeerToPeerActivity();
 }
