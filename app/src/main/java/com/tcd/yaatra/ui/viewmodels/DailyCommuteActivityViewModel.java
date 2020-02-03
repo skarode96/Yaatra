@@ -19,7 +19,7 @@ public class DailyCommuteActivityViewModel extends ViewModel {
         this.dailyCommuteRepository = dailyCommuteRepository;
     }
 
-    public LiveData<AsyncData<List<Journey>>> getDailyCommute(String token){
-        return this.dailyCommuteRepository.getDailyCommute(token);
+    public LiveData<AsyncData<List<Journey>>> getDailyCommute(){
+        return this.dailyCommuteRepository.getDailyCommute();
     }
 }
