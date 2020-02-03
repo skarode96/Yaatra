@@ -1,0 +1,310 @@
+Index: app/src/main/res/values/strings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><resources>\r\n    <string name=\"app_name\">LoginJourneySharing</string>\r\n\r\n    <!-- TODO: Remove or change this placeholder text -->\r\n    <string name=\"hello_blank_fragment\">Hello blank fragment</string>\r\n    <string name=\"title_activity_login\">Sign in</string>\r\n    <string name=\"prompt_email\">Email</string>\r\n    <string name=\"prompt_password\">Password</string>\r\n    <string name=\"action_sign_in\">Sign in or register</string>\r\n    <string name=\"action_sign_in_short\">Sign in</string>\r\n    <string name=\"welcome\">\"Welcome !\"</string>\r\n    <string name=\"invalid_username\">Not a valid username</string>\r\n    <string name=\"invalid_password\">Password must be >5 characters</string>\r\n    <string name=\"login_failed\">\"Login failed\"</string>\r\n    <string name=\"access_token\">pk.eyJ1Ijoic2h1Y2hpMDciLCJhIjoiY2sydnBoMmQ4MDZ6azNobGpqMmx2ZWFnZiJ9.kfIZF0GCcZhK0nhl0OqKAQ</string>\r\n    <string name=\"start_navigating\">Start Navigating</string>\r\n</resources>\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/values/strings.xml	(revision bcd600a8256f88299e044fff0bed6eeacd7f5f5e)
++++ app/src/main/res/values/strings.xml	(date 1579801948934)
+@@ -1,17 +1,6 @@
+ <resources>
+-    <string name="app_name">LoginJourneySharing</string>
+ 
+     <!-- TODO: Remove or change this placeholder text -->
+-    <string name="hello_blank_fragment">Hello blank fragment</string>
+-    <string name="title_activity_login">Sign in</string>
+-    <string name="prompt_email">Email</string>
+-    <string name="prompt_password">Password</string>
+-    <string name="action_sign_in">Sign in or register</string>
+-    <string name="action_sign_in_short">Sign in</string>
+-    <string name="welcome">"Welcome !"</string>
+-    <string name="invalid_username">Not a valid username</string>
+-    <string name="invalid_password">Password must be >5 characters</string>
+-    <string name="login_failed">"Login failed"</string>
+     <string name="access_token">pk.eyJ1Ijoic2h1Y2hpMDciLCJhIjoiY2sydnBoMmQ4MDZ6azNobGpqMmx2ZWFnZiJ9.kfIZF0GCcZhK0nhl0OqKAQ</string>
+     <string name="start_navigating">Start Navigating</string>
+ </resources>
+Index: app/src/main/java/com/example/loginjourneysharing/activities/DailyCommuteActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.loginjourneysharing.activities;\r\n\r\nimport androidx.appcompat.app.AppCompatActivity;\r\n\r\nimport android.app.Activity;\r\nimport android.content.Intent;\r\nimport android.os.Bundle;\r\nimport android.util.Log;\r\nimport android.view.View;\r\nimport android.view.WindowManager;\r\nimport android.widget.AutoCompleteTextView;\r\nimport android.widget.Button;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\nimport com.android.volley.AuthFailureError;\r\nimport com.android.volley.Request;\r\nimport com.android.volley.RequestQueue;\r\nimport com.android.volley.Response;\r\nimport com.android.volley.VolleyError;\r\nimport com.android.volley.VolleyLog;\r\nimport com.android.volley.toolbox.JsonArrayRequest;\r\nimport com.android.volley.toolbox.JsonObjectRequest;\r\nimport com.android.volley.toolbox.StringRequest;\r\nimport com.android.volley.toolbox.Volley;\r\nimport com.example.loginjourneysharing.R;\r\nimport com.google.gson.JsonArray;\r\n\r\nimport org.json.JSONArray;\r\nimport org.json.JSONException;\r\nimport org.json.JSONObject;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.HashMap;\r\nimport java.util.Map;\r\n\r\npublic class DailyCommuteActivity extends AppCompatActivity {\r\n\r\n    private static final String TAG = \"Response\";\r\n    Button getReq;\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_daily_commute);\r\n        getWindow().setBackgroundDrawableResource(R.drawable.journey_sharing_login_background);\r\n        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);\r\n\r\n        Bundle extras = getIntent().getExtras();\r\n        if (extras != null) {\r\n            final String tokenValue = extras.getString(\"token\");\r\n            final TextView textViewToChange = (TextView) findViewById(R.id.LoginToken);\r\n            textViewToChange.setText(tokenValue);\r\n\r\n            final RequestQueue requestQueue = Volley.newRequestQueue(this);\r\n            final String url = \"https://yaatra-services.herokuapp.com/dailycommute/v1\";\r\n            getReq = (Button) findViewById(R.id.btnDailyCommute);\r\n\r\n            final ArrayList<HashMap<String, String>> commuteList = new ArrayList<>();\r\n            getReq.setOnClickListener(new View.OnClickListener() {\r\n                @Override\r\n                public void onClick(View v) {\r\n\r\n                    JsonArrayRequest req = new JsonArrayRequest(Request.Method.GET, url,\r\n                            null, new Response.Listener<JSONArray>() {\r\n                        @Override\r\n                        public void onResponse(JSONArray response) {\r\n                            JSONArray json = null; /*\r\n                                HashMap<String, String> mylist = new HashMap<String, String>();\r\n                                json = new JSONArray(response);\r\n                                for (int i = 0; i < json.length(); i++) {\r\n                                    HashMap<String, String> map = new HashMap<String, String>();\r\n                                    JsonArray e = json.getJSONArray(i);\r\n                                    String user = e.getString(\"User\");\r\n                                    String source = e.getString(\"Source\");\r\n                                    String destination = e.getString(\"Destination\");\r\n                                    map.put(\"User\", user);\r\n                                    map.put(\"Source\", source);\r\n                                    map.put(\"Destination\", destination);\r\n                                    commuteList.add(map);*/\r\n                            Log.e(\"Rest Response\", response.toString());\r\n                            /*Toast.makeText(DailyCommuteActivity.this, \"\" + response.toString(), Toast.LENGTH_SHORT).show();*/\r\n                            Intent myIntent = new Intent(DailyCommuteActivity.this, UserActivity.class);\r\n                            myIntent.putExtra(\"user\", response.toString());\r\n                            DailyCommuteActivity.this.startActivity(myIntent);\r\n                        }\r\n\r\n                    },\r\n                            new Response.ErrorListener() {\r\n                                @Override\r\n                                public void onErrorResponse(VolleyError error) {\r\n                                    VolleyLog.d(\"Error\", \"Error: \" + error.getMessage());\r\n                                    Toast.makeText(DailyCommuteActivity.this, \"\" + error.getMessage(), Toast.LENGTH_SHORT).show();\r\n                                }\r\n                            }) {\r\n                        @Override\r\n                        public String getBodyContentType() {\r\n                            return \"application/json; charset=utf-8\";\r\n                        }\r\n\r\n                        @Override\r\n                        public Map<String, String> getHeaders() throws AuthFailureError {\r\n                            HashMap<String, String> headers = new HashMap<String, String>();\r\n                            headers.put(\"Authorization\", \"Token \" + tokenValue);\r\n                            return headers;\r\n                        }\r\n                    };\r\n                    requestQueue.add(req);\r\n                }\r\n            });\r\n\r\n            /*For Show Routes*/\r\n            Button btnRoute;\r\n            btnRoute = (Button) findViewById(R.id.btnMapBox);\r\n            btnRoute.setOnClickListener(new View.OnClickListener() {\r\n                @Override\r\n                public void onClick(View v) {\r\n                    Intent myIntent = new Intent(DailyCommuteActivity.this, DirectActivity.class);\r\n                    startActivity(myIntent);\r\n                }\r\n            });\r\n\r\n            /*For Find Co Travellers*/\r\n            Button btnFind;\r\n            btnFind = (Button) findViewById(R.id.btnFind);\r\n            btnFind.setOnClickListener(new View.OnClickListener() {\r\n                @Override\r\n                public void onClick(View v) {\r\n                    Intent myIntent = new Intent(DailyCommuteActivity.this, FindActivity.class);\r\n                    startActivity(myIntent);\r\n                }\r\n            });\r\n        }\r\n    }\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/loginjourneysharing/activities/DailyCommuteActivity.java	(revision bcd600a8256f88299e044fff0bed6eeacd7f5f5e)
++++ app/src/main/java/com/example/loginjourneysharing/activities/DailyCommuteActivity.java	(date 1579805520332)
+@@ -24,7 +24,6 @@
+ import com.android.volley.toolbox.StringRequest;
+ import com.android.volley.toolbox.Volley;
+ import com.example.loginjourneysharing.R;
+-import com.google.gson.JsonArray;
+ 
+ import org.json.JSONArray;
+ import org.json.JSONException;
+@@ -32,12 +31,17 @@
+ 
+ import java.util.ArrayList;
+ import java.util.HashMap;
++import java.util.List;
+ import java.util.Map;
++import java.util.stream.Collectors;
++import java.util.stream.IntStream;
+ 
+ public class DailyCommuteActivity extends AppCompatActivity {
+ 
+     private static final String TAG = "Response";
+     Button getReq;
++    private DatabaseHelper db;
++    User user = new User();
+ 
+     @Override
+     protected void onCreate(Bundle savedInstanceState) {
+@@ -45,15 +49,20 @@
+         setContentView(R.layout.activity_daily_commute);
+         getWindow().setBackgroundDrawableResource(R.drawable.journey_sharing_login_background);
+         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+-
+         Bundle extras = getIntent().getExtras();
+         if (extras != null) {
+-            final String tokenValue = extras.getString("token");
++
++            user.setTokenId(extras.getString("token"));
++
++            // create our sqlite helper class
++            db = new DatabaseHelper(this);
++            db.addUserToken(user);
+             final TextView textViewToChange = (TextView) findViewById(R.id.LoginToken);
+-            textViewToChange.setText(tokenValue);
++
++            textViewToChange.setText(user.getTokenId());
+ 
+             final RequestQueue requestQueue = Volley.newRequestQueue(this);
+-            final String url = "https://yaatra-services.herokuapp.com/dailycommute/v1";
++            final String url = "https://yaatra-services.herokuapp.com/dailycommute/v1/";
+             getReq = (Button) findViewById(R.id.btnDailyCommute);
+ 
+             final ArrayList<HashMap<String, String>> commuteList = new ArrayList<>();
+@@ -65,19 +74,7 @@
+                             null, new Response.Listener<JSONArray>() {
+                         @Override
+                         public void onResponse(JSONArray response) {
+-                            JSONArray json = null; /*
+-                                HashMap<String, String> mylist = new HashMap<String, String>();
+-                                json = new JSONArray(response);
+-                                for (int i = 0; i < json.length(); i++) {
+-                                    HashMap<String, String> map = new HashMap<String, String>();
+-                                    JsonArray e = json.getJSONArray(i);
+-                                    String user = e.getString("User");
+-                                    String source = e.getString("Source");
+-                                    String destination = e.getString("Destination");
+-                                    map.put("User", user);
+-                                    map.put("Source", source);
+-                                    map.put("Destination", destination);
+-                                    commuteList.add(map);*/
++                            JSONArray json = null;
+                             Log.e("Rest Response", response.toString());
+                             /*Toast.makeText(DailyCommuteActivity.this, "" + response.toString(), Toast.LENGTH_SHORT).show();*/
+                             Intent myIntent = new Intent(DailyCommuteActivity.this, UserActivity.class);
+@@ -101,7 +98,7 @@
+                         @Override
+                         public Map<String, String> getHeaders() throws AuthFailureError {
+                             HashMap<String, String> headers = new HashMap<String, String>();
+-                            headers.put("Authorization", "Token " + tokenValue);
++                            headers.put("Authorization", "Token " + user.getTokenId());
+                             return headers;
+                         }
+                     };
+@@ -132,5 +129,4 @@
+             });
+         }
+     }
+-
+ }
+Index: app/src/main/res/drawable/ic_list.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/drawable/ic_list.xml	(date 1579809715895)
++++ app/src/main/res/drawable/ic_list.xml	(date 1579809715895)
+@@ -0,0 +1,5 @@
++<vector android:height="24dp" android:tint="#FFFFFF"
++    android:viewportHeight="24.0" android:viewportWidth="24.0"
++    android:width="24dp" xmlns:android="http://schemas.android.com/apk/res/android">
++    <path android:fillColor="#FF000000" android:pathData="M3,13h2v-2L3,11v2zM3,17h2v-2L3,15v2zM3,9h2L5,7L3,7v2zM7,13h14v-2L7,11v2zM7,17h14v-2L7,15v2zM7,7v2h14L21,7L7,7z"/>
++</vector>
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:dist=\"http://schemas.android.com/apk/distribution\"\r\n    package=\"com.example.loginjourneysharing\">\r\n\r\n    <uses-permission android:name=\"android.permission.INTERNET\" />\r\n    <uses-permission android:name=\"android.permission.ACCESS_FINE_LOCATION\" />\r\n    <uses-permission android:name=\"android.permission.FOREGROUND_SERVICE\" />\r\n    <uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\" />\r\n\r\n    <dist:module dist:instant=\"true\" />\r\n\r\n    <application\r\n        android:allowBackup=\"true\"\r\n        android:icon=\"@mipmap/ic_launcher\"\r\n        android:label=\"Daily Commute\"\r\n        android:roundIcon=\"@mipmap/ic_launcher_round\"\r\n        android:supportsRtl=\"true\"\r\n        android:theme=\"@style/AppTheme\"\r\n        android:usesCleartextTraffic=\"true\">\r\n        <activity android:name=\".activities.FindActivity\"></activity>\r\n        <activity android:name=\".activities.MapActivity\" />\r\n        <activity android:name=\".activities.DirectActivity\" />\r\n        <activity android:name=\".activities.UserActivity\" />\r\n        <activity android:name=\".activities.DailyCommuteActivity\" />\r\n        <activity\r\n            android:name=\".activities.LoginActivity\"\r\n            android:label=\"Journey Sharing Login\">\r\n            <intent-filter>\r\n                <action android:name=\"android.intent.action.MAIN\" />\r\n\r\n                <category android:name=\"android.intent.category.LAUNCHER\" />\r\n            </intent-filter>\r\n        </activity>\r\n        <activity android:name=\".activities.RegisterActivity\" />\r\n    </application>\r\n\r\n</manifest>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/AndroidManifest.xml	(revision bcd600a8256f88299e044fff0bed6eeacd7f5f5e)
++++ app/src/main/AndroidManifest.xml	(date 1579807435890)
+@@ -18,7 +18,11 @@
+         android:supportsRtl="true"
+         android:theme="@style/AppTheme"
+         android:usesCleartextTraffic="true">
+-        <activity android:name=".activities.FindActivity"></activity>
++        <meta-data
++            android:name="com.google.android.actions"
++            android:resource="@xml/activity-bar" />
++
++        <activity android:name=".activities.FindActivity" />
+         <activity android:name=".activities.MapActivity" />
+         <activity android:name=".activities.DirectActivity" />
+         <activity android:name=".activities.UserActivity" />
+Index: app/src/main/res/menu/journeysharing_menu.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/menu/journeysharing_menu.xml	(date 1579809723719)
++++ app/src/main/res/menu/journeysharing_menu.xml	(date 1579809723719)
+@@ -0,0 +1,9 @@
++<?xml version="1.0" encoding="utf-8"?>
++<menu xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:app="http://schemas.android.com/apk/res-auto">
++    <item android:id="@+id/item1"
++        android:icon="@drawable/ic_list"
++        android:title="Item1"
++        app:showAsAction="ifRoom">
++    </item>
++</menu>
+\ No newline at end of file
+Index: app/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>apply plugin: 'com.android.application'\r\n\r\nandroid {\r\n    compileSdkVersion 28\r\n    buildToolsVersion \"29.0.2\"\r\n    //\r\n    testOptions {\r\n        unitTests.returnDefaultValues = true\r\n    }\r\n    defaultConfig {\r\n        applicationId \"com.example.loginjourneysharing\"\r\n        minSdkVersion 28\r\n        targetSdkVersion 28\r\n        versionCode 1\r\n        versionName \"1.0\"\r\n        testInstrumentationRunner \"androidx.test.runner.AndroidJUnitRunner\"\r\n    }\r\n    buildTypes {\r\n        release {\r\n            minifyEnabled false\r\n            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'\r\n        }\r\n    }\r\n}\r\n\r\ndependencies {\r\n    implementation fileTree(dir: 'libs', include: ['*.jar'])\r\n    implementation 'androidx.appcompat:appcompat:1.1.0'\r\n    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'\r\n    implementation 'androidx.legacy:legacy-support-v4:1.0.0'\r\n    implementation 'com.google.android.material:material:1.0.0'\r\n    implementation 'androidx.annotation:annotation:1.1.0'\r\n    implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'\r\n    testImplementation 'junit:junit:4.12'\r\n    androidTestImplementation 'androidx.test.ext:junit:1.1.1'\r\n    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'\r\n\r\n    //volley dependencies\r\n    implementation 'com.android.volley:volley:1.1.1'\r\n    implementation 'com.google.code.gson:gson:2.8.6'\r\n\r\n    //unit test dependencies\r\n    testImplementation 'junit:junit:4.12'\r\n    testImplementation 'org.mockito:mockito-core:1.10.19'\r\n\r\n    //MapBox dependencies\r\n    implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:8.5.0'\r\n    implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation:0.42.3'\r\n    implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation-ui:0.42.3'\r\n    implementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-locationlayer:0.11.0'\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/build.gradle	(revision bcd600a8256f88299e044fff0bed6eeacd7f5f5e)
++++ app/build.gradle	(date 1574676073204)
+@@ -7,6 +7,9 @@
+     testOptions {
+         unitTests.returnDefaultValues = true
+     }
++    packagingOptions {
++        exclude 'LICENSE.txt'
++    }
+     defaultConfig {
+         applicationId "com.example.loginjourneysharing"
+         minSdkVersion 28
+@@ -42,6 +45,8 @@
+     //unit test dependencies
+     testImplementation 'junit:junit:4.12'
+     testImplementation 'org.mockito:mockito-core:1.10.19'
++    // Set this dependency if you want to use the Hamcrest matcher library
++    testImplementation 'org.hamcrest:hamcrest-library:1.3'
+ 
+     //MapBox dependencies
+     implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:8.5.0'
+Index: app/src/main/java/com/example/loginjourneysharing/activities/Session.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/loginjourneysharing/activities/Session.java	(date 1579802930978)
++++ app/src/main/java/com/example/loginjourneysharing/activities/Session.java	(date 1579802930978)
+@@ -0,0 +1,25 @@
++package com.example.loginjourneysharing.activities;
++
++import android.content.Context;
++import android.content.SharedPreferences;
++import android.preference.PreferenceManager;
++
++public class Session {
++    private SharedPreferences prefs;
++
++    public Session(Context cntx) {
++        // TODO Auto-generated constructor stub
++        prefs = PreferenceManager.getDefaultSharedPreferences(cntx);
++    }
++
++    public String getUserName() {
++        String userName = prefs.getString("userName","");
++        return userName;
++    }
++
++    public void setUserName(String userName) {
++        prefs.edit().putString("userName", userName).commit();
++    }
++
++
++}
+Index: app/src/main/res/layout/activity_register.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<RelativeLayout\r\n\r\n    xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    tools:context=\".activities.RegisterActivity\">\r\n\r\n    <ImageView\r\n        android:id=\"@+id/formLogo\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"100dp\"\r\n        android:scaleType=\"fitCenter\"\r\n        app:srcCompat=\"@drawable/ic_jslogo\"\r\n        android:layout_marginTop=\"25dp\"\r\n        android:paddingTop=\"10dp\"\r\n        />\r\n\r\n    <ScrollView\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_alignParentBottom=\"true\"\r\n        android:layout_below=\"@+id/formLogo\"\r\n\r\n        >\r\n        <LinearLayout\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"match_parent\"\r\n            android:orientation=\"vertical\"\r\n            android:background=\"@drawable/trans_white_rectangle\"\r\n            android:layout_marginStart=\"10dp\"\r\n            android:layout_marginEnd=\"10dp\"\r\n            >\r\n            <TextView\r\n                android:layout_width=\"match_parent\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:text=\"Get Started\"\r\n                android:textColor=\"#003989\"\r\n                android:textSize=\"20sp\"\r\n                android:textStyle=\"bold\"\r\n                android:layout_marginBottom=\"5dp\"\r\n                android:paddingStart=\"10dp\"\r\n                android:paddingEnd=\"10dp\"\r\n                android:paddingTop=\"10dp\"\r\n                />\r\n            <TextView\r\n                android:layout_width=\"match_parent\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:text=\"Just few details to get you started\"\r\n                android:textColor=\"#14b48c\"\r\n                android:textSize=\"15dp\"\r\n                android:textStyle=\"bold\"\r\n                android:layout_marginBottom=\"20dp\"\r\n                android:paddingStart=\"10dp\"\r\n                android:paddingEnd=\"10dp\"\r\n                android:paddingBottom=\"15dp\"\r\n                />\r\n            <AutoCompleteTextView\r\n                android:layout_width=\"match_parent\"\r\n                android:layout_height=\"40dp\"\r\n                android:hint=\"User Name\"\r\n                android:background=\"@drawable/rounded_white\"\r\n                android:layout_marginStart=\"15dp\"\r\n                android:layout_marginEnd=\"15dp\"\r\n                android:drawableLeft=\"@drawable/ic_login\"\r\n                android:textSize=\"14sp\"\r\n                android:drawablePadding=\"5dp\"\r\n                android:paddingStart=\"10dp\"\r\n                android:id=\"@+id/userName\"\r\n                android:layout_marginBottom=\"10dp\"\r\n                />\r\n            <AutoCompleteTextView\r\n                android:layout_width=\"match_parent\"\r\n                android:layout_height=\"40dp\"\r\n                android:hint=\"Phone Number\"\r\n                android:background=\"@drawable/rounded_white\"\r\n                android:layout_marginStart=\"15dp\"\r\n                android:layout_marginEnd=\"15dp\"\r\n                android:drawableLeft=\"@drawable/ic_phone_number\"\r\n                android:textSize=\"14sp\"\r\n                android:drawablePadding=\"5dp\"\r\n                android:paddingStart=\"10dp\"\r\n                android:id=\"@+id/phoneNumber\"\r\n                android:layout_marginBottom=\"10dp\"\r\n                />\r\n            <AutoCompleteTextView\r\n                android:layout_width=\"match_parent\"\r\n                android:layout_height=\"40dp\"\r\n                android:hint=\"Password\"\r\n                android:background=\"@drawable/rounded_white\"\r\n                android:layout_marginStart=\"15dp\"\r\n                android:layout_marginEnd=\"15dp\"\r\n                android:drawableLeft=\"@drawable/ic_password\"\r\n                android:textSize=\"14sp\"\r\n                android:drawablePadding=\"5dp\"\r\n                android:paddingStart=\"10dp\"\r\n                android:inputType=\"textPassword\"\r\n                android:id=\"@+id/userPassword\"\r\n                android:layout_marginBottom=\"10dp\"\r\n                />\r\n            <AutoCompleteTextView\r\n                android:layout_width=\"match_parent\"\r\n                android:layout_height=\"40dp\"\r\n                android:hint=\"Confirm Password\"\r\n                android:background=\"@drawable/rounded_white\"\r\n                android:layout_marginStart=\"15dp\"\r\n                android:layout_marginEnd=\"15dp\"\r\n                android:drawableLeft=\"@drawable/ic_confirm_password\"\r\n                android:textSize=\"14sp\"\r\n                android:drawablePadding=\"5dp\"\r\n                android:paddingStart=\"10dp\"\r\n                android:inputType=\"textPassword\"\r\n                android:id=\"@+id/userCPassword\"\r\n                android:layout_marginBottom=\"10dp\"\r\n                />\r\n            <RadioButton\r\n                android:layout_width=\"wrap_content\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:text=\"I agree to the Terms and Conditions\"\r\n                android:textColor=\"@color/white\"\r\n                android:layout_gravity=\"center\"\r\n                android:textStyle=\"italic\"\r\n                android:paddingLeft=\"5dp\"\r\n                android:textSize=\"13sp\"\r\n                android:layout_marginBottom=\"10dp\"\r\n                android:id=\"@+id/radio_agree\"/>\r\n\r\n            <Button\r\n                android:layout_width=\"wrap_content\"\r\n                android:layout_height=\"50dp\"\r\n                android:textColor=\"@color/white\"\r\n                android:text=\"Register\"\r\n                android:textStyle=\"bold\"\r\n                android:background=\"@drawable/register_button\"\r\n                android:layout_gravity=\"center\"\r\n                android:paddingLeft=\"20dp\"\r\n                android:paddingRight=\"20dp\"\r\n                android:layout_marginBottom=\"10dp\"\r\n                android:id=\"@+id/btnRegister\"\r\n                />\r\n    </LinearLayout>\r\n\r\n    </ScrollView>\r\n\r\n</RelativeLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/activity_register.xml	(revision bcd600a8256f88299e044fff0bed6eeacd7f5f5e)
++++ app/src/main/res/layout/activity_register.xml	(date 1579802150486)
+@@ -71,6 +71,20 @@
+                 android:id="@+id/userName"
+                 android:layout_marginBottom="10dp"
+                 />
++            <AutoCompleteTextView
++                android:layout_width="match_parent"
++                android:layout_height="40dp"
++                android:hint="Email ID"
++                android:background="@drawable/rounded_white"
++                android:layout_marginStart="15dp"
++                android:layout_marginEnd="15dp"
++                android:drawableLeft="@drawable/ic_login"
++                android:textSize="14sp"
++                android:drawablePadding="5dp"
++                android:paddingStart="10dp"
++                android:id="@+id/emailId"
++                android:layout_marginBottom="10dp"
++                />
+             <AutoCompleteTextView
+                 android:layout_width="match_parent"
+                 android:layout_height="40dp"
+Index: app/src/main/res/drawable/ic_bluetooth.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/drawable/ic_bluetooth.xml	(date 1579809213097)
++++ app/src/main/res/drawable/ic_bluetooth.xml	(date 1579809213097)
+@@ -0,0 +1,9 @@
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++        android:width="24dp"
++        android:height="24dp"
++        android:viewportWidth="24.0"
++        android:viewportHeight="24.0">
++    <path
++        android:fillColor="#FF000000"
++        android:pathData="M14.24,12.01l2.32,2.32c0.28,-0.72 0.44,-1.51 0.44,-2.33 0,-0.82 -0.16,-1.59 -0.43,-2.31l-2.33,2.32zM19.53,6.71l-1.26,1.26c0.63,1.21 0.98,2.57 0.98,4.02s-0.36,2.82 -0.98,4.02l1.2,1.2c0.97,-1.54 1.54,-3.36 1.54,-5.31 -0.01,-1.89 -0.55,-3.67 -1.48,-5.19zM15.71,7.71L10,2L9,2v7.59L4.41,5 3,6.41 8.59,12 3,17.59 4.41,19 9,14.41L9,22h1l5.71,-5.71 -4.3,-4.29 4.3,-4.29zM11,5.83l1.88,1.88L11,9.59L11,5.83zM12.88,16.29L11,18.17v-3.76l1.88,1.88z"/>
++</vector>
+Index: app/src/main/java/com/example/loginjourneysharing/activities/RegisterActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.loginjourneysharing.activities;\r\n\r\nimport android.content.Intent;\r\nimport android.os.Bundle;\r\nimport android.os.PersistableBundle;\r\nimport android.view.View;\r\nimport android.view.WindowManager;\r\nimport android.widget.Button;\r\nimport android.widget.TextView;\r\n\r\nimport androidx.annotation.Nullable;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\n\r\nimport com.example.loginjourneysharing.R;\r\n\r\npublic class RegisterActivity extends AppCompatActivity {\r\n    @Override\r\n    public void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_register);\r\n        getWindow().setBackgroundDrawableResource(R.drawable.journey_sharing_login_background);\r\n        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);\r\n\r\n        Button btn;\r\n        btn = (Button) findViewById(R.id.btnRegister);\r\n        btn.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                Intent myIntent = new Intent(RegisterActivity.this, LoginActivity.class);\r\n                RegisterActivity.this.startActivity(myIntent);\r\n            }\r\n        });\r\n\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/loginjourneysharing/activities/RegisterActivity.java	(revision bcd600a8256f88299e044fff0bed6eeacd7f5f5e)
++++ app/src/main/java/com/example/loginjourneysharing/activities/RegisterActivity.java	(date 1579686785492)
+@@ -7,8 +7,6 @@
+ import android.view.WindowManager;
+ import android.widget.Button;
+ import android.widget.TextView;
+-
+-import androidx.annotation.Nullable;
+ import androidx.appcompat.app.AppCompatActivity;
+ 
+ import com.example.loginjourneysharing.R;
+@@ -20,7 +18,6 @@
+         setContentView(R.layout.activity_register);
+         getWindow().setBackgroundDrawableResource(R.drawable.journey_sharing_login_background);
+         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+-
+         Button btn;
+         btn = (Button) findViewById(R.id.btnRegister);
+         btn.setOnClickListener(new View.OnClickListener() {
