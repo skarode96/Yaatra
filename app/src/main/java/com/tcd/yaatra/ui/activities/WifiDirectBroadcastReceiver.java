@@ -11,6 +11,7 @@ import android.net.wifi.p2p.WifiP2pManager;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
 public class WifiDirectBroadcastReceiver extends BroadcastReceiver {
     WifiP2pManager wifiP2pManager;
     WifiP2pManager.Channel channel;
@@ -95,4 +96,4 @@ public class WifiDirectBroadcastReceiver extends BroadcastReceiver {
         }
     }
 
-}
+}*/
