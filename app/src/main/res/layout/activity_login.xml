@@ -73,7 +73,7 @@
                     android:layout_marginEnd="15dp"
                     android:layout_marginBottom="10dp"
                     android:background="@drawable/rounded_white"
-                    android:drawableLeft="@drawable/ic_login"
+                    android:drawableLeft="@drawable/ic_username"
                     android:drawablePadding="5dp"
                     android:hint="User Name"
                     android:paddingStart="10dp"
