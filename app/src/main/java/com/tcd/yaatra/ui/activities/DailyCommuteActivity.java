@@ -63,7 +63,7 @@ public class DailyCommuteActivity extends BaseActivity<ActivityDailyCommuteBindi
                 case SUCCESS:
                     layoutDataBinding.progressBarOverlay.setVisibility(View.GONE);
                     Intent myIntent = new Intent(DailyCommuteActivity.this, DailyCommuteListActivity.class);
-                    myIntent.putExtra("user", dailyCommuteResponse.getData().getObjects().toString());
+                    myIntent.putExtra("user", dailyCommuteResponse.toString());
                     startActivity(myIntent);
                     break;
 

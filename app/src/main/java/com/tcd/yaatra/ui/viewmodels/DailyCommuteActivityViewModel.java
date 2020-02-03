@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel;
 
 import com.tcd.yaatra.repository.DailyCommuteRepository;
 import com.tcd.yaatra.repository.models.AsyncData;
-import com.tcd.yaatra.services.api.yaatra.models.DailyCommuteResponse;
+import com.tcd.yaatra.services.api.yaatra.models.Journey;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -17,7 +19,7 @@ public class DailyCommuteActivityViewModel extends ViewModel {
         this.dailyCommuteRepository = dailyCommuteRepository;
     }
 
-    public LiveData<AsyncData<DailyCommuteResponse>> getDailyCommute(String token){
+    public LiveData<AsyncData<List<Journey>>> getDailyCommute(String token){
         return this.dailyCommuteRepository.getDailyCommute(token);
     }
 }
