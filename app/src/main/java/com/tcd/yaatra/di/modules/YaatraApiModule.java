@@ -28,19 +28,6 @@ public class YaatraApiModule {
 
     private final static String SERVER_URL = "https://yaatra-services.herokuapp.com";
 
-    private static Response intercept(Interceptor.Chain chain) throws IOException {
-        Request request = chain.request()
-                .newBuilder()
-                .addHeader("Authorization", getToken())
-                .build();
-        Response response = chain.proceed(request);
-        return response;
-    }
-
-    private static String getToken() {
-        return getAppContext().getSharedPreferences("LoginPref", 0).getString("token", "no token");
-    }
-
 
     @Provides
     @Singleton
@@ -77,7 +64,17 @@ public class YaatraApiModule {
         return interceptor;
     }
 
+    private static Response intercept(Interceptor.Chain chain) throws IOException {
+        Request request = chain.request()
+                .newBuilder()
+                .addHeader("Authorization", getToken())
+                .build();
+        Response response = chain.proceed(request);
+        return response;
+    }
 
-
+    private static String getToken() {
+        return getAppContext().getSharedPreferences("LoginPref", 0).getString("token", "no token");
+    }
 
 }
