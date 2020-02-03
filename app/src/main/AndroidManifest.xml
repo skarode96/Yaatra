@@ -7,36 +7,39 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name = "android.permission.CHANGE_WIFI_STATE" />
-    <uses-permission android:name = "android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <dist:module dist:instant="true" />
 
     <application
+        android:name=".App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="Daily Commute"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:name=".App"
         android:usesCleartextTraffic="true">
-        <activity android:name="com.tcd.yaatra.ui.activities.PeerToPeerActivity"></activity>
-        <activity android:name="com.tcd.yaatra.ui.activities.MapActivity" />
-        <activity android:name="com.tcd.yaatra.ui.activities.MapBoxActivity" />
-        <activity android:name="com.tcd.yaatra.ui.activities.DailyCommuteListActivity" />
-        <activity android:name="com.tcd.yaatra.ui.activities.DailyCommuteActivity" />
-        <activity android:name="com.tcd.yaatra.ui.activities.NavigationDrawerActivity"  android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".ui.activities.LoginActivity"></activity>
+        <activity android:name=".ui.activities.PeerToPeerActivity" />
+        <activity android:name=".ui.activities.MapActivity" />
+        <activity android:name=".ui.activities.MapBoxActivity" />
+        <activity android:name=".ui.activities.DailyCommuteListActivity" />
+        <activity android:name=".ui.activities.DailyCommuteActivity" />
         <activity
-            android:name="com.tcd.yaatra.ui.activities.LoginActivity"
-            android:label="Journey Sharing Login">
+            android:name=".ui.activities.NavigationDrawerActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.activities.LaunchActivity"
+            android:label="Journey Sharing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.tcd.yaatra.ui.activities.RegisterActivity" />
+        <activity android:name=".ui.activities.RegisterActivity" />
     </application>
 
 </manifest>

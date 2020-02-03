@@ -19,7 +19,6 @@ public class App extends Application implements HasActivityInjector {
     @Override
     public void onCreate() {
         super.onCreate();
-
         initDagger();
     }
 

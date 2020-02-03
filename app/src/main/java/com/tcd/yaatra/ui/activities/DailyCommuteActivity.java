@@ -1,6 +1,7 @@
 package com.tcd.yaatra.ui.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -15,7 +16,8 @@ import javax.inject.Inject;
 
 public class DailyCommuteActivity extends BaseActivity<ActivityDailyCommuteBinding> {
 
-    private String authToken;
+    private SharedPreferences preferences;
+    private String savedToken;
 
     @Inject
     DailyCommuteActivityViewModel dailyCommuteActivityViewModel;
@@ -37,10 +39,8 @@ public class DailyCommuteActivity extends BaseActivity<ActivityDailyCommuteBindi
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle extras = getIntent().getExtras();
-        if(extras !=null) {
-            this.authToken = extras.getString("authToken");
-        }
+        this.preferences = getApplicationContext().getSharedPreferences("LoginPref", 0); // 0 - for private mode
+        this.savedToken = this.preferences.getString("token", "no token");
     }
 
     private void handleFindCoTravellers() {
@@ -54,7 +54,7 @@ public class DailyCommuteActivity extends BaseActivity<ActivityDailyCommuteBindi
     }
 
     private void handleDailyCommuteClick() {
-        dailyCommuteActivityViewModel.getDailyCommute(this.authToken).observe(this, dailyCommuteResponse -> {
+        dailyCommuteActivityViewModel.getDailyCommute(this.savedToken).observe(this, dailyCommuteResponse -> {
             switch (dailyCommuteResponse.getState()) {
                 case LOADING:
                     layoutDataBinding.progressBarOverlay.setVisibility(View.VISIBLE);
