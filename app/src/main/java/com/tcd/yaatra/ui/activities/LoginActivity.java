@@ -61,6 +61,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
                             this.editor.putString("token", loginResponse.getData().getAuthToken());
                             this.editor.commit();
                             startActivity(myIntent);
+                            finish();
                             break;
 
                         case FAILURE:
