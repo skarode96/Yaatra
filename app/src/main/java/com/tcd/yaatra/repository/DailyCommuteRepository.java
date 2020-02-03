@@ -42,6 +42,8 @@ public class DailyCommuteRepository {
             }
         });
 
+        dailyCommuteResponseLiveData.postValue(AsyncData.getLoadingState());
+
         return dailyCommuteResponseLiveData;
     }
 }
