@@ -1,6 +1,7 @@
 package com.example.loginjourneysharing.activities;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -34,8 +35,18 @@ import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin;
 import com.mapbox.mapboxsdk.plugins.locationlayer.modes.CameraMode;
 import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
 import com.mapbox.services.android.navigation.ui.v5.NavigationLauncherOptions;
+import com.mapbox.services.android.navigation.ui.v5.NavigationViewOptions;
+import com.mapbox.services.android.navigation.ui.v5.OnNavigationReadyCallback;
+import com.mapbox.services.android.navigation.ui.v5.listeners.NavigationListener;
 import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute;
 import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
+import com.mapbox.services.android.navigation.v5.routeprogress.ProgressChangeListener;
+import com.mapbox.services.android.navigation.v5.routeprogress.RouteProgress;
+import com.mapbox.services.android.navigation.ui.v5.listeners.RouteListener;
+import com.mapbox.services.android.navigation.ui.v5.NavigationView;
+import androidx.appcompat.app.AlertDialog;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.List;
@@ -46,7 +57,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, PermissionsListener, MapboxMap.OnMapClickListener{
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, PermissionsListener, MapboxMap.OnMapClickListener, OnNavigationReadyCallback, NavigationListener, RouteListener, ProgressChangeListener{
     private MapView mapView;
     private MapboxMap map;
     LocationComponent locationComponent;
@@ -57,6 +68,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private NavigationMapRoute navigationMapRoute;
     private static final String TAG = "MainActivity";
     private DirectionsRoute currentGivenRoute;
+    private NavigationView navigationView;
+    private boolean dropoffDialogShown;
+    private Location lastKnownLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,12 +85,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NavigationLauncherOptions options = NavigationLauncherOptions.builder()
-                        .directionsRoute(currentGivenRoute)
-                        .shouldSimulateRoute(true)
-                        .build();
-
-                NavigationLauncher.startNavigation(MapActivity.this,options);
+//                NavigationViewOptions options = NavigationViewOptions.builder()
+//                        .directionsRoute(currentGivenRoute)
+//                        .navigationListener(this)
+//                        .progressChangeListener(this)
+//                        .routeListener(this)
+//                        .shouldSimulateRoute(true)
+//                        .build();
+//
+                NavigationLauncher.startNavigation(MapActivity.this,setupOptions(currentGivenRoute));
+                //startNavigation(currentGivenRoute);
             }
         });
     }
@@ -246,4 +264,81 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         return false;
     }
-}
+
+
+    @Override
+    public void onNavigationReady(boolean isRunning) {
+        showRoute();
+    }
+
+    @Override
+    public void onCancelNavigation() {
+        // Navigation canceled, finish the activity
+        finish();
+    }
+
+    @Override
+    public void onNavigationFinished() {
+        // Intentionally empty
+    }
+
+    @Override
+    public void onNavigationRunning() {
+        // Intentionally empty
+    }
+
+    @Override
+    public boolean allowRerouteFrom(Point offRoutePoint) {
+        return true;
+    }
+
+    @Override
+    public void onOffRoute(Point offRoutePoint) {
+
+    }
+
+    @Override
+    public void onRerouteAlong(DirectionsRoute directionsRoute) {
+
+    }
+
+    @Override
+    public void onFailedReroute(String errorMessage) {
+
+    }
+
+    @Override
+    public void onArrival() {
+        if (destinationPosition != null) {
+            Toast.makeText(this, "You have arrived!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onProgressChange(Location location, RouteProgress routeProgress) {
+        lastKnownLocation = location;
+    }
+
+    private void startNavigation(DirectionsRoute directionsRoute) {
+        NavigationViewOptions navigationViewOptions = setupOptions(directionsRoute);
+    }
+
+
+
+    private NavigationViewOptions setupOptions(DirectionsRoute directionsRoute) {
+        dropoffDialogShown = false;
+
+        NavigationViewOptions.Builder options = NavigationViewOptions.builder();
+        options.directionsRoute(directionsRoute)
+                .navigationListener(this)
+                .progressChangeListener(this)
+                .routeListener(this)
+                .shouldSimulateRoute(true);
+        return options.build();
+    }
+
+    private Point getLastKnownLocation() {
+        return Point.fromLngLat(lastKnownLocation.getLongitude(), lastKnownLocation.getLatitude());
+    }
+
+        }
