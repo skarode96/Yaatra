@@ -14,8 +14,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.databinding.ActivityLoginBinding;
 import com.tcd.yaatra.databinding.ActivityRegisterBinding;
+import com.tcd.yaatra.services.api.yaatra.models.RegisterRequestBody;
+import com.tcd.yaatra.ui.viewmodels.LoginActivityViewModel;
+import com.tcd.yaatra.ui.viewmodels.RegisterActivityViewModel;
+import com.tcd.yaatra.utils.SharedPreferenceUtils;
+
+import javax.inject.Inject;
 
 public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
+
+    @Inject
+    RegisterActivityViewModel registerActivityViewModel;
+
     @Override
     int getLayoutResourceId() {
         return R.layout.activity_register;
@@ -101,25 +111,53 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
 
         else
         {
-            String username = layoutDataBinding.userName.getText().toString();
-            String firstName = layoutDataBinding.firstName.getText().toString();
-            String lastName = layoutDataBinding.lastName.getText().toString();
-            String emailId = layoutDataBinding.emailId.getText().toString();
+            RegisterRequestBody registerObject = new RegisterRequestBody();
+
+            registerObject.setUserName(layoutDataBinding.userName.getText().toString());
+            registerObject.setFirstName(layoutDataBinding.firstName.getText().toString());
+            registerObject.setLastName(layoutDataBinding.lastName.getText().toString());
+            registerObject.setEmail(layoutDataBinding.emailId.getText().toString());
+            registerObject.setAge(Integer.parseInt(layoutDataBinding.age.getText().toString()));
+            registerObject.setPassword(layoutDataBinding.userPassword.getText().toString());
+            registerObject.setConfirmPassword(layoutDataBinding.userCPassword.getText().toString());
+
+            RadioButton genderBtn = (RadioButton)findViewById(layoutDataBinding.genderGroup.getCheckedRadioButtonId());
+            if(genderBtn.getText().toString().equalsIgnoreCase("Male"))
+                registerObject.setGender(1);
+            else if(genderBtn.getText().toString().equalsIgnoreCase("Female"))
+                registerObject.setGender(2);
+            else if(genderBtn.getText().toString().equalsIgnoreCase("Others"))
+                registerObject.setGender(3);
+
+
             int phoneNumber = Integer.parseInt(layoutDataBinding.phoneNum.getText().toString());
             String country = layoutDataBinding.country.getText().toString();
-            int age = Integer.parseInt(layoutDataBinding.age.getText().toString());
-            String userPassword = layoutDataBinding.userPassword.getText().toString();
-            String userCPassword = layoutDataBinding.userCPassword.getText().toString();
-            RadioButton genderBtn = (RadioButton)findViewById(layoutDataBinding.genderGroup.getCheckedRadioButtonId());
-            String gender = genderBtn.getText().toString();
             RadioButton genderPrefBtn = (RadioButton)findViewById(layoutDataBinding.genderPrefGroup.getCheckedRadioButtonId());
             String genderPref = genderPrefBtn.getText().toString();
             RadioButton transportPrefBtn = (RadioButton)findViewById(layoutDataBinding.transportPrefGroup.getCheckedRadioButtonId());
             String transportPref = transportPrefBtn.getText().toString();
+
+            registerActivityViewModel.register(registerObject).observe(this,registerResponse -> {
+                switch (registerResponse.getState()) {
+                    case LOADING:
+                        layoutDataBinding.progressBarOverlay.setVisibility(View.VISIBLE);
+                        break;
+
+                    case SUCCESS:
+                        layoutDataBinding.progressBarOverlay.setVisibility(View.GONE);
+                        Toast.makeText(this,"User creation successful",Toast.LENGTH_SHORT).show();
+                        Intent myIntent = new Intent(RegisterActivity.this, LoginActivity.class);
+                        startActivity(myIntent);
+                        finish();
+                        break;
+
+                    case FAILURE:
+                        layoutDataBinding.progressBarOverlay.setVisibility(View.GONE);
+                        Toast.makeText(this, registerResponse.getData().getMessage(), Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            });
+
         }
-
-
-
-
     }
 }

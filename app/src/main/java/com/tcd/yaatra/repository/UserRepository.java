@@ -62,7 +62,7 @@ public class UserRepository {
             @Override
             public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
                 switch (response.code()) {
-                    case 200: registerResponseLiveData.postValue(AsyncData.getSuccessState(response.body()));break;
+                    case 201: registerResponseLiveData.postValue(AsyncData.getSuccessState(response.body()));break;
                     default: registerResponseLiveData.postValue(AsyncData.getFailureState(null));
                 }
             }
