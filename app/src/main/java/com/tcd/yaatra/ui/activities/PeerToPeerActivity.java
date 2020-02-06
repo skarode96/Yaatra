@@ -1,10 +1,16 @@
 package com.tcd.yaatra.ui.activities;
 
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.WifiDirectP2PHelper.PeerCommunicator;
@@ -14,11 +20,16 @@ import com.tcd.yaatra.databinding.ActivityPeerToPeerBinding;
 public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> {
 
     PeerCommunicator communicator;
+    TextView textView;
+    String devices;
 
     @Override
     int getLayoutResourceId() {
         return R.layout.activity_peer_to_peer;
     }
+
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    boolean isLocationPermissionGranted = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +40,27 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
         }
 
         communicator = new PeerCommunicator(this);
+        textView = layoutDataBinding.textView2;
+        devices = "";
+
+        checkIfLocationPermissionGranted();
+    }
+
+    private void checkIfLocationPermissionGranted(){
+        if (ContextCompat.checkSelfPermission(this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            isLocationPermissionGranted = false;
+
+            //if (Build.VERSION.SDK_INT >= 23) {
+            ActivityCompat.requestPermissions(this
+                                        , new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}
+                                        , LOCATION_PERMISSION_REQUEST_CODE);
+            //}
+        }
+        else {
+            isLocationPermissionGranted = true;
+        }
     }
 
     @Override
@@ -38,11 +70,18 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
     }
 
     private void handleDiscoverButtonClick(){
-        communicator.StartAdvertisingMyStatus(TravellerStatus.SeekingFellowTraveller);
+        if(isLocationPermissionGranted){
+            communicator.StartAdvertisingMyStatus(TravellerStatus.SeekingFellowTraveller);
+        }
     }
 
     public void ListenToPeers(){
         communicator.SubscribeStatusChangeOfPeers();
+    }
+
+    public void ShowPeers(String deviceName){
+        devices = deviceName + "," + devices;
+        textView.setText(devices);
     }
 
     @Override
@@ -86,21 +125,22 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
         super.onDestroy();
     }
 
-    //@Override
-    //public void onConnectionInfoAvailable(WifiP2pInfo wifiP2pInfo) {
-
-        /*Log.v(TAG, Build.MANUFACTURER + ". Conn info available" + wifiP2pInfo);
-        Log.v(TAG, Build.MANUFACTURER + ". peer port: " + peerPort);
-
-        if (wifiP2pInfo.groupFormed) {
-            peerIP = wifiP2pInfo.groupOwnerAddress.getHostAddress();
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case LOCATION_PERMISSION_REQUEST_CODE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    isLocationPermissionGranted = true;
+                } else {
+                    isLocationPermissionGranted = false;
+                }
+                return;
+            }
         }
-
-        if (!isConnectionInfoSent && peerPort > 0 && wifiP2pInfo != null && wifiP2pInfo.groupFormed) {
-            //DataSender.sendCurrentDeviceData(LocalDashWiFiP2PSD.this, peerIP, peerPort, true);
-            isConnectionInfoSent = true;
-        }*/
-    //}
+    }
 }
 
 /*public class PeerToPeerActivity extends AppCompatActivity implements WifiP2pManager.GroupInfoListener{

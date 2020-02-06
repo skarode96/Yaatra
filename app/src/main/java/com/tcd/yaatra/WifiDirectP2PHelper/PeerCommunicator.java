@@ -11,12 +11,14 @@ import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
 import android.os.Build;
 import android.util.Log;
 
+import com.tcd.yaatra.WifiDirectP2PHelper.models.Gender;
 import com.tcd.yaatra.WifiDirectP2PHelper.models.TravellerInfo;
 import com.tcd.yaatra.WifiDirectP2PHelper.models.TravellerStatus;
 import com.tcd.yaatra.ui.activities.PeerToPeerActivity;
 
 import java.math.BigInteger;
 import java.nio.ByteOrder;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,7 +32,7 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
 
     private static final String TAG = "PeerCommunicator";
     private static final String SERVICE_INSTANCE = "com.tcd.yaatra.WifiDirectService";
-    private static final String SERVICE_TYPE = "com.tcd.yaatra.WifiDirectService._tcp";
+    private static final String SERVICE_TYPE = "tcp";
 
     private PeerToPeerActivity peerToPeerActivity;
 
@@ -54,14 +56,23 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
             public void onSuccess() {
 
                 TravellerInfo info = new TravellerInfo();
-                info.setStatus(status);
-                info.setIpAddress(getWiFiIPAddress(peerToPeerActivity));
 
-                Map<String, String> record = new HashMap<String, String>();
-                record.put("Name", "JShare");
+                info.setName("JP");
+                info.setIpAddress(getWiFiIPAddress(peerToPeerActivity));
+                info.setStatus(status);
+                info.setSource("Source");
+                info.setDestination("Destination");
+                info.setAge(20);
+                info.setPortNumber(12345);
+                info.setRequestStartTime(LocalDateTime.now());
+                info.setGender(Gender.Female);
+
+                //Map<String, String> record = new HashMap<String, String>();
+                //record.put("Name", "JShare");
+                Map<String, String> serializedRecord = info.SerializeToMap();
 
                 WifiP2pDnsSdServiceInfo service = WifiP2pDnsSdServiceInfo.newInstance(
-                        SERVICE_INSTANCE, SERVICE_TYPE, record);
+                        SERVICE_INSTANCE, SERVICE_TYPE, serializedRecord);
 
                 wifiP2pManager.addLocalService(wifip2pChannel, service, new WifiP2pManager.ActionListener() {
 
@@ -118,25 +129,30 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
                             WifiP2pDevice device) {
                         //boolean isGroupOwner = device.isGroupOwner();
 
-                        /*TravellerInfo info = TravellerInfo.DeserializeFromMap(travellerInfoMap);
+                        if(fullDomainName.toLowerCase().startsWith(SERVICE_INSTANCE.toLowerCase())) {
 
-                        String ipAdd = info.getIpAddress();
-                        TravellerStatus status = info.getStatus();
+                            TravellerInfo info = TravellerInfo.DeserializeFromMap(travellerInfoMap);
 
-                        Log.d(TAG, "Peer IP: " + ipAdd);
-                        Log.d(TAG, "Peer Status: " + status);*/
+                            String ipAdd = info.getIpAddress();
+                            TravellerStatus status = info.getStatus();
 
-                        Log.d(TAG, "Peer IP: " + travellerInfoMap.get("Name"));
+                            peerToPeerActivity.ShowPeers(device.deviceAddress);
 
-                        /*Log.v(TAG, Build.MANUFACTURER + ". peer port received: " + peerPort);
-                        if (peerIP != null && peerPort > 0) {
-                            String player = record.get("Name").toString();
+                            Log.d(TAG, "Peer IP: " + ipAdd);
+                            Log.d(TAG, "Peer Status: " + status);
 
-                            *//*DataSender.sendCurrentDeviceData(LocalDashWiFiP2PSD.this,
-                                    peerIP, peerPort, true);
-                            isWDConnected = true;
-                            isConnectionInfoSent = true;*//*
-                        }*/
+                            //Log.d(TAG, "Peer IP: " + travellerInfoMap.get("Name"));
+
+                            /*Log.v(TAG, Build.MANUFACTURER + ". peer port received: " + peerPort);
+                            if (peerIP != null && peerPort > 0) {
+                                String player = record.get("Name").toString();
+
+                                *//*DataSender.sendCurrentDeviceData(LocalDashWiFiP2PSD.this,
+                                        peerIP, peerPort, true);
+                                isWDConnected = true;
+                                isConnectionInfoSent = true;*//*
+                            }*/
+                        }
                     }
                 });
 
@@ -202,6 +218,32 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
 
     public void Cleanup(){
         peerToPeerActivity.unregisterReceiver(serviceDiscoveryReceiver);
+
+
+        wifiP2pManager.removeServiceRequest(wifip2pChannel, serviceRequest, new WifiP2pManager.ActionListener() {
+
+            @Override
+            public void onSuccess() {
+                Log.d(TAG, "Added service discovery request");
+            }
+
+            @Override
+            public void onFailure(int arg0) {
+                Log.d(TAG, "ERRORCEPTION: Failed adding service discovery request");
+            }
+        });
+
+        wifiP2pManager.clearLocalServices(wifip2pChannel, new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
+                Log.d(TAG, "Added Local Service");
+            }
+
+            @Override
+            public void onFailure(int error) {
+                Log.e(TAG, "ERRORCEPTION: Failed to clear services");
+            }
+        });
     }
 
     public void RegisterPeerActivityListener(){
