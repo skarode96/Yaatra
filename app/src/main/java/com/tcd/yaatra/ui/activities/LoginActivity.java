@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.databinding.ActivityLoginBinding;
 import com.tcd.yaatra.ui.viewmodels.LoginActivityViewModel;
+import com.tcd.yaatra.utils.SharedPreferenceUtils;
 
 import javax.inject.Inject;
 
@@ -18,9 +19,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
 
     @Inject
     LoginActivityViewModel loginActivityViewModel;
-
-    SharedPreferences preferences;
-    SharedPreferences.Editor editor;
+    SharedPreferences loginPreferences;
 
 
     @Override
@@ -37,8 +36,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.preferences = getApplicationContext().getSharedPreferences("LoginPref", 0); // 0 - for private mode
-        this.editor = preferences.edit();
+        this.loginPreferences = SharedPreferenceUtils.createLoginSharedPreference();
     }
 
     private void handleOnLoginButtonClick() {
@@ -57,8 +55,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
                         case SUCCESS:
                             layoutDataBinding.progressBarOverlay.setVisibility(View.GONE);
                             Intent myIntent = new Intent(LoginActivity.this, DailyCommuteActivity.class);
-                            this.editor.putString("token", "Token " + loginResponse.getData().getAuthToken());
-                            this.editor.commit();
+                            SharedPreferenceUtils.setAuthToken(loginResponse.getData().getAuthToken());
                             startActivity(myIntent);
                             finish();
                             break;
