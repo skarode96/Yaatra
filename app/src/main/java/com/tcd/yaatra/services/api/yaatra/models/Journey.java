@@ -7,9 +7,9 @@ public class Journey {
     private String journeyId;
     @SerializedName("title")
     private String title;
-    @SerializedName("source")
+    @SerializedName("Source")
     private String source;
-    @SerializedName("destination")
+    @SerializedName("Destination")
     private String destination;
 
     public Journey(String journeyId, String title, String source, String destination) {

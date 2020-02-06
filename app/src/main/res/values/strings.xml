@@ -17,6 +17,8 @@
     <string name="ad_hoc">Ad Hoc</string>
     <string name="daily">Daily Commute</string>
     <string name="settings">Settings</string>
+    <string name="test_username">test</string>
+    <string name="password">qwerty12340</string>
 
     <string-array name="Gender">
         <item>Gender</item>

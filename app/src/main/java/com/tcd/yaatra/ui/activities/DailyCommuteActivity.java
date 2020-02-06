@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.databinding.ActivityDailyCommuteBinding;
 import com.tcd.yaatra.ui.viewmodels.DailyCommuteActivityViewModel;
+import com.tcd.yaatra.utils.SharedPreferenceUtils;
 
 import javax.inject.Inject;
 
@@ -29,7 +30,14 @@ public class DailyCommuteActivity extends BaseActivity<ActivityDailyCommuteBindi
         layoutDataBinding.btnDailyCommute.setOnClickListener(view -> handleDailyCommuteClick());
         layoutDataBinding.btnShowRoute.setOnClickListener(view -> handleShowRoute());
         layoutDataBinding.btnFindCoTraveller.setOnClickListener(view -> handleFindCoTravellers());
+        layoutDataBinding.logout.setOnClickListener(view -> handleLogout());
         
+    }
+
+    private void handleLogout() {
+        SharedPreferenceUtils.clearAuthToken();
+        Intent myIntent = new Intent(this, LoginActivity.class);
+        startActivity(myIntent);
     }
 
     @Override

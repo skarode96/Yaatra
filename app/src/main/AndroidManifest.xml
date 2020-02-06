@@ -21,7 +21,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.activities.LoginActivity"></activity>
         <activity android:name=".ui.activities.PeerToPeerActivity" />
         <activity android:name=".ui.activities.MapActivity" />
         <activity android:name=".ui.activities.MapBoxActivity" />
@@ -31,10 +30,8 @@
             android:name=".ui.activities.NavigationDrawerActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ui.activities.LaunchActivity"
-            android:label="Journey Sharing"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:name=".ui.activities.LoginActivity"
+            android:label="Journey Sharing Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

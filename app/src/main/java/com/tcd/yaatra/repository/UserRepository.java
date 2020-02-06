@@ -30,10 +30,10 @@ public class UserRepository {
         this.loginApi.getToken(username, password).enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-                if(response.code() == 200) {
-                    loginResponseLiveData.postValue(AsyncData.getSuccessState(response.body()));
-                }else{
-                    loginResponseLiveData.postValue(AsyncData.getFailureState(null));
+                switch (response.code()) {
+                    case 200: loginResponseLiveData.postValue(AsyncData.getSuccessState(response.body()));break;
+                    case 404: loginResponseLiveData.postValue(AsyncData.getFailureState(new LoginResponse("User Not Found, Invalid Credentials!", "Error")));break;
+                    default: loginResponseLiveData.postValue(AsyncData.getFailureState(new LoginResponse("Fatal Error", "Error")));
                 }
             }
 
