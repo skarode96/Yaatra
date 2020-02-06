@@ -1,17 +1,14 @@
 package com.tcd.yaatra.ui.activities;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.databinding.ActivityLaunchBinding;
+import com.tcd.yaatra.utils.SharedPreferenceUtils;
 
 public class LaunchActivity extends BaseActivity<ActivityLaunchBinding> {
-
-    SharedPreferences preferences;
-    String savedToken;
 
     @Override
     int getLayoutResourceId() {
@@ -21,16 +18,13 @@ public class LaunchActivity extends BaseActivity<ActivityLaunchBinding> {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.preferences = getSharedPreferences(); // 0 - for private mode
-        this.savedToken = getToken();
         handleLaunch();
-
     }
 
     private void handleLaunch() {
         Handler handler = new Handler();
         handler.postDelayed(() -> {
-            if(!savedToken.equals("no token")) {
+            if(!SharedPreferenceUtils.getAuthToken().equals(SharedPreferenceUtils.DEFAULT_TOKEN)) {
                 Intent myIntent = new Intent(LaunchActivity.this, DailyCommuteActivity.class);
                 startActivity(myIntent);
             } else {
@@ -40,14 +34,5 @@ public class LaunchActivity extends BaseActivity<ActivityLaunchBinding> {
             finish();
         },2000);
     }
-
-    private String getToken() {
-        return this.preferences.getString("token", "no token");
-    }
-
-    private SharedPreferences getSharedPreferences() {
-        return getApplicationContext().getSharedPreferences("LoginPref", 0);
-    }
-
 
 }
