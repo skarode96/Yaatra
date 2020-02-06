@@ -81,7 +81,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
 
                             case FAILURE:
                                 layoutDataBinding.progressBarOverlay.setVisibility(View.GONE);
-                                Toast.makeText(this, "Invalid Credentials", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(this, loginResponse.getData().getMessage(), Toast.LENGTH_SHORT).show();
                                 break;
                         }
                     });
