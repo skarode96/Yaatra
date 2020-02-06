@@ -79,10 +79,10 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
                             finish();
                             break;
 
-                            case FAILURE:
-                                layoutDataBinding.progressBarOverlay.setVisibility(View.GONE);
-                                Toast.makeText(this, loginResponse.getData().getMessage(), Toast.LENGTH_SHORT).show();
-                                break;
+                        case FAILURE:
+                            layoutDataBinding.progressBarOverlay.setVisibility(View.GONE);
+                            Toast.makeText(this, loginResponse.getData().getMessage(), Toast.LENGTH_SHORT).show();
+                            break;
                         }
                     });
         }
