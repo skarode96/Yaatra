@@ -2,6 +2,7 @@ package com.tcd.yaatra.di.modules;
 
 import com.tcd.yaatra.services.api.yaatra.api.DailyCommuteApi;
 import com.tcd.yaatra.services.api.yaatra.api.LoginApi;
+import com.tcd.yaatra.services.api.yaatra.api.RegisterApi;
 import com.tcd.yaatra.utils.SharedPreferenceUtils;
 
 import org.jetbrains.annotations.NotNull;
@@ -48,6 +49,12 @@ public class YaatraApiModule {
     @Singleton
     LoginApi providesLoginApi(@Named("yaatraRetrofit") Retrofit retrofit){
         return retrofit.create(LoginApi.class);
+    }
+
+    @Provides
+    @Singleton
+    RegisterApi providesRegisterApi(@Named("yaatraRetrofit") Retrofit retrofit) {
+        return retrofit.create(RegisterApi.class);
     }
 
     @Provides

@@ -5,7 +5,10 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.tcd.yaatra.repository.models.AsyncData;
 import com.tcd.yaatra.services.api.yaatra.api.LoginApi;
+import com.tcd.yaatra.services.api.yaatra.api.RegisterApi;
 import com.tcd.yaatra.services.api.yaatra.models.LoginResponse;
+import com.tcd.yaatra.services.api.yaatra.models.RegisterRequestBody;
+import com.tcd.yaatra.services.api.yaatra.models.RegisterResponse;
 
 import javax.inject.Inject;
 
@@ -16,10 +19,12 @@ import retrofit2.Response;
 public class UserRepository {
 
     private LoginApi loginApi;
+    private RegisterApi registerApi;
 
     @Inject
-    public UserRepository(LoginApi loginApi){
+    public UserRepository(LoginApi loginApi, RegisterApi registerApi){
         this.loginApi = loginApi;
+        this.registerApi = registerApi;
     }
 
 
@@ -47,4 +52,32 @@ public class UserRepository {
 
         return loginResponseLiveData;
     }
+
+
+    public LiveData<AsyncData<RegisterResponse>> registerUser(RegisterRequestBody registerRequestBody){
+
+        MutableLiveData<AsyncData<RegisterResponse>> registerResponseLiveData = new MutableLiveData<>();
+
+        this.registerApi.register(registerRequestBody).enqueue(new Callback<RegisterResponse>() {
+            @Override
+            public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
+                switch (response.code()) {
+                    case 200: registerResponseLiveData.postValue(AsyncData.getSuccessState(response.body()));break;
+                    default: registerResponseLiveData.postValue(AsyncData.getFailureState(null));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RegisterResponse> call, Throwable t) {
+                registerResponseLiveData.postValue(AsyncData.getFailureState(null));
+            }
+        });
+
+        registerResponseLiveData.postValue(AsyncData.getLoadingState());
+
+        return registerResponseLiveData;
+    }
+
+
+
 }
