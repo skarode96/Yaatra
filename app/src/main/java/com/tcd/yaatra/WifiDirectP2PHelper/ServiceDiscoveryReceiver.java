@@ -1,6 +1,5 @@
 package com.tcd.yaatra.WifiDirectP2PHelper;
 
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +8,6 @@ import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.ConnectionInfoListener;
 import android.util.Log;
-import com.tcd.yaatra.ui.activities.PeerToPeerActivity;
 
 public class ServiceDiscoveryReceiver extends BroadcastReceiver {
 
@@ -17,19 +15,19 @@ public class ServiceDiscoveryReceiver extends BroadcastReceiver {
 
     private WifiP2pManager manager;
     private WifiP2pManager.Channel channel;
-    private PeerToPeerActivity activity;
+    private ConnectionInfoListener connectionInfoListener;
 
     /**
      * @param manager  WifiP2pManager system service
      * @param channel  Wifi p2p channel
-     * @param activity activity associated with the receiver
+     * @param connectionInfoListener listener to handle wifi direct events
      */
     public ServiceDiscoveryReceiver(WifiP2pManager manager, WifiP2pManager.Channel channel,
-                                    PeerToPeerActivity activity) {
+                                    ConnectionInfoListener connectionInfoListener) {
         super();
         this.manager = manager;
         this.channel = channel;
-        this.activity = activity;
+        this.connectionInfoListener = connectionInfoListener;
     }
 
     /*
@@ -56,8 +54,7 @@ public class ServiceDiscoveryReceiver extends BroadcastReceiver {
                 // info to find group owner IP
                 Log.d(TAG,
                         "Connected to p2p network. Requesting network details");
-                manager.requestConnectionInfo(channel,
-                        (ConnectionInfoListener) activity);
+                manager.requestConnectionInfo(channel, connectionInfoListener);
             } else {
                 // It's a disconnect
             }
@@ -69,8 +66,7 @@ public class ServiceDiscoveryReceiver extends BroadcastReceiver {
             WifiP2pDevice device = (WifiP2pDevice) intent
                     .getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_DEVICE);
             Log.d(TAG, "Device status -" + device.status);
-            manager.requestConnectionInfo(channel,
-                    (ConnectionInfoListener) activity);
+            manager.requestConnectionInfo(channel, connectionInfoListener);
 
         }
     }
