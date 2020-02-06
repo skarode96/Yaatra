@@ -3,7 +3,11 @@ package com.tcd.yaatra.ui.activities;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -31,6 +35,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
     public void initEventHandlers() {
         super.initEventHandlers();
         layoutDataBinding.login.setOnClickListener(view -> handleOnLoginButtonClick());
+        layoutDataBinding.showHide.setOnClickListener(view -> handleOnShowHideClick());
     }
 
     @Override
@@ -41,9 +46,23 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
 
     private void handleOnLoginButtonClick() {
 
+        if(TextUtils.isEmpty(layoutDataBinding.username.getText().toString()))
+        {
+            layoutDataBinding.username.setError("Username is required");
+            layoutDataBinding.username.setHint("Please enter username");
+            layoutDataBinding.username.requestFocus();
+        }
 
-        String username = layoutDataBinding.username.getText().toString();
-        String password = layoutDataBinding.password.getText().toString();
+        else if(TextUtils.isEmpty(layoutDataBinding.password.getText().toString()))
+        {
+            layoutDataBinding.password.setError("Password is required");
+            layoutDataBinding.password.setHint("Please enter password");
+            layoutDataBinding.password.requestFocus();
+        }
+
+        else {
+            String username = layoutDataBinding.username.getText().toString();
+            String password = layoutDataBinding.password.getText().toString();
 
         loginActivityViewModel.authenticateUser(username, password)
                 .observe(this, loginResponse -> {
@@ -60,12 +79,35 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
                             finish();
                             break;
 
-                        case FAILURE:
-                            layoutDataBinding.progressBarOverlay.setVisibility(View.GONE);
-                            Toast.makeText(this, "Invalid Credentials", Toast.LENGTH_SHORT).show();
-                            break;
-                    }
-                });
+                            case FAILURE:
+                                layoutDataBinding.progressBarOverlay.setVisibility(View.GONE);
+                                Toast.makeText(this, "Invalid Credentials", Toast.LENGTH_SHORT).show();
+                                break;
+                        }
+                    });
+        }
     }
+
+    private void handleOnShowHideClick() {
+
+        if( layoutDataBinding.password.getTransformationMethod().equals(PasswordTransformationMethod.getInstance())){
+            layoutDataBinding.showHide.setImageResource(R.drawable.ic_hide_password);
+
+            //Show Password
+            layoutDataBinding.password.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+            layoutDataBinding.password.setSelection(layoutDataBinding.password.length());
+
+        }
+        else{
+            layoutDataBinding.showHide.setImageResource(R.drawable.ic_show_password);
+
+            //Hide Password
+            layoutDataBinding.password.setTransformationMethod(PasswordTransformationMethod.getInstance());
+            layoutDataBinding.password.setSelection(layoutDataBinding.password.length());
+
+        }
+    }
+
+
 
 }
