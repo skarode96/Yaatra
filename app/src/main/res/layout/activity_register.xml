@@ -1,187 +1,363 @@
 <?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 <RelativeLayout
 
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.activities.RegisterActivity">
 
-    <ImageView
-        android:id="@+id/formLogo"
-        android:layout_width="match_parent"
-        android:layout_height="75dp"
-        android:scaleType="fitCenter"
-        app:srcCompat="@drawable/ic_jslogo"
-        />
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
         android:layout_alignParentBottom="true"
-        android:layout_below="@+id/formLogo"
-        >
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:background="@drawable/trans_white_rectangle"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
-            >
-            <TextView
+            android:orientation="vertical">
+
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Get Started"
-                android:textColor="#003989"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="5dp"
-                android:paddingStart="5dp"
-                android:paddingEnd="5dp"
-                android:paddingTop="5dp"
-                />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Just few details to get you started"
-                android:textColor="#14b48c"
-                android:textSize="15dp"
-                android:textStyle="bold"
-                android:layout_marginBottom="10dp"
-                android:paddingStart="10dp"
-                android:paddingEnd="10dp"
-                />
+                android:layout_height="match_parent"
+                android:layout_marginTop="20dp">
+
             <AutoCompleteTextView
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:hint="User Name"
-                android:background="@drawable/rounded_white"
-                android:layout_marginStart="15dp"
-                android:layout_marginEnd="15dp"
-                android:drawableLeft="@drawable/ic_username"
-                android:textSize="14sp"
-                android:drawablePadding="5dp"
-                android:paddingStart="10dp"
                 android:id="@+id/userName"
-                android:layout_marginBottom="10dp"
-                />
-            <AutoCompleteTextView
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:hint="First Name"
-                android:background="@drawable/rounded_white"
                 android:layout_marginStart="15dp"
                 android:layout_marginEnd="15dp"
-                android:drawableLeft="@drawable/ic_name"
-                android:textSize="14sp"
+                android:layout_marginBottom="10dp"
+                android:drawableLeft="@drawable/ic_username"
                 android:drawablePadding="5dp"
+                android:hint="User Name"
                 android:paddingStart="10dp"
+                android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="20dp">
+
+            <AutoCompleteTextView
                 android:id="@+id/firstName"
-                android:layout_marginBottom="10dp"
-                />
-            <AutoCompleteTextView
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:hint="Last Name"
-                android:background="@drawable/rounded_white"
                 android:layout_marginStart="15dp"
                 android:layout_marginEnd="15dp"
+                android:layout_marginBottom="10dp"
                 android:drawableLeft="@drawable/ic_name"
-                android:textSize="14sp"
                 android:drawablePadding="5dp"
+                android:hint="First Name"
                 android:paddingStart="10dp"
+                android:textSize="14sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="20dp">
+
+            <AutoCompleteTextView
                 android:id="@+id/lastName"
-                android:layout_marginBottom="10dp"
-                />
-            <AutoCompleteTextView
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:hint="Email Id"
-                android:background="@drawable/rounded_white"
                 android:layout_marginStart="15dp"
                 android:layout_marginEnd="15dp"
+                android:layout_marginBottom="10dp"
+                android:drawableLeft="@drawable/ic_name"
+                android:drawablePadding="5dp"
+                android:hint="Last Name"
+                android:paddingStart="10dp"
+                android:textSize="14sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="20dp">
+
+            <AutoCompleteTextView
+                android:id="@+id/emailId"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="10dp"
                 android:drawableLeft="@drawable/ic_email"
-                android:textSize="14sp"
                 android:drawablePadding="5dp"
+                android:hint="Email Id"
+                android:inputType="textEmailAddress"
                 android:paddingStart="10dp"
-                android:id="@+id/email_id"
-                android:layout_marginBottom="10dp"
-                />
+                android:textSize="14sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="20dp">
+
             <AutoCompleteTextView
+                android:id="@+id/phoneNum"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:hint="Password"
-                android:background="@drawable/rounded_white"
                 android:layout_marginStart="15dp"
                 android:layout_marginEnd="15dp"
-                android:drawableLeft="@drawable/ic_password"
-                android:textSize="14sp"
+                android:layout_marginBottom="10dp"
+                android:drawableLeft="@drawable/ic_phone_number"
                 android:drawablePadding="5dp"
+                android:hint="Phone Number"
+                android:inputType="phone"
                 android:paddingStart="10dp"
-                android:inputType="textPassword"
+                android:textSize="14sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="20dp">
+
+            <AutoCompleteTextView
+                android:id="@+id/country"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="10dp"
+                android:drawableLeft="@drawable/ic_country"
+                android:drawablePadding="5dp"
+                android:hint="Country"
+                android:inputType="textPersonName"
+                android:paddingStart="10dp"
+                android:textSize="14sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="20dp">
+
+            <AutoCompleteTextView
+                android:id="@+id/age"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="10dp"
+                android:drawablePadding="5dp"
+                android:drawableLeft="@drawable/ic_age"
+                android:hint="Age"
+                android:inputType="number"
+                android:paddingStart="10dp"
+                android:textSize="14sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="20dp">
+
+            <AutoCompleteTextView
                 android:id="@+id/userPassword"
-                android:layout_marginBottom="10dp"
-                />
-            <AutoCompleteTextView
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:hint="Confirm Password"
-                android:background="@drawable/rounded_white"
                 android:layout_marginStart="15dp"
                 android:layout_marginEnd="15dp"
-                android:drawableLeft="@drawable/ic_confirm_password"
-                android:textSize="14sp"
+                android:layout_marginBottom="10dp"
+                android:drawableLeft="@drawable/ic_password"
                 android:drawablePadding="5dp"
-                android:paddingStart="10dp"
+                android:hint="Password"
                 android:inputType="textPassword"
-                android:id="@+id/userCPassword"
-                android:layout_marginBottom="10dp"
-                />
+                android:paddingStart="10dp"
+                android:textSize="14sp" />
 
-            <Spinner
-                android:id="@+id/spin"
-                android:entries="@array/Gender"
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="20dp">
+
+            <AutoCompleteTextView
+                android:id="@+id/userCPassword"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:background="@drawable/rounded_white"
                 android:layout_marginStart="15dp"
                 android:layout_marginEnd="15dp"
-                android:textSize="14sp"
+                android:layout_marginBottom="10dp"
+                android:drawableLeft="@drawable/ic_confirm_password"
                 android:drawablePadding="5dp"
+                android:hint="Confirm Password"
+                android:inputType="textPassword"
                 android:paddingStart="10dp"
-                android:layout_marginBottom="10dp"
-                />
+                android:textSize="14sp" />
 
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="I agree to the Terms and Conditions"
-                android:textColor="@color/white"
-                android:layout_gravity="center"
-                android:textStyle="italic"
-                android:paddingLeft="5dp"
-                android:textSize="13sp"
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="20dp">
+
+            <TextView
+                android:id="@+id/gender"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
                 android:layout_marginBottom="10dp"
-                android:id="@+id/radio_agree"/>
+                android:text="Gender" />
+
+                <RadioGroup
+                    android:id="@+id/genderGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginBottom="10dp">
+
+
+                    <RadioButton
+                        android:id="@+id/maleBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="Male" />
+
+                    <RadioButton
+                        android:id="@+id/femaleBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Female" />
+
+                    <RadioButton
+                        android:id="@+id/otherBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Others" />
+                </RadioGroup>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="20dp">
+
+                <TextView
+                    android:id="@+id/genderPref"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="Gender Preference" />
+
+                <RadioGroup
+                    android:id="@+id/genderPrefGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginBottom="10dp">
+
+
+                    <RadioButton
+                        android:id="@+id/malePrefBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Male" />
+
+                    <RadioButton
+                        android:id="@+id/femalePrefBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="Female" />
+
+                    <RadioButton
+                        android:id="@+id/otherPrefBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Others" />
+                </RadioGroup>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="20dp">
+
+                <TextView
+                    android:id="@+id/transportPref"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="Mode of Transport Preference" />
+
+                <RadioGroup
+                    android:id="@+id/transportPrefGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginBottom="10dp">
+
+
+                    <RadioButton
+                        android:id="@+id/cabPrefBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Cab" />
+
+                    <RadioButton
+                        android:id="@+id/busPrefBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Bus" />
+
+                    <RadioButton
+                        android:id="@+id/walkPrefBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="Walk" />
+                </RadioGroup>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <Button
+                android:id="@+id/btnRegister"
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
-                android:textColor="@color/white"
-                android:text="Register"
-                android:textStyle="bold"
-                android:background="@drawable/register_button"
                 android:layout_gravity="center"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/register_button"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
-                android:layout_marginBottom="10dp"
-                android:id="@+id/btnRegister"
-                />
+                android:text="Register"
+                android:textColor="@color/white"
+                android:textStyle="bold" />
 
         </LinearLayout>
 
     </ScrollView>
 
 </RelativeLayout>
+</layout>

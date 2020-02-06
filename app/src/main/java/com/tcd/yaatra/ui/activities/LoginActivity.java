@@ -35,6 +35,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
         super.initEventHandlers();
         layoutDataBinding.login.setOnClickListener(view -> handleOnLoginButtonClick());
         layoutDataBinding.showHide.setOnClickListener(view -> handleOnShowHideClick());
+        layoutDataBinding.registerLink.setOnClickListener(view -> handleOnRegisterLinkClick());
     }
 
     @Override
@@ -107,6 +108,9 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
         }
     }
 
-
+    private void handleOnRegisterLinkClick() {
+        Intent intent = new Intent(LoginActivity.this,RegisterActivity.class);
+        startActivity(intent);
+    }
 
 }
