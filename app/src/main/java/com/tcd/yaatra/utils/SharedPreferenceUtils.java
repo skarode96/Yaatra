@@ -8,8 +8,8 @@ public class SharedPreferenceUtils {
 
     private static final String LOGIN_PREF = "LoginPref";
     private static final String TOKEN_KEY = "token";
-    private static final String DEFAULT_TOKEN = "default";
     private static final String TOKEN_PREFIX = "Token ";
+    public static final String DEFAULT_TOKEN = "default";
 
     public static SharedPreferences createSharedPreference(String key, Integer mode) {
         SharedPreferences sharedPreferences = App.getAppContext().getSharedPreferences(key, mode);
