@@ -5,7 +5,9 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.tcd.yaatra.repository.models.AsyncData;
 import com.tcd.yaatra.services.api.yaatra.api.DailyCommuteApi;
-import com.tcd.yaatra.services.api.yaatra.models.DailyCommuteResponse;
+import com.tcd.yaatra.services.api.yaatra.models.Journey;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -21,12 +23,11 @@ public class DailyCommuteRepository {
         this.dailyCommuteApi = dailyCommuteApi;
     }
 
-    public LiveData<AsyncData<DailyCommuteResponse>> getDailyCommute(String token) {
-        MutableLiveData<AsyncData<DailyCommuteResponse>> dailyCommuteResponseLiveData = new MutableLiveData<>();
-        this.dailyCommuteApi.
-                getDailyCommute("Token " + token).enqueue(new Callback<DailyCommuteResponse>() {
+    public LiveData<AsyncData<List<Journey>>> getDailyCommute() {
+        MutableLiveData<AsyncData<List<Journey>>> dailyCommuteResponseLiveData = new MutableLiveData<>();
+        this.dailyCommuteApi.getDailyCommute().enqueue(new Callback<List<Journey>>() {
             @Override
-            public void onResponse(Call<DailyCommuteResponse> call, Response<DailyCommuteResponse> response) {
+            public void onResponse(Call<List<Journey>> call, Response<List<Journey>> response) {
                 if(response.code() == 200) {
                     dailyCommuteResponseLiveData.postValue(AsyncData.getSuccessState(response.body()));
                 } else {
@@ -35,10 +36,12 @@ public class DailyCommuteRepository {
             }
 
             @Override
-            public void onFailure(Call<DailyCommuteResponse> call, Throwable t) {
+            public void onFailure(Call<List<Journey>> call, Throwable t) {
                 dailyCommuteResponseLiveData.postValue(AsyncData.getFailureState(null));
             }
         });
+
+        dailyCommuteResponseLiveData.postValue(AsyncData.getLoadingState());
         return dailyCommuteResponseLiveData;
     }
 }
