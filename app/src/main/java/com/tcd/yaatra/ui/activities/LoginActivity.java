@@ -56,7 +56,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
 
                         case SUCCESS:
                             layoutDataBinding.progressBarOverlay.setVisibility(View.GONE);
-                            Intent myIntent = new Intent(LoginActivity.this, DailyCommuteActivity.class);
+                            Intent myIntent = new Intent(LoginActivity.this, MenuActivity.class);
                             this.editor.putString("token", "Token " + loginResponse.getData().getAuthToken());
                             this.editor.commit();
                             startActivity(myIntent);

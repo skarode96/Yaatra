@@ -26,15 +26,13 @@
         <activity android:name=".ui.activities.MapBoxActivity" />
         <activity android:name=".ui.activities.DailyCommuteListActivity" />
         <activity android:name=".ui.activities.DailyCommuteActivity" />
-        <activity
-            android:name=".ui.activities.NavigationDrawerActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".ui.activities.NavigationDrawerActivity" />
+        <activity android:name=".ui.activities.MenuActivity" android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.activities.LoginActivity"
-            android:label="Journey Sharing Login">
+            android:label="Journey Sharing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
