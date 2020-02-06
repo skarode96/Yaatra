@@ -1,6 +1,5 @@
 package com.tcd.yaatra.WifiDirectP2PHelper;
 
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -12,7 +11,7 @@ import android.util.Log;
 
 public class ServiceDiscoveryReceiver extends BroadcastReceiver {
 
-    private static final String TAG = "WiFiP2PSD";
+    private static final String TAG = "ServiceDiscoveryReceiver";
 
     private WifiP2pManager manager;
     private WifiP2pManager.Channel channel;

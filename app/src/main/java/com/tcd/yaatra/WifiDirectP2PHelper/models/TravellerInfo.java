@@ -8,13 +8,13 @@ import java.util.Map;
 public class TravellerInfo {
 
     private int age;
-    private Gender gender;
-    private String name;
-    private String source;
-    private String destination;
-    private TravellerStatus status;
-    private LocalDateTime requestStartTime;
-    private String ipAddress;
+    private Gender gender = Gender.NotSpecified;
+    private String name = "";
+    private String source = "";
+    private String destination = "";
+    private TravellerStatus status = TravellerStatus.None;
+    private LocalDateTime requestStartTime = LocalDateTime.now();
+    private String ipAddress = "";
     private int portNumber;
 
     private static final String AGE = "AGE";
@@ -101,23 +101,23 @@ public class TravellerInfo {
         this.portNumber = portNumber;
     }
 
-    public Map<String, String> SerializeToMap(TravellerInfo travellerInfo){
+    public Map<String, String> SerializeToMap(){
 
         Map<String, String> travellerInfoRecord = new HashMap<String, String>();
-        travellerInfoRecord.put(NAME, travellerInfo.getName());
-        travellerInfoRecord.put(GENDER, travellerInfo.getGender().toString());
-        travellerInfoRecord.put(AGE, Integer.toString(travellerInfo.getAge()));
-        travellerInfoRecord.put(SOURCE, travellerInfo.getSource());
-        travellerInfoRecord.put(DESTINATION, travellerInfo.getDestination());
-        travellerInfoRecord.put(STATUS, travellerInfo.getStatus().toString());
-        travellerInfoRecord.put(REQUEST_START_TIME, travellerInfo.getRequestStartTime().format(DATE_TIME_FORMATTER));
-        travellerInfoRecord.put(IP_ADDRESS, travellerInfo.getIpAddress());
-        travellerInfoRecord.put(PORT_NUMBER, Integer.toString(travellerInfo.getPortNumber()));
+        travellerInfoRecord.put(NAME, getName());
+        travellerInfoRecord.put(GENDER, getGender().toString());
+        travellerInfoRecord.put(AGE, Integer.toString(getAge()));
+        travellerInfoRecord.put(SOURCE, getSource());
+        travellerInfoRecord.put(DESTINATION, getDestination());
+        travellerInfoRecord.put(STATUS, getStatus().toString());
+        travellerInfoRecord.put(REQUEST_START_TIME, getRequestStartTime().format(DATE_TIME_FORMATTER));
+        travellerInfoRecord.put(IP_ADDRESS, getIpAddress());
+        travellerInfoRecord.put(PORT_NUMBER, Integer.toString(getPortNumber()));
 
         return travellerInfoRecord;
     }
 
-    public TravellerInfo DeserializeFromMap(Map<String, String> travellerInfoRecord){
+    public static TravellerInfo DeserializeFromMap(Map<String, String> travellerInfoRecord){
         TravellerInfo info = new TravellerInfo();
 
         info.setName(travellerInfoRecord.get(NAME));
