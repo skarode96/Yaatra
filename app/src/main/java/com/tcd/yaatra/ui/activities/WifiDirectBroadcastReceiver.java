@@ -1,16 +1,5 @@
 package com.tcd.yaatra.ui.activities;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.net.NetworkInfo;
-import android.net.wifi.p2p.WifiP2pDevice;
-import android.net.wifi.p2p.WifiP2pDeviceList;
-import android.net.wifi.p2p.WifiP2pManager;
-
-import java.util.ArrayList;
-import java.util.List;
-
 /*
 public class WifiDirectBroadcastReceiver extends BroadcastReceiver {
     WifiP2pManager wifiP2pManager;

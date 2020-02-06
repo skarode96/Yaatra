@@ -1,6 +1,7 @@
 package com.tcd.yaatra.di.modules;
 
 import com.tcd.yaatra.ui.activities.DailyCommuteActivity;
+import com.tcd.yaatra.ui.activities.LaunchActivity;
 import com.tcd.yaatra.ui.activities.LoginActivity;
 
 import com.tcd.yaatra.ui.activities.DailyCommuteListActivity;
@@ -20,6 +21,9 @@ public interface ActivityModule {
 
     @ContributesAndroidInjector
     DailyCommuteListActivity contributeUserActivity();
+
+    @ContributesAndroidInjector
+    LaunchActivity contributeLaunchActivity();
 
     @ContributesAndroidInjector
     PeerToPeerActivity contributePeerToPeerActivity();

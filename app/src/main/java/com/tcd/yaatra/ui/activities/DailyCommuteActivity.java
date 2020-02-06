@@ -15,8 +15,6 @@ import javax.inject.Inject;
 
 public class DailyCommuteActivity extends BaseActivity<ActivityDailyCommuteBinding> {
 
-    private String authToken;
-
     @Inject
     DailyCommuteActivityViewModel dailyCommuteActivityViewModel;
 
@@ -37,10 +35,6 @@ public class DailyCommuteActivity extends BaseActivity<ActivityDailyCommuteBindi
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle extras = getIntent().getExtras();
-        if(extras !=null) {
-            this.authToken = extras.getString("authToken");
-        }
     }
 
     private void handleFindCoTravellers() {
@@ -54,7 +48,7 @@ public class DailyCommuteActivity extends BaseActivity<ActivityDailyCommuteBindi
     }
 
     private void handleDailyCommuteClick() {
-        dailyCommuteActivityViewModel.getDailyCommute(this.authToken).observe(this, dailyCommuteResponse -> {
+        dailyCommuteActivityViewModel.getDailyCommute().observe(this, dailyCommuteResponse -> {
             switch (dailyCommuteResponse.getState()) {
                 case LOADING:
                     layoutDataBinding.progressBarOverlay.setVisibility(View.VISIBLE);

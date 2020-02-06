@@ -23,10 +23,9 @@ public class DailyCommuteRepository {
         this.dailyCommuteApi = dailyCommuteApi;
     }
 
-    public LiveData<AsyncData<List<Journey>>> getDailyCommute(String token) {
+    public LiveData<AsyncData<List<Journey>>> getDailyCommute() {
         MutableLiveData<AsyncData<List<Journey>>> dailyCommuteResponseLiveData = new MutableLiveData<>();
-        this.dailyCommuteApi.
-                getDailyCommute("Token " + token).enqueue(new Callback<List<Journey>>() {
+        this.dailyCommuteApi.getDailyCommute().enqueue(new Callback<List<Journey>>() {
             @Override
             public void onResponse(Call<List<Journey>> call, Response<List<Journey>> response) {
                 if(response.code() == 200) {
@@ -42,6 +41,7 @@ public class DailyCommuteRepository {
             }
         });
 
+        dailyCommuteResponseLiveData.postValue(AsyncData.getLoadingState());
         return dailyCommuteResponseLiveData;
     }
 }
