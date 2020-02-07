@@ -1,26 +1,24 @@
 package com.tcd.yaatra.WifiDirectP2PHelper;
 
-import android.content.Context;
 import android.content.IntentFilter;
-import android.net.wifi.WifiManager;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
-import android.os.Build;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.tcd.yaatra.WifiDirectP2PHelper.models.Gender;
 import com.tcd.yaatra.WifiDirectP2PHelper.models.TravellerInfo;
 import com.tcd.yaatra.WifiDirectP2PHelper.models.TravellerStatus;
 import com.tcd.yaatra.ui.activities.PeerToPeerActivity;
+import com.tcd.yaatra.utils.NetworkUtils;
 
-import java.math.BigInteger;
-import java.nio.ByteOrder;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static android.content.Context.WIFI_P2P_SERVICE;
 
@@ -38,6 +36,11 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
 
     private WifiP2pDnsSdServiceRequest serviceRequest;
 
+    private boolean isReceiverRegistered = false;
+
+    private Timer discoveryTimer;
+    private boolean isDiscoveryStarted = false;
+
     public PeerCommunicator(PeerToPeerActivity activity){
 
         peerToPeerActivity = activity;
@@ -46,9 +49,13 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
         wifip2pChannel = wifiP2pManager.initialize(activity, activity.getMainLooper(), null);
         serviceDiscoveryReceiver = new ServiceDiscoveryReceiver(wifiP2pManager, wifip2pChannel, this);
         serviceRequest = WifiP2pDnsSdServiceRequest.newInstance();
+
+        NetworkUtils.deletePersistentGroups(wifiP2pManager, wifip2pChannel);
     }
 
     public void StartAdvertisingMyStatus(TravellerStatus status){
+
+        StopServiceDiscoveryTimer();
 
         wifiP2pManager.clearLocalServices(wifip2pChannel, new WifiP2pManager.ActionListener() {
 
@@ -58,7 +65,7 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
                 TravellerInfo info = new TravellerInfo();
 
                 info.setName("JP");
-                info.setIpAddress(getWiFiIPAddress(peerToPeerActivity));
+                info.setIpAddress(NetworkUtils.getWiFiIPAddress(peerToPeerActivity));
                 info.setStatus(status);
                 info.setSource("Source");
                 info.setDestination("Destination");
@@ -131,15 +138,13 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
 
                         if(fullDomainName.toLowerCase().startsWith(SERVICE_INSTANCE.toLowerCase())) {
 
+                            Toast.makeText(peerToPeerActivity.getApplicationContext(), "Peer Found", Toast.LENGTH_SHORT).show();
+
                             TravellerInfo info = TravellerInfo.DeserializeFromMap(travellerInfoMap);
 
-                            String ipAdd = info.getIpAddress();
-                            TravellerStatus status = info.getStatus();
+                            peerToPeerActivity.SetFellowTraveller(info);
 
-                            peerToPeerActivity.ShowPeers(device.deviceAddress);
 
-                            Log.d(TAG, "Peer IP: " + ipAdd);
-                            Log.d(TAG, "Peer Status: " + status);
 
                             //Log.d(TAG, "Peer IP: " + travellerInfoMap.get("Name"));
 
@@ -179,18 +184,7 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
                             }
                         });
 
-                wifiP2pManager.discoverServices(wifip2pChannel, new WifiP2pManager.ActionListener() {
-
-                    @Override
-                    public void onSuccess() {
-                        Log.d(TAG, "Service discovery initiated");
-                    }
-
-                    @Override
-                    public void onFailure(int arg0) {
-                        Log.d(TAG, "Service discovery failed: " + arg0);
-                    }
-                });
+                StartServiceDiscoveryTimer();
             }
 
             @Override
@@ -198,6 +192,46 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
                 Log.d(TAG, "ERRORCEPTION: Failed adding service discovery request");
             }
         });
+    }
+
+    private void StartServiceDiscoveryTimer(){
+        discoveryTimer = new Timer();
+
+        //Set the schedule function and rate
+        discoveryTimer.schedule(new TimerTask() {
+
+                       @Override
+                       public void run() {
+
+                           wifiP2pManager.discoverServices(wifip2pChannel, new WifiP2pManager.ActionListener() {
+
+                               @Override
+                               public void onSuccess() {
+                                   Log.d(TAG, "Service discovery initiated");
+                               }
+
+                               @Override
+                               public void onFailure(int arg0) {
+                                   Log.d(TAG, "Service discovery failed: " + arg0);
+                               }
+                           });
+                       }
+                   },
+                //Set how long before to start calling the TimerTask (in milliseconds)
+                0,
+                //Set the amount of time between each execution (in milliseconds)
+                10000);
+
+        isDiscoveryStarted = true;
+    }
+
+    private void StopServiceDiscoveryTimer(){
+        if(isDiscoveryStarted){
+            discoveryTimer.cancel();
+            discoveryTimer.purge();
+            discoveryTimer = null;
+            isDiscoveryStarted = false;
+        }
     }
 
     @Override
@@ -217,8 +251,13 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
     }
 
     public void Cleanup(){
-        peerToPeerActivity.unregisterReceiver(serviceDiscoveryReceiver);
 
+        StopServiceDiscoveryTimer();
+
+        if(isReceiverRegistered) {
+            peerToPeerActivity.unregisterReceiver(serviceDiscoveryReceiver);
+            isReceiverRegistered = false;
+        }
 
         wifiP2pManager.removeServiceRequest(wifip2pChannel, serviceRequest, new WifiP2pManager.ActionListener() {
 
@@ -254,46 +293,8 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
         serviceDiscoveryReceiver = new ServiceDiscoveryReceiver(wifiP2pManager,
                 wifip2pChannel, this);
         peerToPeerActivity.registerReceiver(serviceDiscoveryReceiver, wifip2pFilter);
+
+        isReceiverRegistered = true;
     }
 
-
-
-
-
-
-
-
-
-
-
-    public static String getWiFiIPAddress(Context context) {
-        WifiManager wm = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        String ip = getDottedDecimalIP(wm.getConnectionInfo().getIpAddress());
-        return ip;
-    }
-
-    public static String getDottedDecimalIP(int ipAddr) {
-
-        if (ByteOrder.nativeOrder().equals(ByteOrder.LITTLE_ENDIAN)) {
-            ipAddr = Integer.reverseBytes(ipAddr);
-        }
-
-        byte[] ipByteArray = BigInteger.valueOf(ipAddr).toByteArray();
-
-        //convert to dotted decimal notation:
-        String ipAddrStr = getDottedDecimalIP(ipByteArray);
-        return ipAddrStr;
-    }
-
-    public static String getDottedDecimalIP(byte[] ipAddr) {
-        //convert to dotted decimal notation:
-        String ipAddrStr = "";
-        for (int i = 0; i < ipAddr.length; i++) {
-            if (i > 0) {
-                ipAddrStr += ".";
-            }
-            ipAddrStr += ipAddr[i] & 0xFF;
-        }
-        return ipAddrStr;
-    }
 }

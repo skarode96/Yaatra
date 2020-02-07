@@ -1,27 +1,26 @@
 package com.tcd.yaatra.ui.activities;
 
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.net.wifi.p2p.WifiP2pInfo;
-import android.net.wifi.p2p.WifiP2pManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
-
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.WifiDirectP2PHelper.PeerCommunicator;
+import com.tcd.yaatra.WifiDirectP2PHelper.models.TravellerInfo;
 import com.tcd.yaatra.WifiDirectP2PHelper.models.TravellerStatus;
 import com.tcd.yaatra.databinding.ActivityPeerToPeerBinding;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> {
 
     PeerCommunicator communicator;
     TextView textView;
-    String devices;
+    private HashMap<String, TravellerInfo> fellowTravellers = new HashMap<>();
+    private ArrayList<String> peers = new ArrayList<>();
 
     @Override
     int getLayoutResourceId() {
@@ -41,7 +40,6 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
 
         communicator = new PeerCommunicator(this);
         textView = layoutDataBinding.textView2;
-        devices = "";
 
         checkIfLocationPermissionGranted();
     }
@@ -67,6 +65,7 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
     public void initEventHandlers() {
         super.initEventHandlers();
         layoutDataBinding.buttonDiscoverPeers.setOnClickListener(view -> handleDiscoverButtonClick());
+        layoutDataBinding.buttonSendMessage.setOnClickListener(view -> handleDiscoverButtonClick());
     }
 
     private void handleDiscoverButtonClick(){
@@ -79,9 +78,29 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
         communicator.SubscribeStatusChangeOfPeers();
     }
 
-    public void ShowPeers(String deviceName){
-        devices = deviceName + "," + devices;
-        textView.setText(devices);
+    public void SetFellowTraveller(TravellerInfo travellerInfo){
+        if(fellowTravellers.containsKey(travellerInfo.getIpAddress())){
+            fellowTravellers.replace(travellerInfo.getIpAddress(), travellerInfo);
+        }
+        else {
+            fellowTravellers.put(travellerInfo.getIpAddress(), travellerInfo);
+        }
+
+        peers.clear();
+
+        fellowTravellers.values().forEach(info-> addPeerAddress(info.getIpAddress()));
+
+        showPeers();
+    }
+
+    private void addPeerAddress(String ipAdd){
+        peers.add(ipAdd);
+    }
+
+    private void showPeers(){
+        final ListView list = layoutDataBinding.listNearbyDevices;
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, peers);
+        list.setAdapter(arrayAdapter);
     }
 
     @Override
@@ -101,27 +120,6 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
     protected void onDestroy() {
 
         communicator.Cleanup();
-//        mNsdHelper.tearDown();
-//        connListener.tearDown();
-        /*appController.stopConnectionListener();
-
-        Utility.clearPreferences(LocalDashWiFiP2PSD.this);
-        Utility.deletePersistentGroups(wifiP2pManager, wifip2pChannel);
-*/
-        /*if (wifiP2pManager != null && wifip2pChannel != null) {
-            wifiP2pManager.removeGroup(wifip2pChannel, new WifiP2pManager.ActionListener() {
-
-                @Override
-                public void onFailure(int reasonCode) {
-                    Log.d(TAG, "Disconnect failed. Reason :" + reasonCode);
-                }
-
-                @Override
-                public void onSuccess() {
-                }
-
-            });
-        }*/
         super.onDestroy();
     }
 

@@ -72,7 +72,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/buttonSendMessage"
         android:layout_width="407dp"
         android:layout_height="70dp"
         android:layout_marginStart="34dp"
