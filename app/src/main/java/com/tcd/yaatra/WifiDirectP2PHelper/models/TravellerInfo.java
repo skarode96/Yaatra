@@ -13,8 +13,34 @@ public class TravellerInfo {
     private Double destinationLongitude;
     private TravellerStatus status = TravellerStatus.None;
     private LocalDateTime requestStartTime = LocalDateTime.now();
+    private Double userRating;
     private String ipAddress = "";
     private int portNumber;
+    private LocalDateTime statusUpdateTime = LocalDateTime.now();
+
+    public TravellerInfo(String userName, int age, Gender gender
+            , Double sourceLatitude, Double sourceLongitude
+            , Double destinationLatitude, Double destinationLongitude
+            , TravellerStatus status, LocalDateTime requestStartTime
+            , Double userRating, String ipAddress, int port
+            , LocalDateTime statusUpdateTime){
+
+        setUserName(userName);
+        setAge(age);
+        setGender(gender);
+        setSourceLatitude(sourceLatitude);
+        setSourceLongitude(sourceLongitude);
+        setDestinationLatitude(destinationLatitude);
+        setDestinationLongitude(destinationLongitude);
+        setStatus(status);
+        setRequestStartTime(requestStartTime);
+        setUserRating(userRating);
+        setIpAddress(ipAddress);
+        setPortNumber(port);
+        setStatusUpdateTime(statusUpdateTime);
+    }
+
+    //region Getters & Setters
 
     public String getUserName() {
         return userName;
@@ -88,6 +114,14 @@ public class TravellerInfo {
         this.requestStartTime = requestStartTime;
     }
 
+    public Double getUserRating() {
+        return userRating;
+    }
+
+    public void setUserRating(Double userRating) {
+        this.userRating = userRating;
+    }
+
     public String getIpAddress() {
         return ipAddress;
     }
@@ -103,4 +137,14 @@ public class TravellerInfo {
     public void setPortNumber(int portNumber) {
         this.portNumber = portNumber;
     }
+
+    public LocalDateTime getStatusUpdateTime() {
+        return statusUpdateTime;
+    }
+
+    public void setStatusUpdateTime(LocalDateTime statusUpdateTime) {
+        this.statusUpdateTime = statusUpdateTime;
+    }
+
+    //endregion
 }

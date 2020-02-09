@@ -3,6 +3,8 @@ package com.tcd.yaatra.WifiDirectP2PHelper;
 import com.tcd.yaatra.WifiDirectP2PHelper.models.Gender;
 import com.tcd.yaatra.WifiDirectP2PHelper.models.TravellerInfo;
 import com.tcd.yaatra.WifiDirectP2PHelper.models.TravellerStatus;
+import com.tcd.yaatra.utils.EncryptionUtils;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
@@ -20,8 +22,10 @@ public class P2pSerializerDeserializer {
         Map<String, String> serializedTravellerInfo = new HashMap<>();
 
         allTravellers.forEach(traveller->{
-            serializedTravellerInfo.put(traveller.getUserName(),
-                    traveller.getAge() + VALUE_SEPARATOR +
+
+            String encryptedUserName = EncryptionUtils.encrypt(traveller.getUserName());
+
+            String value = traveller.getAge() + VALUE_SEPARATOR +
                     traveller.getGender() + VALUE_SEPARATOR +
                     traveller.getSourceLatitude() + VALUE_SEPARATOR +
                     traveller.getSourceLongitude() + VALUE_SEPARATOR +
@@ -29,8 +33,14 @@ public class P2pSerializerDeserializer {
                     traveller.getDestinationLongitude() + VALUE_SEPARATOR +
                     traveller.getStatus() + VALUE_SEPARATOR +
                     traveller.getRequestStartTime().format(DATE_TIME_FORMATTER) + VALUE_SEPARATOR +
+                    traveller.getUserRating() + VALUE_SEPARATOR +
                     traveller.getIpAddress() + VALUE_SEPARATOR +
-                    traveller.getPortNumber());
+                    traveller.getPortNumber() + VALUE_SEPARATOR +
+                    traveller.getStatusUpdateTime().format(DATE_TIME_FORMATTER);
+
+            String encryptedValue = EncryptionUtils.encrypt(value);
+
+            serializedTravellerInfo.put(encryptedUserName, encryptedValue);
         });
         return serializedTravellerInfo;
     }
@@ -38,22 +48,23 @@ public class P2pSerializerDeserializer {
     public static HashMap<String, TravellerInfo> deserializeFromMap(Map<String, String> serializedTravellerInfo){
         HashMap<String, TravellerInfo> allTravellers = new HashMap<>();
 
-        serializedTravellerInfo.forEach((userName, serializedInfo)->{
-            TravellerInfo info = new TravellerInfo();
-            info.setUserName(userName);
+        serializedTravellerInfo.forEach((encryptedUserName, encryptedValue)->{
+
+            String userName = EncryptionUtils.decrypt(encryptedUserName);
+            String serializedInfo = EncryptionUtils.decrypt(encryptedValue);
 
             String[] fieldValues = serializedInfo.split(",", -1);
 
-            info.setAge(Integer.parseInt(fieldValues[0]));
-            info.setGender(Gender.valueOf(fieldValues[1]));
-            info.setSourceLatitude(Double.parseDouble(fieldValues[2]));
-            info.setSourceLongitude(Double.parseDouble(fieldValues[3]));
-            info.setDestinationLatitude(Double.parseDouble(fieldValues[4]));
-            info.setDestinationLongitude(Double.parseDouble(fieldValues[5]));
-            info.setStatus(TravellerStatus.valueOf(fieldValues[6]));
-            info.setRequestStartTime(LocalDateTime.parse(fieldValues[7], DATE_TIME_FORMATTER));
-            info.setIpAddress(fieldValues[8]);
-            info.setPortNumber(Integer.parseInt(fieldValues[9]));
+            TravellerInfo info =
+                    new TravellerInfo(userName, Integer.parseInt(fieldValues[0]), Gender.valueOf(fieldValues[1])
+                    , Double.parseDouble(fieldValues[2]), Double.parseDouble(fieldValues[3])
+                    , Double.parseDouble(fieldValues[4]), Double.parseDouble(fieldValues[5])
+                    , TravellerStatus.valueOf(fieldValues[6])
+                    , LocalDateTime.parse(fieldValues[7], DATE_TIME_FORMATTER)
+                    , Double.parseDouble(fieldValues[8])
+                    , fieldValues[9]
+                    , Integer.parseInt(fieldValues[10])
+                    , LocalDateTime.parse(fieldValues[11], DATE_TIME_FORMATTER));
 
             allTravellers.put(userName, info);
         });

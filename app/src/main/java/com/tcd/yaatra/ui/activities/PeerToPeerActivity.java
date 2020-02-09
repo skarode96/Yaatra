@@ -19,10 +19,12 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
 
     PeerCommunicator communicator;
     TextView textView;
-    private HashMap<String, TravellerInfo> fellowTravellers = new HashMap<>();
     private ArrayList<String> peers = new ArrayList<>();
+
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     boolean isLocationPermissionGranted = false;
+
+    //region Activity Initialization
 
     @Override
     int getLayoutResourceId() {
@@ -63,32 +65,26 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
         }
     }
 
-    private void handleDiscoverButtonClick(){
-        if(isLocationPermissionGranted){
-            communicator.advertiseStatusAndDiscoverFellowTravellers(TravellerStatus.SeekingFellowTraveller);
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case LOCATION_PERMISSION_REQUEST_CODE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    isLocationPermissionGranted = true;
+                } else {
+                    isLocationPermissionGranted = false;
+                }
+                return;
+            }
         }
     }
 
-    public void showFellowTravellers(HashMap<String, TravellerInfo> peerTravellers){
+    //endregion
 
-        fellowTravellers = peerTravellers;
-
-        peers.clear();
-
-        fellowTravellers.values().forEach(info-> addPeerAddress(info.getIpAddress()));
-
-        showPeers();
-    }
-
-    private void addPeerAddress(String ipAdd){
-        peers.add(ipAdd);
-    }
-
-    private void showPeers(){
-        final ListView list = layoutDataBinding.listNearbyDevices;
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, peers);
-        list.setAdapter(arrayAdapter);
-    }
+    //region Activity Life Cycle
 
     @Override
     protected void onPause() {
@@ -110,20 +106,30 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
         super.onDestroy();
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case LOCATION_PERMISSION_REQUEST_CODE: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    isLocationPermissionGranted = true;
-                } else {
-                    isLocationPermissionGranted = false;
-                }
-                return;
-            }
+    //endregion
+
+    private void handleDiscoverButtonClick(){
+        if(isLocationPermissionGranted){
+            communicator.advertiseStatusAndDiscoverFellowTravellers(TravellerStatus.SeekingFellowTraveller);
         }
+    }
+
+    public void showFellowTravellers(HashMap<String, TravellerInfo> peerTravellers){
+
+        peers.clear();
+
+        peerTravellers.values().forEach(info-> addPeerAddress(info.getIpAddress()));
+
+        showPeers();
+    }
+
+    private void addPeerAddress(String ipAdd){
+        peers.add(ipAdd);
+    }
+
+    private void showPeers(){
+        final ListView list = layoutDataBinding.listNearbyDevices;
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, peers);
+        list.setAdapter(arrayAdapter);
     }
 }
