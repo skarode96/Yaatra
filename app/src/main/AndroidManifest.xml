@@ -27,7 +27,6 @@
         <activity android:name=".ui.activities.MapBoxActivity" />
         <activity android:name=".ui.activities.DailyCommuteListActivity" />
         <activity android:name=".ui.activities.DailyCommuteActivity" />
-        <activity android:name=".ui.activities.NavigationDrawerActivity" />
         <activity android:name=".ui.activities.MenuActivity" android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.activities.LaunchActivity"
