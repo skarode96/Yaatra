@@ -1,14 +1,10 @@
 package com.tcd.yaatra.di.modules;
 
-import android.app.Activity;
-
 import com.tcd.yaatra.ui.activities.DailyCommuteActivity;
+import com.tcd.yaatra.ui.activities.DailyCommuteListActivity;
 import com.tcd.yaatra.ui.activities.LaunchActivity;
 import com.tcd.yaatra.ui.activities.LoginActivity;
-
-import com.tcd.yaatra.ui.activities.DailyCommuteListActivity;
 import com.tcd.yaatra.ui.activities.MenuActivity;
-import com.tcd.yaatra.ui.activities.NavigationDrawerActivity;
 import com.tcd.yaatra.ui.activities.PeerToPeerActivity;
 import com.tcd.yaatra.ui.activities.RegisterActivity;
 
@@ -35,10 +31,6 @@ public interface ActivityModule {
 
     @ContributesAndroidInjector
     MenuActivity contributeMenuActivity();
-
-    @ContributesAndroidInjector
-    NavigationDrawerActivity contributeNavigationDrawerActivity();
-
 
     @ContributesAndroidInjector
     RegisterActivity contributeRegisterActivity();

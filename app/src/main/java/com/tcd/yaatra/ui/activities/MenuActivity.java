@@ -1,20 +1,19 @@
 package com.tcd.yaatra.ui.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.annotation.Nullable;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.navigation.NavigationView;
 import com.tcd.yaatra.R;
-import com.tcd.yaatra.databinding.ActivityDailyCommuteBinding;
 import com.tcd.yaatra.databinding.ActivityMenuBinding;
+import com.tcd.yaatra.utils.SharedPreferenceUtils;
 
 public class MenuActivity extends BaseActivity<ActivityMenuBinding> implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout drawer;
@@ -28,13 +27,8 @@ public class MenuActivity extends BaseActivity<ActivityMenuBinding> implements N
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Toolbar toolbar = layoutDataBinding.toobar;
-
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Journey Sharing");
-
+        Toolbar toolbar = layoutDataBinding.toolbar;
         drawer = layoutDataBinding.drawerLayout;
-        //drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = layoutDataBinding.navView;//findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -60,9 +54,20 @@ public class MenuActivity extends BaseActivity<ActivityMenuBinding> implements N
             case R.id.settings:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SettingsFragment()).commit();
                 break;
+            case R.id.logout:
+                handleLogout();
+                break;
+            default: break;
         }
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void handleLogout() {
+        SharedPreferenceUtils.clearAuthToken();
+        Intent myIntent = new Intent(this, LoginActivity.class);
+        startActivity(myIntent);
+        finish();
     }
 
     @Override
