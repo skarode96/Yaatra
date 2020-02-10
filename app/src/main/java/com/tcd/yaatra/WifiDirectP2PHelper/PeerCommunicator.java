@@ -32,7 +32,7 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
     private static final String TAG = "PeerCommunicator";
     private static final String SERVICE_INSTANCE = "com.tcd.yaatra.WifiDirectService";
     private static final String SERVICE_TYPE = "tcp";
-    private static final int TIMER_PERIOD_IN_MILLISECONDS = 60000;
+    private static final int TIMER_PERIOD_IN_MILLISECONDS = 5000;
     private static final int TIMER_DELAY_IN_MILLISECONDS = 0;
 
     private PeerToPeerActivity peerToPeerActivity;
@@ -285,7 +285,7 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
             isReceiverRegistered = false;
         }
 
-        wifiP2pManager.removeServiceRequest(wifiP2pChannel, serviceRequest, new WifiP2pManager.ActionListener() {
+        wifiP2pManager.clearServiceRequests(wifiP2pChannel, new WifiP2pManager.ActionListener() {
 
             @Override
             public void onSuccess() {
@@ -309,5 +309,12 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
                 Log.e(TAG, "Error: Failed to remove wifi direct services");
             }
         });
+
+        serviceRequest = null;
+        serviceDiscoveryReceiver = null;
+        wifiP2pChannel.close();
+        wifiP2pChannel = null;
+        wifiP2pManager = null;
+
     }
 }

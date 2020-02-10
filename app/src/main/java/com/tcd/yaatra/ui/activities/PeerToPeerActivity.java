@@ -41,11 +41,13 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        communicator = new PeerCommunicator(this, "JP");
         textView = layoutDataBinding.textView2;
-
+        initializePeerCommunicator();
         checkIfLocationPermissionGranted();
+    }
+
+    private void initializePeerCommunicator(){
+        communicator = new PeerCommunicator(this, "JP");
     }
 
     private void checkIfLocationPermissionGranted(){
@@ -88,21 +90,26 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
 
     @Override
     protected void onPause() {
+        peers.clear();
+        showPeers();
         communicator.cleanup();
+        communicator = null;
         super.onPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
+        initializePeerCommunicator();
         communicator.registerPeerActivityListener();
     }
 
     @Override
     protected void onDestroy() {
-
+        peers.clear();
+        showPeers();
         communicator.cleanup();
+        communicator = null;
         super.onDestroy();
     }
 
