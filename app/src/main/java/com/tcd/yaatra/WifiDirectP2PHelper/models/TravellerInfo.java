@@ -17,14 +17,15 @@ public class TravellerInfo {
     private String ipAddress = "";
     private int portNumber;
     private LocalDateTime statusUpdateTime = LocalDateTime.now();
-    //private String travellerOwnerName = "";
+    private String infoProvider = "";
 
     public TravellerInfo(String userName, int age, Gender gender
             , Double sourceLatitude, Double sourceLongitude
             , Double destinationLatitude, Double destinationLongitude
             , TravellerStatus status, LocalDateTime requestStartTime
             , Double userRating, String ipAddress, int port
-            , LocalDateTime statusUpdateTime){
+            , LocalDateTime statusUpdateTime
+            , String infoProvider){
 
         setUserName(userName);
         setAge(age);
@@ -145,6 +146,12 @@ public class TravellerInfo {
 
     public void setStatusUpdateTime(LocalDateTime statusUpdateTime) {
         this.statusUpdateTime = statusUpdateTime;
+    }
+
+    public String getInfoProvider() { return infoProvider; }
+
+    public void setInfoProvider(String infoProvider){
+        this.infoProvider = infoProvider;
     }
 
     //endregion

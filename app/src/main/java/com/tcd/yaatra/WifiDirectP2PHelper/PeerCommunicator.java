@@ -8,10 +8,10 @@ import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
 import android.util.Log;
 import android.widget.Toast;
-
 import com.tcd.yaatra.WifiDirectP2PHelper.models.Gender;
 import com.tcd.yaatra.WifiDirectP2PHelper.models.TravellerInfo;
 import com.tcd.yaatra.WifiDirectP2PHelper.models.TravellerStatus;
+import com.tcd.yaatra.repository.models.FellowTravellersCache;
 import com.tcd.yaatra.ui.activities.PeerToPeerActivity;
 import com.tcd.yaatra.utils.NetworkUtils;
 import java.time.LocalDateTime;
@@ -32,7 +32,7 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
     private static final String TAG = "PeerCommunicator";
     private static final String SERVICE_INSTANCE = "com.tcd.yaatra.WifiDirectService";
     private static final String SERVICE_TYPE = "tcp";
-    private static final int TIMER_PERIOD_IN_MILLISECONDS = 5000;
+    private static final int TIMER_PERIOD_IN_MILLISECONDS = 20000;
     private static final int TIMER_DELAY_IN_MILLISECONDS = 0;
 
     private PeerToPeerActivity peerToPeerActivity;
@@ -44,8 +44,9 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
     private Timer discoveryTimer;
     private boolean isDiscoveryStarted = false;
 
-    private HashMap<String, TravellerInfo> allTravellers;
     private String appUserName;
+
+    private TravellerInfo currentUserTravellerInfo;
 
     //endregion
 
@@ -71,15 +72,12 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
     private void initializeUserAsTraveller(){
 
         LocalDateTime now = LocalDateTime.now();
-        TravellerInfo info =
+        currentUserTravellerInfo =
                 new TravellerInfo(appUserName, 20, Gender.NotSpecified
                         , 0.0d, 0.0d, 0.0d, 0.0d
                         , TravellerStatus.None, now, 0.0d
                         , NetworkUtils.getWiFiIPAddress(peerToPeerActivity)
-                        , 12345, now);
-
-        allTravellers = new HashMap<>();
-        allTravellers.put(info.getUserName(), info);
+                        , 12345, now, appUserName);
     }
 
     public void advertiseStatusAndDiscoverFellowTravellers(TravellerStatus status){
@@ -94,6 +92,9 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
             public void onSuccess() {
 
                 Log.d(TAG, "Removed all existing wifi direct local services");
+
+                HashMap<String, TravellerInfo> allTravellers = FellowTravellersCache.getCacheInstance().getFellowTravellers();
+                allTravellers.put(appUserName, currentUserTravellerInfo);
 
                 Map<String, String> serializedRecord = P2pSerializerDeserializer.serializeToMap(allTravellers.values());
 
@@ -123,9 +124,7 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
     }
 
     private void setCurrentStatusOfAppUser(TravellerStatus status){
-        TravellerInfo info = allTravellers.get(appUserName);
-        info.setStatus(status);
-        allTravellers.replace(appUserName, info);
+        currentUserTravellerInfo.setStatus(status);
     }
 
     private void subscribeStatusChangeOfPeers(){
@@ -194,29 +193,21 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
 
                         //Save or Update existing information about peer traveller
                         HashMap<String, TravellerInfo> fellowTravellers = P2pSerializerDeserializer.deserializeFromMap(travellersInfoMap);
-                        fellowTravellers.forEach((fellowTravellerUserName, fellowTravellerInfo) -> cacheFellowTravellersInfo(fellowTravellerUserName, fellowTravellerInfo));
 
-                        //Send information of fellow travellers to UI
-                        HashMap<String, TravellerInfo> onlyPeerTravellers = new HashMap<>(allTravellers);
+                        HashMap<String, TravellerInfo> onlyPeerTravellers = new HashMap<>(fellowTravellers);
                         TravellerInfo userInfo = onlyPeerTravellers.remove(appUserName);
-                        peerToPeerActivity.showFellowTravellers(onlyPeerTravellers);
 
-                        //Start advertising newly discovered fellow travellers
-                        advertiseStatusAndDiscoverFellowTravellers(userInfo.getStatus());
+                        boolean isCacheUpdated = FellowTravellersCache.getCacheInstance().addOrUpdate(appUserName, onlyPeerTravellers);
+
+                        if(isCacheUpdated){
+                            //Start advertising newly discovered fellow travellers
+                            peerToPeerActivity.showFellowTravellers(FellowTravellersCache.getCacheInstance().getFellowTravellers());
+                            advertiseStatusAndDiscoverFellowTravellers(userInfo.getStatus());
+                        }
                     }
                 }
             }
         );
-    }
-
-    private void cacheFellowTravellersInfo(String fellowTravellerUserName, TravellerInfo fellowTravellerInfo){
-
-        if(fellowTravellerUserName != appUserName && allTravellers.containsKey(fellowTravellerUserName)){
-            allTravellers.replace(fellowTravellerUserName, fellowTravellerInfo);
-        }
-        else if(fellowTravellerUserName != appUserName){
-            allTravellers.put(fellowTravellerUserName, fellowTravellerInfo);
-        }
     }
 
     private void startDiscoveringFellowTravellersOnTimer(){
