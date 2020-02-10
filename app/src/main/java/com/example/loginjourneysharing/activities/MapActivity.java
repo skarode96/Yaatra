@@ -93,7 +93,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 //                        .shouldSimulateRoute(true)
 //                        .build();
 //
-                NavigationLauncher.startNavigation(MapActivity.this,setupOptions(currentGivenRoute));
+                //NavigationLauncher.startNavigation(MapActivity.this,setupOptions(currentGivenRoute));
                 //startNavigation(currentGivenRoute);
             }
         });
@@ -341,4 +341,5 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         return Point.fromLngLat(lastKnownLocation.getLongitude(), lastKnownLocation.getLatitude());
     }
 
-        }
+
+}

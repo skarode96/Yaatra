@@ -1,6 +1,16 @@
 package com.example.loginjourneysharing.activities;
 
+import org.junit.Test;
+import org.junit.Assert;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;import static org.junit.Assert.assertEquals;
+
 public class MapActivityTest {
+
+
+
 
 //    private Point originPosition;
 //    private Point destinationPosition;

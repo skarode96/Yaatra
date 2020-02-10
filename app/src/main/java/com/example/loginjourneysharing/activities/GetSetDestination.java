@@ -5,7 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import timber.log.Timber;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.Address;
@@ -19,6 +21,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.Toast;
@@ -63,6 +66,7 @@ import android.content.BroadcastReceiver;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+@SuppressLint("NewApi")
 public class GetSetDestination extends AppCompatActivity implements OnMapReadyCallback, PermissionsListener, MapboxMap.OnMapClickListener, SearchView.OnQueryTextListener {
 
     private MapView mapView;
@@ -82,9 +86,12 @@ public class GetSetDestination extends AppCompatActivity implements OnMapReadyCa
     private int regionSelected = 0;
     private Button downloadButton;
     private Button listButton;
+    private Button navigateButton ;
 
-    private static final String TAG = "GetSetDestinationActivity";
 
+    private static final String TAG = "DestinationActivity";
+
+    @SuppressLint("NewApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,6 +101,7 @@ public class GetSetDestination extends AppCompatActivity implements OnMapReadyCa
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
         destinationArea = (SearchView) findViewById(R.id.searchDest);
+        navigateButton = (Button) findViewById(R.id.button9) ;
         destinationArea.setOnQueryTextListener(this);
         MyReceiver= new MyReceiver();
         broadcastIntent();
@@ -132,17 +140,56 @@ public class GetSetDestination extends AppCompatActivity implements OnMapReadyCa
 
             offlineManager = offlineManager.getInstance(GetSetDestination.this);
             downloadButton = findViewById(R.id.downloadButton);
-            downloadButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                }
-            });
+            listButton = findViewById(R.id.listButton);
 
         } else{
             permissionsManager = new PermissionsManager(this);
             permissionsManager.requestLocationPermissions(this);
         }
+    }
+
+    private void downloadRegion( final String regionName) {
+        map.getStyle(new Style.OnStyleLoaded() {
+            @Override
+            public void onStyleLoaded(@NonNull Style style) {
+                String styleUrl = style.getUri();
+                LatLngBounds bounds = map.getProjection().getVisibleRegion().latLngBounds;
+                double minZoom = map.getCameraPosition().zoom;
+                double maxZoom = map.getMaxZoomLevel();
+                float pixelRatio = GetSetDestination.this.getResources().getDisplayMetrics().density;
+                OfflineTilePyramidRegionDefinition definition = new OfflineTilePyramidRegionDefinition(styleUrl,bounds,minZoom,maxZoom,pixelRatio);
+
+                byte[] metadata = null;
+                try{
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put(JSON_FIELD_REGION_NAME,regionName);
+                    String json = jsonObject.toString();
+                    metadata = json.getBytes(JSON_CHARSET);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                    metadata = null;
+                }
+
+                offlineManager.createOfflineRegion(definition, metadata, new OfflineManager.CreateOfflineRegionCallback() {
+                    @Override
+                    public void onCreate(OfflineRegion offlineRegion) {
+                        Log.d(TAG, "onCreate: Offline region to be created"+regionName);
+                        GetSetDestination.this.offlineRegion = offlineRegion;
+                        launchDownload();
+                    }
+
+                    @Override
+                    public void onError(String error) {
+
+                    }
+                });
+
+            }
+        });
+
     }
 
     @Override
@@ -220,6 +267,8 @@ public class GetSetDestination extends AppCompatActivity implements OnMapReadyCa
 
         destinationMarker = map.addMarker(new MarkerOptions().position(point));
         destination = Point.fromLngLat(point.getLongitude(),point.getLatitude());
+        navigateButton.setVisibility(View.VISIBLE);
+
 
         return true;
     }
@@ -259,99 +308,58 @@ public class GetSetDestination extends AppCompatActivity implements OnMapReadyCa
             Address loc = address.get(0);
 
             map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(loc.getLatitude(), loc.getLongitude()), 13.0));
-//            destinationMarker = map.addMarker(new MarkerOptions().position(new LatLng(loc.getLatitude(), loc.getLongitude())));
-            destination = Point.fromLngLat(loc.getLongitude(),loc.getLatitude());
-
-            map.getStyle(new Style.OnStyleLoaded() {
-                @Override
-                public void onStyleLoaded(@NonNull Style style) {
-                    String styleUrl = style.getUri();
-                    LatLngBounds bounds = map.getProjection().getVisibleRegion().latLngBounds;
-                    double minZoom = map.getMinZoomLevel();
-                    double maxZoom = map.getMaxZoomLevel();
-                    float pixelRatio = GetSetDestination.this.getResources().getDisplayMetrics().density;
-                    OfflineTilePyramidRegionDefinition definition = new OfflineTilePyramidRegionDefinition(styleUrl,bounds,minZoom,maxZoom,pixelRatio);
-
-                    byte[] metadata = null;
-                    try{
-                        JSONObject jsonObject = new JSONObject();
-                        jsonObject.put(JSON_FIELD_REGION_NAME,regionName);
-                        String json = jsonObject.toString();
-                        metadata = json.getBytes(JSON_CHARSET);
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                        metadata = null;
-                    }
-
-                    offlineManager.createOfflineRegion(definition, metadata, new OfflineManager.CreateOfflineRegionCallback() {
-                        @Override
-                        public void onCreate(OfflineRegion offlineRegion) {
-                            Log.d(TAG, "onCreate: Offline region to be created"+regionName);
-                            GetSetDestination.this.offlineRegion = offlineRegion;
-                            launchDownload();
-                        }
-
-                        @Override
-                        public void onError(String error) {
-
-                        }
-                    });
-
-                }
-            });
 
 
         } catch (IOException e) {
             Toast.makeText(this, "Inside catch", Toast.LENGTH_SHORT).show();
             // Get the region bounds and zoom and move the camera.
 
+            View view = this.mapView ;
+            diaplayOfflineList(view , "No Internet available. Please select from ");
 
-                offlineManager.listOfflineRegions(new OfflineManager.ListOfflineRegionsCallback() {
-                    @Override
-                    public void onList(OfflineRegion[] offlineRegions) {
-                        if (offlineRegions == null || offlineRegions.length == 0) {
-                            Toast.makeText(getApplicationContext(), "You have no regions yet.", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                        ArrayList<String> offlineRegionNames = new ArrayList<>();
-                        ArrayList<String> offlineSelectedRegionNames = new ArrayList<>();
-                        for (OfflineRegion offlineRegion : offlineRegions) {
-                            String regName = getRegionName(offlineRegion);
-                            offlineRegionNames.add(regName);
-                            if (regName.toLowerCase().contains(name.toLowerCase())) {
-                                offlineSelectedRegionNames.add(regName);
-                            }
-                        }
-                        if (offlineSelectedRegionNames.size() == 0) {
-                            Toast.makeText(getApplicationContext(), "No offline region found", Toast.LENGTH_SHORT).show();
-                            return;
-                        } else if (offlineSelectedRegionNames.size() == 1) {
-                            int index = offlineRegionNames.indexOf(offlineSelectedRegionNames.get(0));
-                            LatLngBounds bounds = (offlineRegions[index].getDefinition().getBounds());
-                            double regionZoom = (offlineRegions[index].getDefinition().getMinZoom());
-
-                            CameraPosition cameraPosition = new CameraPosition.Builder()
-                                    .target(bounds.getCenter())
-                                    .zoom(regionZoom)
-                                    .build();
-
-                            map.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                        } else {
-                            final CharSequence[] items = offlineSelectedRegionNames.toArray(new CharSequence[offlineRegionNames.size()]);
-
-                        }
-
-
-                    }
-
-                    @Override
-                    public void onError(String error) {
-                        Toast.makeText(getApplicationContext(), error, Toast.LENGTH_SHORT).show();
-                    }
-                });
+//                offlineManager.listOfflineRegions(new OfflineManager.ListOfflineRegionsCallback() {
+//                    @Override
+//                    public void onList(OfflineRegion[] offlineRegions) {
+//                        if (offlineRegions == null || offlineRegions.length == 0) {
+//                            Toast.makeText(getApplicationContext(), "You have no regions yet.", Toast.LENGTH_SHORT).show();
+//                            return;
+//                        }
+//                        ArrayList<String> offlineRegionNames = new ArrayList<>();
+//                        ArrayList<String> offlineSelectedRegionNames = new ArrayList<>();
+//                        for (OfflineRegion offlineRegion : offlineRegions) {
+//                            String regName = getRegionName(offlineRegion);
+//                            offlineRegionNames.add(regName);
+//                            if (regName.toLowerCase().contains(name.toLowerCase())) {
+//                                offlineSelectedRegionNames.add(regName);
+//                            }
+//                        }
+//                        if (offlineSelectedRegionNames.size() == 0) {
+//                            Toast.makeText(getApplicationContext(), "No offline region found", Toast.LENGTH_SHORT).show();
+//                            return;
+//                        } else if (offlineSelectedRegionNames.size() == 1) {
+//                            int index = offlineRegionNames.indexOf(offlineSelectedRegionNames.get(0));
+//                            LatLngBounds bounds = (offlineRegions[index].getDefinition().getBounds());
+//                            double regionZoom = (offlineRegions[index].getDefinition().getMinZoom());
+//
+//                            CameraPosition cameraPosition = new CameraPosition.Builder()
+//                                    .target(bounds.getCenter())
+//                                    .zoom(regionZoom)
+//                                    .build();
+//
+//                            map.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+//                        } else {
+//                            final CharSequence[] items = offlineSelectedRegionNames.toArray(new CharSequence[offlineRegionNames.size()]);
+//
+//                        }
+//
+//
+//                    }
+//
+//                    @Override
+//                    public void onError(String error) {
+//                        Toast.makeText(getApplicationContext(), error, Toast.LENGTH_SHORT).show();
+//                    }
+//                });
 //        }
 //        else
 //        {
@@ -423,4 +431,148 @@ public class GetSetDestination extends AppCompatActivity implements OnMapReadyCa
 
     }
 
+    public void onDownload(View view)
+        {
+            AlertDialog.Builder builder = new AlertDialog.Builder(GetSetDestination.this);
+            final EditText regionNameEdit = new EditText(GetSetDestination.this);
+            regionNameEdit.setHint(getString(R.string.set_region_name_hint));
+
+            try {
+
+
+                // Build the dialog box
+                builder.setTitle(getString(R.string.dialog_title))
+                        .setView(regionNameEdit)
+                        .setMessage(getString(R.string.dialog_message))
+                        .setPositiveButton(getString(R.string.dialog_positive_button), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String regionName = regionNameEdit.getText().toString();
+                                // Require a region name to begin the download.
+                                // If the user-provided string is empty, display
+                                // a toast message and do not begin download.
+                                if (regionName.length() == 0) {
+                                    Toast.makeText(GetSetDestination.this, getString(R.string.dialog_toast), Toast.LENGTH_SHORT).show();
+                                } else {
+                                    // Begin download process
+
+                                    downloadRegion(regionName);
+                                }
+                            }
+                        })
+                        .setNegativeButton(getString(R.string.dialog_negative_button), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+
+            }
+            catch (Exception ex1)
+            {
+                ex1.getMessage();
+
+            }
+            // Display the dialog
+            builder.show();
+
+        }
+    public void onListClick(View view)
+    {
+        diaplayOfflineList(view , "");
+    }
+
+
+    public void diaplayOfflineList(View view, final String info) {
+        // Build a region list when the user clicks the list button
+
+        // Reset the region selected int to 0
+        regionSelected = 0;
+
+        // Query the DB asynchronously
+        offlineManager.listOfflineRegions(new OfflineManager.ListOfflineRegionsCallback() {
+            @Override
+            public void onList(final OfflineRegion[] offlineRegions) {
+                // Check result. If no regions have been
+                // downloaded yet, notify user and return
+                if (offlineRegions == null || offlineRegions.length == 0) {
+                    Toast.makeText(getApplicationContext(), getString(R.string.toast_no_regions_yet), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // Add all of the region names to a list
+                ArrayList<String> offlineRegionsNames = new ArrayList<>();
+                for (OfflineRegion offlineRegion : offlineRegions) {
+                    offlineRegionsNames.add(getRegionName(offlineRegion));
+                }
+                final CharSequence[] items = offlineRegionsNames.toArray(new CharSequence[offlineRegionsNames.size()]);
+
+                // Build a dialog containing the list of regions
+                AlertDialog dialog = new AlertDialog.Builder(GetSetDestination.this)
+                        .setTitle(info + getString(R.string.navigate_title))
+                        .setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // Track which region the user selects
+                                regionSelected = which;
+                            }
+                        })
+                        .setPositiveButton(getString(R.string.navigate_positive_button), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+
+                                Toast.makeText(GetSetDestination.this, items[regionSelected], Toast.LENGTH_LONG).show();
+
+                                // Get the region bounds and zoom
+                                LatLngBounds bounds = (offlineRegions[regionSelected].getDefinition()).getBounds();
+                                double regionZoom = (offlineRegions[regionSelected].getDefinition()).getMinZoom();
+
+                                // Create new camera position
+                                CameraPosition cameraPosition = new CameraPosition.Builder()
+                                        .target(bounds.getCenter())
+                                        .zoom(regionZoom)
+                                        .build();
+
+                                // Move camera to new position
+                                map.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+                            }
+                        })
+                        .setNeutralButton(getString(R.string.navigate_neutral_button_title), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+
+                                // Begin the deletion process
+                                offlineRegions[regionSelected].delete(new OfflineRegion.OfflineRegionDeleteCallback() {
+                                    @Override
+                                    public void onDelete() {
+                                        Toast.makeText(getApplicationContext(), getString(R.string.toast_region_deleted),
+                                                Toast.LENGTH_LONG).show();
+                                    }
+
+                                    @Override
+                                    public void onError(String error) {
+                                        Timber.e( "Error: %s", error);
+                                    }
+                                });
+                            }
+                        })
+                        .setNegativeButton(getString(R.string.navigate_negative_button_title), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                // When the user cancels, don't do anything.
+                                // The dialog will automatically close
+                            }
+                        }).create();
+                dialog.show();
+
+            }
+
+            @Override
+            public void onError(String error) {
+                Timber.e( "Error: %s", error);
+            }
+        });
+
+    }
 }

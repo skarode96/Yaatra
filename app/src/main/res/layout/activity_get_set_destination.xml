@@ -1,81 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--<androidx.constraintlayout.widget.ConstraintLayout -->
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:mapbox="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.GetSetDestination">
 
-    <Button
-        android:id="@+id/button9"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:layout_marginEnd="150dp"
-        android:layout_marginBottom="52dp"
-        android:onClick="showRoutes"
-        android:text="@string/show_routes"
-        mapbox:layout_constraintBottom_toTopOf="@+id/mapViewDestination"
-        mapbox:layout_constraintEnd_toEndOf="parent"
-        mapbox:layout_constraintStart_toEndOf="@+id/searchDest"
-        mapbox:layout_constraintTop_toTopOf="parent" />
+
 
     <LinearLayout
+        android:id="@+id/top_navigation"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="680dp"
-        android:orientation="horizontal"
-        mapbox:layout_constraintBottom_toBottomOf="parent"
-        mapbox:layout_constraintEnd_toEndOf="parent"
-        mapbox:layout_constraintStart_toStartOf="parent"
-        mapbox:layout_constraintTop_toTopOf="parent">
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:elevation="8dp"
+        android:paddingBottom="8dp"
+        android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/downloadButton"
-            android:layout_width="101dp"
+        <SearchView
+            android:id="@+id/searchDest"
+            android:layout_width="300dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="Download" />
+            android:background="@color/md_grey_200"
+            android:layout_marginStart="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="1dp"
+            android:layout_marginBottom="1dp">
+
+        </SearchView>
 
         <Button
-            android:id="@+id/listButton"
-            android:layout_width="wrap_content"
+            android:id="@+id/button9"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="List" />
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="1dp"
+            android:onClick="showRoutes"
+            android:text="Navigate"
+            android:visibility="gone" />
 
     </LinearLayout>
 
-    <com.mapbox.mapboxsdk.maps.MapView
-        android:id="@+id/mapViewDestination"
+    <LinearLayout
+        android:id="@+id/mapBox_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="100dp"
-        mapbox:layout_constraintBottom_toBottomOf="parent"
-        mapbox:layout_constraintEnd_toEndOf="parent"
-        mapbox:layout_constraintHorizontal_bias="1.0"
-        mapbox:layout_constraintStart_toStartOf="parent"
-        mapbox:layout_constraintTop_toTopOf="parent"
-        mapbox:layout_constraintVertical_bias="0.0"
-        mapbox:mapbox_cameraTargetLat="37.7749"
-        mapbox:mapbox_cameraTargetLng="-122.4194"
-        mapbox:mapbox_cameraZoom="12" >
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal">
 
-    </com.mapbox.mapboxsdk.maps.MapView>
+        <com.mapbox.mapboxsdk.maps.MapView
+            android:id="@+id/mapViewDestination"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/top_navigation"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="50dp"
+            mapbox:layout_constraintBottom_toBottomOf="parent"
+            mapbox:layout_constraintEnd_toEndOf="parent"
+            mapbox:layout_constraintHorizontal_bias="0.0"
+            mapbox:layout_constraintStart_toStartOf="parent"
+            mapbox:layout_constraintTop_toTopOf="parent"
+            mapbox:layout_constraintVertical_bias="1.0"
+            mapbox:mapbox_cameraTargetLat="53.3498"
+            mapbox:mapbox_cameraTargetLng="-6.2603"
+            mapbox:mapbox_cameraZoom="12">
 
-    <SearchView
-        android:id="@+id/searchDest"
-        android:layout_width="409dp"
-        android:layout_height="98dp"
-        android:layout_marginStart="1dp"
-        android:layout_marginTop="1dp"
-        android:layout_marginEnd="1dp"
-        android:layout_marginBottom="1dp"
-        mapbox:layout_constraintBottom_toTopOf="@+id/mapViewDestination"
-        mapbox:layout_constraintEnd_toEndOf="parent"
-        mapbox:layout_constraintStart_toStartOf="parent"
-        mapbox:layout_constraintTop_toTopOf="parent" >
 
-    </SearchView>
+        </com.mapbox.mapboxsdk.maps.MapView>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/bottom_navigation"
+        style="?android:attr/buttonBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/md_grey_200"
+        android:elevation="8dp"
+        android:orientation="horizontal"
+        android:paddingTop="8dp">
+
+        <Button
+            android:id="@+id/listButton"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:layout_weight="1"
+            android:onClick="onListClick"
+            android:text="List" />
+
+        <Button
+            android:id="@+id/downloadButton"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:layout_marginEnd="10dp"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:onClick="onDownload"
+            android:text="Download" />
+    </LinearLayout>
+
+
+
+</RelativeLayout>
+    <!--</androidx.constraintlayout.widget.ConstraintLayout>-->
