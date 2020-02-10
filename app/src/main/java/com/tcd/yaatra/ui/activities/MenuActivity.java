@@ -1,5 +1,6 @@
 package com.tcd.yaatra.ui.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -52,13 +53,17 @@ public class MenuActivity extends BaseActivity<ActivityMenuBinding> implements N
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.ad_hoc:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new Ad_HocFragment()).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new MapBoxActivity()).commit();
                 break;
             case R.id.daily:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new DailyFragment()).commit();
                 break;
             case R.id.settings:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SettingsFragment()).commit();
+                break;
+            case R.id.peer2peer:
+                Intent intent = new Intent(MenuActivity.this,PeerToPeerActivity.class);
+                startActivity(intent);
                 break;
         }
         drawer.closeDrawer(GravityCompat.START);
