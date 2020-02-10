@@ -118,7 +118,7 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
 
         peers.clear();
 
-        peerTravellers.values().forEach(info-> addPeerAddress(info.getIpAddress()));
+        peerTravellers.values().forEach(info-> addPeerAddress(info.getUserName()));
 
         showPeers();
     }

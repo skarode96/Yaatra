@@ -17,6 +17,7 @@ public class TravellerInfo {
     private String ipAddress = "";
     private int portNumber;
     private LocalDateTime statusUpdateTime = LocalDateTime.now();
+    //private String travellerOwnerName = "";
 
     public TravellerInfo(String userName, int age, Gender gender
             , Double sourceLatitude, Double sourceLongitude

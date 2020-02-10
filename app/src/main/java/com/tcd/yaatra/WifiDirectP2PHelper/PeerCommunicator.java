@@ -7,6 +7,8 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
 import android.util.Log;
+import android.widget.Toast;
+
 import com.tcd.yaatra.WifiDirectP2PHelper.models.Gender;
 import com.tcd.yaatra.WifiDirectP2PHelper.models.TravellerInfo;
 import com.tcd.yaatra.WifiDirectP2PHelper.models.TravellerStatus;
@@ -30,8 +32,8 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
     private static final String TAG = "PeerCommunicator";
     private static final String SERVICE_INSTANCE = "com.tcd.yaatra.WifiDirectService";
     private static final String SERVICE_TYPE = "tcp";
-    private static final int TIMER_PERIOD_IN_MILLISECONDS = 10000;
-    private static final int TIMER_DELAY_IN_MILLISECONDS = 10000;
+    private static final int TIMER_PERIOD_IN_MILLISECONDS = 60000;
+    private static final int TIMER_DELAY_IN_MILLISECONDS = 0;
 
     private PeerToPeerActivity peerToPeerActivity;
 
@@ -188,6 +190,8 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
 
                         Log.d(TAG, "Received advertised information from peers");
 
+                        Toast.makeText(peerToPeerActivity, "Peer Found", Toast.LENGTH_SHORT);
+
                         //Save or Update existing information about peer traveller
                         HashMap<String, TravellerInfo> fellowTravellers = P2pSerializerDeserializer.deserializeFromMap(travellersInfoMap);
                         fellowTravellers.forEach((fellowTravellerUserName, fellowTravellerInfo) -> cacheFellowTravellersInfo(fellowTravellerUserName, fellowTravellerInfo));
@@ -259,6 +263,7 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
         IntentFilter wifiP2pFilter = new IntentFilter();
         wifiP2pFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
         wifiP2pFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
+        //wifiP2pFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
 
         serviceDiscoveryReceiver = new ServiceDiscoveryReceiver(wifiP2pManager,
                 wifiP2pChannel, this);
