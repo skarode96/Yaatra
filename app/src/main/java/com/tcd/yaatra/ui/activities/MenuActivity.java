@@ -53,7 +53,7 @@ public class MenuActivity extends BaseActivity<ActivityMenuBinding> implements N
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.ad_hoc:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new MapBoxActivity()).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new Ad_HocFragment()).commit();
                 break;
             case R.id.daily:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new DailyFragment()).commit();
