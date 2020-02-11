@@ -93,32 +93,36 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
 
                 Log.d(TAG, "Removed all existing wifi direct local services");
 
-                HashMap<String, TravellerInfo> allTravellers = FellowTravellersCache.getCacheInstance().getFellowTravellers();
-                allTravellers.put(appUserName, currentUserTravellerInfo);
-
-                Map<String, String> serializedRecord = P2pSerializerDeserializer.serializeToMap(allTravellers.values());
-
-                WifiP2pDnsSdServiceInfo service = WifiP2pDnsSdServiceInfo.newInstance(
-                        SERVICE_INSTANCE, SERVICE_TYPE, serializedRecord);
-
-                wifiP2pManager.addLocalService(wifiP2pChannel, service, new WifiP2pManager.ActionListener() {
-
-                    @Override
-                    public void onSuccess() {
-                        Log.d(TAG, "Started advertising status of travellers");
-                        subscribeStatusChangeOfPeers();
-                    }
-
-                    @Override
-                    public void onFailure(int error) {
-                        Log.e(TAG, "Error: Failed to advertise status");
-                    }
-                });
+                advertiseStatus();
             }
 
             @Override
             public void onFailure(int error) {
                 Log.e(TAG, "Error: Failed to remove existing wifi direct services");
+            }
+        });
+    }
+
+    private void advertiseStatus() {
+        HashMap<String, TravellerInfo> allTravellers = FellowTravellersCache.getCacheInstance().getFellowTravellers();
+        allTravellers.put(appUserName, currentUserTravellerInfo);
+
+        Map<String, String> serializedRecord = P2pSerializerDeserializer.serializeToMap(allTravellers.values());
+
+        WifiP2pDnsSdServiceInfo service = WifiP2pDnsSdServiceInfo.newInstance(
+                SERVICE_INSTANCE, SERVICE_TYPE, serializedRecord);
+
+        wifiP2pManager.addLocalService(wifiP2pChannel, service, new WifiP2pManager.ActionListener() {
+
+            @Override
+            public void onSuccess() {
+                Log.d(TAG, "Started advertising status of travellers");
+                subscribeStatusChangeOfPeers();
+            }
+
+            @Override
+            public void onFailure(int error) {
+                Log.e(TAG, "Error: Failed to advertise status");
             }
         });
     }
@@ -189,8 +193,6 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
 
                         Log.d(TAG, "Received advertised information from peers");
 
-                        Toast.makeText(peerToPeerActivity, "Peer Found", Toast.LENGTH_SHORT);
-
                         //Save or Update existing information about peer traveller
                         HashMap<String, TravellerInfo> fellowTravellers = P2pSerializerDeserializer.deserializeFromMap(travellersInfoMap);
 
@@ -200,8 +202,9 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
                         boolean isCacheUpdated = FellowTravellersCache.getCacheInstance().addOrUpdate(appUserName, onlyPeerTravellers);
 
                         if(isCacheUpdated){
-                            //Start advertising newly discovered fellow travellers
                             peerToPeerActivity.showFellowTravellers(FellowTravellersCache.getCacheInstance().getFellowTravellers());
+
+                            //Start advertising newly discovered/updated fellow travellers
                             advertiseStatusAndDiscoverFellowTravellers(currentUserTravellerInfo.getStatus());
                         }
                     }

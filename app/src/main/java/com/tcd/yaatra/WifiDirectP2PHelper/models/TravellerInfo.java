@@ -40,6 +40,7 @@ public class TravellerInfo {
         setIpAddress(ipAddress);
         setPortNumber(port);
         setStatusUpdateTime(statusUpdateTime);
+        setInfoProvider(infoProvider);
     }
 
     //region Getters & Setters

@@ -92,8 +92,11 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
     protected void onPause() {
         peers.clear();
         showPeers();
-        communicator.cleanup();
-        communicator = null;
+
+        if(communicator != null){
+            communicator.cleanup();
+            communicator = null;
+        }
         super.onPause();
     }
 
@@ -108,8 +111,11 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
     protected void onDestroy() {
         peers.clear();
         showPeers();
-        communicator.cleanup();
-        communicator = null;
+
+        if(communicator != null) {
+            communicator.cleanup();
+            communicator = null;
+        }
         super.onDestroy();
     }
 

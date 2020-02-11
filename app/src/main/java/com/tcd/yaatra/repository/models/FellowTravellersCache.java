@@ -59,6 +59,8 @@ public class FellowTravellersCache {
                 //However, existing cached information was received through a hop
                 //Provide newly received information to other peers with provider as the current app user
                 receivedInfo.setInfoProvider(appUserName);
+
+                fellowTravellers.replace(receivedInfo.getUserName(), receivedInfo);
                 isCacheUpdated = true;
             }
             else if(!isInformationReceivedThroughHop(receivedInfo)
@@ -108,8 +110,11 @@ public class FellowTravellersCache {
 
     private boolean copyChangesIfAny(TravellerInfo receivedInfo, TravellerInfo existingCachedInfo){
         if(receivedInfo.getStatusUpdateTime().isAfter(existingCachedInfo.getStatusUpdateTime())){
+
             existingCachedInfo.setStatus(receivedInfo.getStatus());
             existingCachedInfo.setStatusUpdateTime(receivedInfo.getStatusUpdateTime());
+
+            fellowTravellers.replace(receivedInfo.getUserName(), existingCachedInfo);
 
             return true;
         }
