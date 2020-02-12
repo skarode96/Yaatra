@@ -1,8 +1,8 @@
 package com.tcd.yaatra.WifiDirectP2PHelper;
 
-import com.tcd.yaatra.WifiDirectP2PHelper.models.Gender;
-import com.tcd.yaatra.WifiDirectP2PHelper.models.TravellerInfo;
-import com.tcd.yaatra.WifiDirectP2PHelper.models.TravellerStatus;
+import com.tcd.yaatra.repository.models.Gender;
+import com.tcd.yaatra.repository.models.TravellerInfo;
+import com.tcd.yaatra.repository.models.TravellerStatus;
 import com.tcd.yaatra.utils.EncryptionUtils;
 
 import org.junit.Test;

@@ -1,7 +1,5 @@
 package com.tcd.yaatra.repository.models;
 
-import com.tcd.yaatra.WifiDirectP2PHelper.models.TravellerInfo;
-
 import java.util.HashMap;
 import java.util.Iterator;
 

@@ -1,9 +1,5 @@
 package com.tcd.yaatra.repository.models;
 
-import com.tcd.yaatra.WifiDirectP2PHelper.models.Gender;
-import com.tcd.yaatra.WifiDirectP2PHelper.models.TravellerInfo;
-import com.tcd.yaatra.WifiDirectP2PHelper.models.TravellerStatus;
-
 import org.junit.Test;
 
 import java.time.LocalDateTime;

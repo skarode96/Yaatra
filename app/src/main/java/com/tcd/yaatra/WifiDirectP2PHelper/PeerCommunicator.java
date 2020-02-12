@@ -7,10 +7,10 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
 import android.util.Log;
-import android.widget.Toast;
-import com.tcd.yaatra.WifiDirectP2PHelper.models.Gender;
-import com.tcd.yaatra.WifiDirectP2PHelper.models.TravellerInfo;
-import com.tcd.yaatra.WifiDirectP2PHelper.models.TravellerStatus;
+
+import com.tcd.yaatra.repository.models.Gender;
+import com.tcd.yaatra.repository.models.TravellerInfo;
+import com.tcd.yaatra.repository.models.TravellerStatus;
 import com.tcd.yaatra.repository.models.FellowTravellersCache;
 import com.tcd.yaatra.ui.activities.PeerToPeerActivity;
 import com.tcd.yaatra.utils.NetworkUtils;

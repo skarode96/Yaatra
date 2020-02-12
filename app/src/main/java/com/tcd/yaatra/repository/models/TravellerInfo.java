@@ -1,4 +1,4 @@
-package com.tcd.yaatra.WifiDirectP2PHelper.models;
+package com.tcd.yaatra.repository.models;
 
 import java.time.LocalDateTime;
 
