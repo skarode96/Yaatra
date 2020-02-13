@@ -10,6 +10,7 @@ public class SharedPreferenceUtils {
     private static final String TOKEN_KEY = "token";
     private static final String TOKEN_PREFIX = "Token ";
     public static final String DEFAULT_TOKEN = "default";
+    private static final String USER_NAME = "UserName";
 
     public static SharedPreferences createSharedPreference(String key, Integer mode) {
         SharedPreferences sharedPreferences = App.getAppContext().getSharedPreferences(key, mode);
@@ -36,6 +37,20 @@ public class SharedPreferenceUtils {
 
     public static boolean clearAuthToken() {
         getLoginSharedPreference().edit().remove(TOKEN_KEY).apply();
+        return true;
+    }
+
+    public static boolean setUserName(String userName) {
+        getLoginSharedPreference().edit().putString(USER_NAME,userName).apply();
+        return true;
+    }
+
+    public static String getUserName() {
+        return getLoginSharedPreference().getString(USER_NAME, "");
+    }
+
+    public static boolean clearUserName() {
+        getLoginSharedPreference().edit().remove(USER_NAME).apply();
         return true;
     }
 

@@ -1,5 +1,6 @@
 package com.tcd.yaatra.services.api.yaatra.models;
 
+import com.example.loginjourneysharing.activities.User;
 import com.google.gson.annotations.SerializedName;
 
 public class LoginResponse {
@@ -10,6 +11,8 @@ public class LoginResponse {
     private String response;
     @SerializedName("authToken")
     private String authToken;
+    @SerializedName("userInfo")
+    private UserInfo userInfo;
 
 
     public LoginResponse(String message, String response) {
@@ -42,6 +45,13 @@ public class LoginResponse {
         this.authToken = authToken;
     }
 
+    public UserInfo getUserInfo() {
+        return userInfo;
+    }
+
+    public void setUserInfo(UserInfo userInfo) {
+        this.userInfo = userInfo;
+    }
 
     @Override
     public String toString() {
@@ -49,6 +59,7 @@ public class LoginResponse {
                 "token='" + message + '\'' +
                 ", response='" + response + '\'' +
                 ", authToken='" + authToken + '\'' +
+                ", userInfo='" + userInfo + '\'' +
                 '}';
     }
 }

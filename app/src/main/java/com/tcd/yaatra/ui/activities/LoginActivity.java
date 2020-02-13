@@ -13,7 +13,9 @@ import androidx.annotation.Nullable;
 
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.databinding.ActivityLoginBinding;
+import com.tcd.yaatra.services.api.yaatra.models.UserInfo;
 import com.tcd.yaatra.ui.viewmodels.LoginActivityViewModel;
+import com.tcd.yaatra.utils.DatabaseUtils;
 import com.tcd.yaatra.utils.SharedPreferenceUtils;
 
 import javax.inject.Inject;
@@ -23,6 +25,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
     @Inject
     LoginActivityViewModel loginActivityViewModel;
     SharedPreferences loginPreferences;
+    DatabaseUtils userDb;
 
 
     @Override
@@ -42,6 +45,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.loginPreferences = SharedPreferenceUtils.createLoginSharedPreference();
+        this.userDb = DatabaseUtils.getInstance(this);
     }
 
     private void handleOnLoginButtonClick() {
@@ -75,14 +79,14 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
                             layoutDataBinding.progressBarOverlay.setVisibility(View.GONE);
                             Intent myIntent = new Intent(LoginActivity.this, MenuContainerActivity.class);
                             SharedPreferenceUtils.setAuthToken(loginResponse.getData().getAuthToken());
+                            SharedPreferenceUtils.setUserName(loginResponse.getData().getUserInfo().getUsername());
+                            userDb.userInfoDao().insertUser(loginResponse.getData().getUserInfo());
                             startActivity(myIntent);
                             finish();
                             break;
 
                         case FAILURE:
                             layoutDataBinding.progressBarOverlay.setVisibility(View.GONE);
-                            myIntent = new Intent(LoginActivity.this, MenuContainerActivity.class);
-                            startActivity(myIntent);
                             Toast.makeText(this, loginResponse.getData().getMessage(), Toast.LENGTH_SHORT).show();
                             break;
                         }
@@ -93,7 +97,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
     private void handleOnShowHideClick() {
 
         if( layoutDataBinding.password.getTransformationMethod().equals(PasswordTransformationMethod.getInstance())){
-            layoutDataBinding.showHide.setImageResource(R.drawable.ic_hide_password);
+            layoutDataBinding.showHide.setImageResource(R.drawable.ic_show_password);
 
             //Show Password
             layoutDataBinding.password.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
@@ -101,7 +105,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
 
         }
         else{
-            layoutDataBinding.showHide.setImageResource(R.drawable.ic_show_password);
+            layoutDataBinding.showHide.setImageResource(R.drawable.ic_hide_password);
 
             //Hide Password
             layoutDataBinding.password.setTransformationMethod(PasswordTransformationMethod.getInstance());
