@@ -45,21 +45,8 @@ public class UserInfo {
     @ColumnInfo(name="rating")
     private double rating;
 
-    public UserInfo(String firstName, String lastName, String email, String gender, int age, String username, String created_on, String last_login, int pref_mode_travel, int pref_gender, double rating) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.gender = gender;
-        this.age = age;
-        this.username = username;
-        this.created_on = created_on;
-        this.last_login = last_login;
-        this.pref_mode_travel = pref_mode_travel;
-        this.pref_gender = pref_gender;
-        this.rating = rating;
-    }
-
     public UserInfo() {
+
     }
 
     public String getFirstName() {
@@ -148,5 +135,13 @@ public class UserInfo {
 
     public void setRating(double rating) {
         this.rating = rating;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }
