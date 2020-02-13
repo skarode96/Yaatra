@@ -1,18 +1,18 @@
 package com.tcd.yaatra.ui.activities;
 
+import com.tcd.yaatra.R;
+import com.tcd.yaatra.ui.viewmodels.RouteInfoViewModel;
+import com.tcd.yaatra.databinding.ActivityRouteinfoBinding;
+
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.mapbox.android.core.location.LocationEngine;
+
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.api.directions.v5.DirectionsCriteria;
@@ -20,7 +20,6 @@ import com.mapbox.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
-import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.location.LocationComponent;
@@ -30,7 +29,6 @@ import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
-import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin;
 import com.mapbox.mapboxsdk.plugins.locationlayer.modes.CameraMode;
 import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
 import com.mapbox.services.android.navigation.ui.v5.NavigationLauncherOptions;
@@ -43,20 +41,9 @@ import com.mapbox.services.android.navigation.v5.routeprogress.ProgressChangeLis
 import com.mapbox.services.android.navigation.v5.routeprogress.RouteProgress;
 import com.mapbox.services.android.navigation.ui.v5.listeners.RouteListener;
 import com.mapbox.services.android.navigation.ui.v5.NavigationView;
-import com.tcd.yaatra.R;
-import com.tcd.yaatra.databinding.ActivityMapBinding;
-import com.tcd.yaatra.databinding.ActivityRouteinfoBinding;
-import com.tcd.yaatra.ui.viewmodels.MapActivityViewModel;
 
-import androidx.appcompat.app.AlertDialog;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
 import java.util.List;
-
 import androidx.annotation.NonNull;
-
 import javax.inject.Inject;
 
 import retrofit2.Call;
@@ -80,7 +67,7 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
     private Location lastKnownLocation;
 
     @Inject
-    com.tcd.yaatra.ui.viewmodels.MapActivityViewModel MapActivityViewModel;
+    RouteInfoViewModel RouteInfoViewModel;
     //SharedPreferences loginPreferences;
 
     @Override
@@ -90,6 +77,16 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
     public void initEventHandlers() {
         super.initEventHandlers();
         layoutDataBinding.startButton.setOnClickListener(view -> handleOnStartButtonClick());
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        Mapbox.getInstance(this,getString(R.string.access_token));
+        super.onCreate(savedInstanceState);
+        mapView = layoutDataBinding.mapView;
+        startButton = layoutDataBinding.startButton;
+        mapView.onCreate(savedInstanceState);
+        mapView.getMapAsync(this);
     }
 
     private void handleOnStartButtonClick() {
@@ -103,15 +100,34 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Mapbox.getInstance(this,getString(R.string.access_token));
-        mapView = layoutDataBinding.mapView;
-        startButton = layoutDataBinding.startButton;
-        mapView.onCreate(savedInstanceState);
-        mapView.getMapAsync(this);
-    }
+    public void onMapReady(MapboxMap mapboxMap) {
+        map = mapboxMap;
+//        map.setMinZoomPreference(15);
+//        map.setStyle(Style.MAPBOX_STREETS);
+        mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
+            @Override
+            public void onStyleLoaded(@NonNull Style style) {
+                enableLocation(style);
 
+            }
+        });
+
+    }
+    @SuppressLint("WrongConstant")
+    private void enableLocation(Style loadedMapStyle){
+
+        if(PermissionsManager.areLocationPermissionsGranted(this)){
+            LocationComponentOptions locationComponentOptions = LocationComponentOptions.builder(this).build();
+            locationComponent = map.getLocationComponent();
+            locationComponent.activateLocationComponent(LocationComponentActivationOptions.builder(this, map.getStyle()).build());
+            locationComponent.setLocationComponentEnabled(true);
+            locationComponent.setCameraMode(CameraMode.TRACKING);
+            showRoute();
+        } else{
+            permissionsManager = new PermissionsManager(this);
+            permissionsManager.requestLocationPermissions(this);
+        }
+    }
 
     private void setCameraPosition(Location location){
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(),location.getLongitude()),13.0));
@@ -169,36 +185,6 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
     @Override
     public void onExplanationNeeded(List<String> permissionsToExplain) {
         Toast.makeText(this,"Location needed to route",Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onMapReady(MapboxMap mapboxMap) {
-        map = mapboxMap;
-//        map.setMinZoomPreference(15);
-//        map.setStyle(Style.MAPBOX_STREETS);
-        mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
-            @Override
-            public void onStyleLoaded(@NonNull Style style) {
-                enableLocation(style);
-
-            }
-        });
-
-    }
-    @SuppressLint("WrongConstant")
-    private void enableLocation(Style loadedMapStyle){
-
-        if(PermissionsManager.areLocationPermissionsGranted(this)){
-            LocationComponentOptions locationComponentOptions = LocationComponentOptions.builder(this).build();
-            locationComponent = map.getLocationComponent();
-            locationComponent.activateLocationComponent(LocationComponentActivationOptions.builder(this, map.getStyle()).build());
-            locationComponent.setLocationComponentEnabled(true);
-            locationComponent.setCameraMode(CameraMode.TRACKING);
-            showRoute();
-        } else{
-            permissionsManager = new PermissionsManager(this);
-            permissionsManager.requestLocationPermissions(this);
-        }
     }
 
     @Override
