@@ -20,6 +20,10 @@
             android:icon="@drawable/ic_settings"
             android:title="@string/peer2peer" />
         <item
+            android:id="@+id/mapbox"
+            android:icon="@drawable/ic_settings"
+            android:title="Map" />
+        <item
             android:id="@+id/logout"
             android:icon="@drawable/ic_logout"
             android:title="@string/logout" />

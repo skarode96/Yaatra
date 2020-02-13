@@ -4,6 +4,7 @@ import com.tcd.yaatra.ui.activities.DailyCommuteActivity;
 import com.tcd.yaatra.ui.activities.DailyCommuteListActivity;
 import com.tcd.yaatra.ui.activities.LaunchActivity;
 import com.tcd.yaatra.ui.activities.LoginActivity;
+import com.tcd.yaatra.ui.activities.MapActivity;
 import com.tcd.yaatra.ui.activities.MenuContainerActivity;
 import com.tcd.yaatra.ui.activities.PeerToPeerActivity;
 import com.tcd.yaatra.ui.activities.RegisterActivity;
@@ -34,4 +35,7 @@ public interface ActivityModule {
 
     @ContributesAndroidInjector
     RegisterActivity contributeRegisterActivity();
+
+    @ContributesAndroidInjector
+    MapActivity contributesMapActivity();
 }

@@ -52,11 +52,15 @@ public class MenuContainerActivity extends BaseActivity<ActivityMenuBinding> imp
             case R.id.logout:
                 handleLogout();
                 break;
-            default: break;
             case R.id.peer2peer:
                 Intent intent = new Intent(MenuContainerActivity.this,PeerToPeerActivity.class);
                 startActivity(intent);
                 break;
+            case R.id.mapbox:
+                intent = new Intent(MenuContainerActivity.this, MapActivity.class);
+                startActivity(intent);
+                break;
+            default: break;
         }
         this.drawer.closeDrawer(GravityCompat.START);
         return true;

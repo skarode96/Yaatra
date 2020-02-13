@@ -81,6 +81,8 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
 
                         case FAILURE:
                             layoutDataBinding.progressBarOverlay.setVisibility(View.GONE);
+                            myIntent = new Intent(LoginActivity.this, MenuContainerActivity.class);
+                            startActivity(myIntent);
                             Toast.makeText(this, loginResponse.getData().getMessage(), Toast.LENGTH_SHORT).show();
                             break;
                         }

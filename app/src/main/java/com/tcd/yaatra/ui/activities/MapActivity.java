@@ -58,7 +58,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Mapbox.getInstance(this,getString(R.string.access_token));
         setContentView(R.layout.activity_map);
         mapView = findViewById(R.id.mapView);
         startButton = findViewById(R.id.startButton);
