@@ -1,4 +1,4 @@
-package com.tcd.yaatra.WifiDirectP2PHelper.models;
+package com.tcd.yaatra.repository.models;
 
 import java.time.LocalDateTime;
 
@@ -17,13 +17,15 @@ public class TravellerInfo {
     private String ipAddress = "";
     private int portNumber;
     private LocalDateTime statusUpdateTime = LocalDateTime.now();
+    private String infoProvider = "";
 
     public TravellerInfo(String userName, int age, Gender gender
             , Double sourceLatitude, Double sourceLongitude
             , Double destinationLatitude, Double destinationLongitude
             , TravellerStatus status, LocalDateTime requestStartTime
             , Double userRating, String ipAddress, int port
-            , LocalDateTime statusUpdateTime){
+            , LocalDateTime statusUpdateTime
+            , String infoProvider){
 
         setUserName(userName);
         setAge(age);
@@ -38,6 +40,7 @@ public class TravellerInfo {
         setIpAddress(ipAddress);
         setPortNumber(port);
         setStatusUpdateTime(statusUpdateTime);
+        setInfoProvider(infoProvider);
     }
 
     //region Getters & Setters
@@ -144,6 +147,12 @@ public class TravellerInfo {
 
     public void setStatusUpdateTime(LocalDateTime statusUpdateTime) {
         this.statusUpdateTime = statusUpdateTime;
+    }
+
+    public String getInfoProvider() { return infoProvider; }
+
+    public void setInfoProvider(String infoProvider){
+        this.infoProvider = infoProvider;
     }
 
     //endregion

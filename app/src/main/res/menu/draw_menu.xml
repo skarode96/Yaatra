@@ -16,6 +16,10 @@
             android:icon="@drawable/ic_settings"
             android:title="@string/settings" />
         <item
+            android:id="@+id/peer2peer"
+            android:icon="@drawable/ic_settings"
+            android:title="@string/peer2peer" />
+        <item
             android:id="@+id/logout"
             android:icon="@drawable/ic_logout"
             android:title="@string/logout" />

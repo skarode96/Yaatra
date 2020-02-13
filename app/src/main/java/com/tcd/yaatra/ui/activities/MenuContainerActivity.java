@@ -53,6 +53,10 @@ public class MenuContainerActivity extends BaseActivity<ActivityMenuBinding> imp
                 handleLogout();
                 break;
             default: break;
+            case R.id.peer2peer:
+                Intent intent = new Intent(MenuActivity.this,PeerToPeerActivity.class);
+                startActivity(intent);
+                break;
         }
         this.drawer.closeDrawer(GravityCompat.START);
         return true;

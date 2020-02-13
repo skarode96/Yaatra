@@ -1,8 +1,8 @@
 package com.tcd.yaatra.WifiDirectP2PHelper;
 
-import com.tcd.yaatra.WifiDirectP2PHelper.models.Gender;
-import com.tcd.yaatra.WifiDirectP2PHelper.models.TravellerInfo;
-import com.tcd.yaatra.WifiDirectP2PHelper.models.TravellerStatus;
+import com.tcd.yaatra.repository.models.Gender;
+import com.tcd.yaatra.repository.models.TravellerInfo;
+import com.tcd.yaatra.repository.models.TravellerStatus;
 import com.tcd.yaatra.utils.EncryptionUtils;
 
 import java.time.LocalDateTime;
@@ -36,7 +36,8 @@ public class P2pSerializerDeserializer {
                     traveller.getUserRating() + VALUE_SEPARATOR +
                     traveller.getIpAddress() + VALUE_SEPARATOR +
                     traveller.getPortNumber() + VALUE_SEPARATOR +
-                    traveller.getStatusUpdateTime().format(DATE_TIME_FORMATTER);
+                    traveller.getStatusUpdateTime().format(DATE_TIME_FORMATTER) + VALUE_SEPARATOR +
+                    traveller.getInfoProvider();
 
             String encryptedValue = EncryptionUtils.encrypt(value);
 
@@ -64,7 +65,8 @@ public class P2pSerializerDeserializer {
                     , Double.parseDouble(fieldValues[8])
                     , fieldValues[9]
                     , Integer.parseInt(fieldValues[10])
-                    , LocalDateTime.parse(fieldValues[11], DATE_TIME_FORMATTER));
+                    , LocalDateTime.parse(fieldValues[11], DATE_TIME_FORMATTER)
+                    , fieldValues[12]);
 
             allTravellers.put(userName, info);
         });

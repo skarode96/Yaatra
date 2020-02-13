@@ -9,8 +9,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.WifiDirectP2PHelper.PeerCommunicator;
-import com.tcd.yaatra.WifiDirectP2PHelper.models.TravellerInfo;
-import com.tcd.yaatra.WifiDirectP2PHelper.models.TravellerStatus;
+import com.tcd.yaatra.repository.models.TravellerInfo;
+import com.tcd.yaatra.repository.models.TravellerStatus;
 import com.tcd.yaatra.databinding.ActivityPeerToPeerBinding;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,11 +41,13 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        communicator = new PeerCommunicator(this, "JP");
         textView = layoutDataBinding.textView2;
-
+        initializePeerCommunicator();
         checkIfLocationPermissionGranted();
+    }
+
+    private void initializePeerCommunicator(){
+        communicator = new PeerCommunicator(this, "JP");
     }
 
     private void checkIfLocationPermissionGranted(){
@@ -88,21 +90,32 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
 
     @Override
     protected void onPause() {
-        communicator.cleanup();
+        peers.clear();
+        showPeers();
+
+        if(communicator != null){
+            communicator.cleanup();
+            communicator = null;
+        }
         super.onPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
+        initializePeerCommunicator();
         communicator.registerPeerActivityListener();
     }
 
     @Override
     protected void onDestroy() {
+        peers.clear();
+        showPeers();
 
-        communicator.cleanup();
+        if(communicator != null) {
+            communicator.cleanup();
+            communicator = null;
+        }
         super.onDestroy();
     }
 
@@ -118,7 +131,7 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
 
         peers.clear();
 
-        peerTravellers.values().forEach(info-> addPeerAddress(info.getIpAddress()));
+        peerTravellers.values().forEach(info-> addPeerAddress(info.getUserName()));
 
         showPeers();
     }

@@ -22,6 +22,7 @@
     <string name="test_username">test</string>
     <string name="password">qwerty12340</string>
     <string name="logout">logout</string>
+    <string name="peer2peer">Peer2Peer</string>
 
     <string-array name="Gender">
         <item>Gender</item>

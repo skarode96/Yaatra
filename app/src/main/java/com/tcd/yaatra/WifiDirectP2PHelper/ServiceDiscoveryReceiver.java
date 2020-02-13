@@ -69,5 +69,9 @@ public class ServiceDiscoveryReceiver extends BroadcastReceiver {
             manager.requestConnectionInfo(channel, connectionInfoListener);
 
         }
+
+        //else if(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)){
+
+        //}
     }
 }
