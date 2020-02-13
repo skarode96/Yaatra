@@ -36,13 +36,12 @@ public class P2pSerializerDeserializerTest {
         assertNotNull(serializedEncryptedTravellerInfo);
         assertEquals(1, serializedEncryptedTravellerInfo.size());
 
-        String encryptedUserNameKey = serializedEncryptedTravellerInfo.keySet().iterator().next();
+        Integer userIdKey = Integer.parseInt(serializedEncryptedTravellerInfo.keySet().iterator().next());
 
-        String expectedTravellerUserName = dummyTraveller.getUserName();
         String expectedTravellerInfo = getSerializedTravellerInfo(dummyTraveller);
 
-        assertEquals(expectedTravellerUserName, EncryptionUtils.decrypt(encryptedUserNameKey));
-        assertEquals(expectedTravellerInfo, EncryptionUtils.decrypt(serializedEncryptedTravellerInfo.get(encryptedUserNameKey)));
+        assertEquals(dummyTraveller.getUserId(), userIdKey);
+        assertEquals(expectedTravellerInfo, EncryptionUtils.decrypt(serializedEncryptedTravellerInfo.get(dummyTraveller.getUserId().toString())));
     }
 
     @Test
@@ -58,18 +57,19 @@ public class P2pSerializerDeserializerTest {
         assertNotNull(serializedEncryptedTravellerInfo);
         assertEquals(1, serializedEncryptedTravellerInfo.size());
 
-        HashMap<String, TravellerInfo> deserializedTravellerInfoMap = P2pSerializerDeserializer.deserializeFromMap(serializedEncryptedTravellerInfo);
+        HashMap<Integer, TravellerInfo> deserializedTravellerInfoMap = P2pSerializerDeserializer.deserializeFromMap(serializedEncryptedTravellerInfo);
 
         assertNotNull(deserializedTravellerInfoMap);
         assertEquals(1, deserializedTravellerInfoMap.size());
-        assertTrue(deserializedTravellerInfoMap.containsKey(dummyTraveller.getUserName()));
+        assertTrue(deserializedTravellerInfoMap.containsKey(dummyTraveller.getUserId()));
 
-        TravellerInfo deserializedTravellerInfo = deserializedTravellerInfoMap.get(dummyTraveller.getUserName());
+        TravellerInfo deserializedTravellerInfo = deserializedTravellerInfoMap.get(dummyTraveller.getUserId());
 
         assertTravellerEquals(dummyTraveller, deserializedTravellerInfo);
     }
 
     private void assertTravellerEquals(TravellerInfo expectedInfo, TravellerInfo actualInfo){
+        assertEquals(expectedInfo.getUserName(), actualInfo.getUserName());
         assertEquals(expectedInfo.getAge(), actualInfo.getAge());
         assertEquals(expectedInfo.getGender(), actualInfo.getGender());
         assertEquals(expectedInfo.getSourceLatitude(), actualInfo.getSourceLatitude());
@@ -86,15 +86,17 @@ public class P2pSerializerDeserializerTest {
     }
 
     private TravellerInfo getDummyTravellerInfo(){
+        String travellerUserName = "Traveller";
         String userName = "TestUser";
-        return new TravellerInfo(userName, 20, Gender.Male, 0.0d
+        return new TravellerInfo(1, travellerUserName, 20, Gender.Male, 0.0d
                 , 0.0d, 0.0d, 0.0d
                 , TravellerStatus.SeekingFellowTraveller, LocalDateTime.now(), 0.0d
                 , "1.2.3.4", 12345, LocalDateTime.now(), userName);
     }
 
     private String getSerializedTravellerInfo(TravellerInfo traveller){
-        return  traveller.getAge() + VALUE_SEPARATOR +
+        return  traveller.getUserName() + VALUE_SEPARATOR +
+                traveller.getAge() + VALUE_SEPARATOR +
                 traveller.getGender() + VALUE_SEPARATOR +
                 traveller.getSourceLatitude() + VALUE_SEPARATOR +
                 traveller.getSourceLongitude() + VALUE_SEPARATOR +

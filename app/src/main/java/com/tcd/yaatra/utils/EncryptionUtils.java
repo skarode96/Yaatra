@@ -20,8 +20,9 @@ public class EncryptionUtils {
 
     private static final String TAG = "EncryptionUtils";
     private static SecretKey secretKey;
+    private static final String password = "nyi$478H%Osdj@67";
 
-    static byte[] key = "nyi$478H%Osdj@67".getBytes();
+    static byte[] key = password.getBytes();
     static SecureRandom secureRandom;
 
     static {

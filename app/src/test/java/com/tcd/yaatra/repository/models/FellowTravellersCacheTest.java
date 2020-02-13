@@ -15,17 +15,19 @@ public class FellowTravellersCacheTest {
         assertTrue(FellowTravellersCache.getCacheInstance().getFellowTravellers().isEmpty());
 
         String appUserName = "TestUser";
+        Integer appUserId = 1;
+        Integer fellowTravellerUserId = 2;
         String fellowTravellerUserName = "FellowTraveller";
 
-        HashMap<String, TravellerInfo> fellowTravellers = new HashMap<>();
-        fellowTravellers.put(fellowTravellerUserName, getDummyTraveller(fellowTravellerUserName));
+        HashMap<Integer, TravellerInfo> fellowTravellers = new HashMap<>();
+        fellowTravellers.put(fellowTravellerUserId, getDummyTraveller(fellowTravellerUserId, fellowTravellerUserName));
         FellowTravellersCache.getCacheInstance().addOrUpdate(appUserName, fellowTravellers);
 
-        HashMap<String, TravellerInfo> cacheEntry = FellowTravellersCache.getCacheInstance().getFellowTravellers();
+        HashMap<Integer, TravellerInfo> cacheEntry = FellowTravellersCache.getCacheInstance().getFellowTravellers();
         assertEquals(1, cacheEntry.size());
-        assertTrue(cacheEntry.containsKey(fellowTravellerUserName));
+        assertTrue(cacheEntry.containsKey(fellowTravellerUserId));
 
-        TravellerInfo cachedTraveller = cacheEntry.get(fellowTravellerUserName);
+        TravellerInfo cachedTraveller = cacheEntry.get(fellowTravellerUserId);
 
         assertEquals(appUserName, cachedTraveller.getInfoProvider());
     }
@@ -35,13 +37,15 @@ public class FellowTravellersCacheTest {
 
         FellowTravellersCache.getCacheInstance().clear();
 
-        String appUserName = "TestUser";
+        Integer fellowTravellerUserId = 1;
+        String fellowTravellerUserName = "FellowTraveller";
+        String appUserName = "appUser";
 
-        HashMap<String, TravellerInfo> fellowTravellers = new HashMap<>();
-        fellowTravellers.put(appUserName, getDummyTraveller(appUserName));
+        HashMap<Integer, TravellerInfo> fellowTravellers = new HashMap<>();
+        fellowTravellers.put(fellowTravellerUserId, getDummyTraveller(fellowTravellerUserId, fellowTravellerUserName));
         FellowTravellersCache.getCacheInstance().addOrUpdate(appUserName, fellowTravellers);
 
-        HashMap<String, TravellerInfo> cacheEntry = FellowTravellersCache.getCacheInstance().getFellowTravellers();
+        HashMap<Integer, TravellerInfo> cacheEntry = FellowTravellersCache.getCacheInstance().getFellowTravellers();
         assertEquals(1, cacheEntry.size());
 
         FellowTravellersCache.getCacheInstance().clear();
@@ -50,8 +54,8 @@ public class FellowTravellersCacheTest {
         assertEquals(0, cacheEntry.size());
     }
 
-    private TravellerInfo getDummyTraveller(String userName){
-        return new TravellerInfo(userName, 20, Gender.Male, 0.0d
+    private TravellerInfo getDummyTraveller(Integer userId, String userName){
+        return new TravellerInfo(userId, userName, 20, Gender.Male, 0.0d
                 , 0.0d, 0.0d, 0.0d
                 , TravellerStatus.SeekingFellowTraveller, LocalDateTime.now(), 0.0d
                 , "1.2.3.4", 12345, LocalDateTime.now(), userName);

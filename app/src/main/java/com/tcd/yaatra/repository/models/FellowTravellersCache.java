@@ -17,22 +17,22 @@ public class FellowTravellersCache {
 
     //endregion
 
-    private final HashMap<String, TravellerInfo> fellowTravellers = new HashMap<>();
+    private final HashMap<Integer, TravellerInfo> fellowTravellers = new HashMap<>();
 
-    public HashMap<String, TravellerInfo> getFellowTravellers(){
+    public HashMap<Integer, TravellerInfo> getFellowTravellers(){
         return new HashMap<>(fellowTravellers);
     }
 
-    public boolean addOrUpdate(String appUserName, HashMap<String, TravellerInfo> receivedPeerTravellersInfo ){
+    public boolean addOrUpdate(String appUserName, HashMap<Integer, TravellerInfo> receivedPeerTravellersInfo ){
         boolean isCacheUpdated = false;
 
-        Iterator<String> keyIterator = receivedPeerTravellersInfo.keySet().iterator();
+        Iterator<Integer> keyIterator = receivedPeerTravellersInfo.keySet().iterator();
 
         while (keyIterator.hasNext()){
-            String userNameKey = keyIterator.next();
-            TravellerInfo info = receivedPeerTravellersInfo.get(userNameKey);
+            Integer userIdKey = keyIterator.next();
+            TravellerInfo info = receivedPeerTravellersInfo.get(userIdKey);
 
-            isCacheUpdated = addOrUpdateCache(appUserName, userNameKey, info);
+            isCacheUpdated = addOrUpdateCache(userIdKey, appUserName, info);
         }
 
         return isCacheUpdated;
@@ -42,14 +42,14 @@ public class FellowTravellersCache {
         fellowTravellers.clear();
     }
 
-    private boolean addOrUpdateCache(String appUserName, String userNameKey, TravellerInfo receivedInfo) {
+    private boolean addOrUpdateCache(Integer userIdKey, String appUserName, TravellerInfo receivedInfo) {
 
         boolean isCacheUpdated = false;
 
         //Is fellow traveller already existing in cache?
-        if(fellowTravellers.containsKey(userNameKey)){
+        if(fellowTravellers.containsKey(userIdKey)){
 
-            TravellerInfo existingCachedInfo = fellowTravellers.get(userNameKey);
+            TravellerInfo existingCachedInfo = fellowTravellers.get(userIdKey);
 
             if(!isInformationReceivedThroughHop(receivedInfo)
                 && !existingCachedInfo.getInfoProvider().equals(appUserName)){
@@ -58,7 +58,7 @@ public class FellowTravellersCache {
                 //Provide newly received information to other peers with provider as the current app user
                 receivedInfo.setInfoProvider(appUserName);
 
-                fellowTravellers.replace(receivedInfo.getUserName(), receivedInfo);
+                fellowTravellers.replace(receivedInfo.getUserId(), receivedInfo);
                 isCacheUpdated = true;
             }
             else if(!isInformationReceivedThroughHop(receivedInfo)
@@ -96,7 +96,7 @@ public class FellowTravellersCache {
             }
             //else information is received through a hop
 
-            fellowTravellers.put(userNameKey, receivedInfo);
+            fellowTravellers.put(userIdKey, receivedInfo);
             isCacheUpdated = true;
         }
         return isCacheUpdated;
@@ -112,7 +112,7 @@ public class FellowTravellersCache {
             existingCachedInfo.setStatus(receivedInfo.getStatus());
             existingCachedInfo.setStatusUpdateTime(receivedInfo.getStatusUpdateTime());
 
-            fellowTravellers.replace(receivedInfo.getUserName(), existingCachedInfo);
+            fellowTravellers.replace(receivedInfo.getUserId(), existingCachedInfo);
 
             return true;
         }

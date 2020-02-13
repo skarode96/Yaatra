@@ -127,7 +127,7 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
         }
     }
 
-    public void showFellowTravellers(HashMap<String, TravellerInfo> peerTravellers){
+    public void showFellowTravellers(HashMap<Integer, TravellerInfo> peerTravellers){
 
         peers.clear();
 

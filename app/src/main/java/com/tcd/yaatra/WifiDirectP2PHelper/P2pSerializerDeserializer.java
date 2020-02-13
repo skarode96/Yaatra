@@ -23,9 +23,8 @@ public class P2pSerializerDeserializer {
 
         allTravellers.forEach(traveller->{
 
-            String encryptedUserName = EncryptionUtils.encrypt(traveller.getUserName());
-
-            String value = traveller.getAge() + VALUE_SEPARATOR +
+            String value = traveller.getUserName() + VALUE_SEPARATOR +
+                    traveller.getAge() + VALUE_SEPARATOR +
                     traveller.getGender() + VALUE_SEPARATOR +
                     traveller.getSourceLatitude() + VALUE_SEPARATOR +
                     traveller.getSourceLongitude() + VALUE_SEPARATOR +
@@ -41,34 +40,34 @@ public class P2pSerializerDeserializer {
 
             String encryptedValue = EncryptionUtils.encrypt(value);
 
-            serializedTravellerInfo.put(encryptedUserName, encryptedValue);
+            serializedTravellerInfo.put(traveller.getUserId().toString(), encryptedValue);
         });
         return serializedTravellerInfo;
     }
 
-    public static HashMap<String, TravellerInfo> deserializeFromMap(Map<String, String> serializedTravellerInfo){
-        HashMap<String, TravellerInfo> allTravellers = new HashMap<>();
+    public static HashMap<Integer, TravellerInfo> deserializeFromMap(Map<String, String> serializedTravellerInfo){
+        HashMap<Integer, TravellerInfo> allTravellers = new HashMap<Integer, TravellerInfo>();
 
-        serializedTravellerInfo.forEach((encryptedUserName, encryptedValue)->{
+        serializedTravellerInfo.forEach((userId, encryptedValue)->{
 
-            String userName = EncryptionUtils.decrypt(encryptedUserName);
             String serializedInfo = EncryptionUtils.decrypt(encryptedValue);
 
             String[] fieldValues = serializedInfo.split(",", -1);
 
             TravellerInfo info =
-                    new TravellerInfo(userName, Integer.parseInt(fieldValues[0]), Gender.valueOf(fieldValues[1])
-                    , Double.parseDouble(fieldValues[2]), Double.parseDouble(fieldValues[3])
-                    , Double.parseDouble(fieldValues[4]), Double.parseDouble(fieldValues[5])
-                    , TravellerStatus.valueOf(fieldValues[6])
-                    , LocalDateTime.parse(fieldValues[7], DATE_TIME_FORMATTER)
-                    , Double.parseDouble(fieldValues[8])
-                    , fieldValues[9]
-                    , Integer.parseInt(fieldValues[10])
-                    , LocalDateTime.parse(fieldValues[11], DATE_TIME_FORMATTER)
-                    , fieldValues[12]);
+                    new TravellerInfo(Integer.parseInt(userId), fieldValues[0], Integer.parseInt(fieldValues[1])
+                    , Gender.valueOf(fieldValues[2])
+                    , Double.parseDouble(fieldValues[3]), Double.parseDouble(fieldValues[4])
+                    , Double.parseDouble(fieldValues[5]), Double.parseDouble(fieldValues[6])
+                    , TravellerStatus.valueOf(fieldValues[7])
+                    , LocalDateTime.parse(fieldValues[8], DATE_TIME_FORMATTER)
+                    , Double.parseDouble(fieldValues[9])
+                    , fieldValues[10]
+                    , Integer.parseInt(fieldValues[11])
+                    , LocalDateTime.parse(fieldValues[12], DATE_TIME_FORMATTER)
+                    , fieldValues[13]);
 
-            allTravellers.put(userName, info);
+            allTravellers.put(Integer.parseInt(userId), info);
         });
 
         return allTravellers;

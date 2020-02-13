@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 public class TravellerInfo {
 
+    private Integer userId;
     private String userName = "";
     private int age;
     private Gender gender = Gender.NotSpecified;
@@ -19,7 +20,7 @@ public class TravellerInfo {
     private LocalDateTime statusUpdateTime = LocalDateTime.now();
     private String infoProvider = "";
 
-    public TravellerInfo(String userName, int age, Gender gender
+    public TravellerInfo(Integer userId, String userName, int age, Gender gender
             , Double sourceLatitude, Double sourceLongitude
             , Double destinationLatitude, Double destinationLongitude
             , TravellerStatus status, LocalDateTime requestStartTime
@@ -27,6 +28,7 @@ public class TravellerInfo {
             , LocalDateTime statusUpdateTime
             , String infoProvider){
 
+        setUserId(userId);
         setUserName(userName);
         setAge(age);
         setGender(gender);
@@ -44,6 +46,14 @@ public class TravellerInfo {
     }
 
     //region Getters & Setters
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
 
     public String getUserName() {
         return userName;

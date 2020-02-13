@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.NetworkInfo;
 import android.net.wifi.p2p.WifiP2pDevice;
+import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.ConnectionInfoListener;
 import android.util.Log;
@@ -70,8 +71,12 @@ public class ServiceDiscoveryReceiver extends BroadcastReceiver {
 
         }
 
-        //else if(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)){
+        else if(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)){
 
-        //}
+            Log.d(TAG, "Peer Changed");
+
+            WifiP2pDeviceList devices = (WifiP2pDeviceList)intent.getParcelableExtra(WifiP2pManager.EXTRA_P2P_DEVICE_LIST);
+
+        }
     }
 }
