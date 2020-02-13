@@ -136,8 +136,8 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
     public void showRoute() {
 
         Bundle bundle = getIntent().getExtras();
-        double latitude = bundle.getDouble("Latitude");
-        double longitude = bundle.getDouble("Longitude");
+        double latitude = bundle.getDouble("destLatitude");
+        double longitude = bundle.getDouble("destLongitude");
         destinationPosition = Point.fromLngLat(longitude,latitude);
         originPosition = Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),locationComponent.getLastKnownLocation().getLatitude());
         getRoute(originPosition,destinationPosition);

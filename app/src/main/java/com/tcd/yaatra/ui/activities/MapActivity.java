@@ -229,8 +229,8 @@ public class MapActivity extends BaseActivity<ActivityMapBinding> implements OnM
         Bundle bundle = new Bundle();
         double latitude = destination.latitude();
         double longitide = destination.longitude();
-        bundle.putDouble("Latitude",latitude);
-        bundle.putDouble("Longitude",longitide);
+        bundle.putDouble("destLatitude",latitude);
+        bundle.putDouble("destLongitude",longitide);
         Toast.makeText(this,String.valueOf(latitude),Toast.LENGTH_SHORT).show();
         mapIntent.putExtras(bundle);
         startActivity(mapIntent);
