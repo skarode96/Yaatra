@@ -54,7 +54,7 @@ public class MenuContainerActivity extends BaseActivity<ActivityMenuBinding> imp
                 break;
             default: break;
             case R.id.peer2peer:
-                Intent intent = new Intent(MenuActivity.this,PeerToPeerActivity.class);
+                Intent intent = new Intent(MenuContainerActivity.this,PeerToPeerActivity.class);
                 startActivity(intent);
                 break;
         }
