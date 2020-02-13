@@ -107,7 +107,7 @@
                         android:layout_height="35dp"
                         android:layout_alignParentRight="true"
                         android:layout_marginRight="16dp"
-                        app:srcCompat="@drawable/ic_show_password" />
+                        app:srcCompat="@drawable/ic_hide_password" />
 
                 </RelativeLayout>
 

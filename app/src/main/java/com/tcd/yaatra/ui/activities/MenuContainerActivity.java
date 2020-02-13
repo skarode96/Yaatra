@@ -1,6 +1,7 @@
 package com.tcd.yaatra.ui.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -8,10 +9,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.room.Database;
 
 import com.google.android.material.navigation.NavigationView;
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.databinding.ActivityMenuBinding;
+import com.tcd.yaatra.services.api.yaatra.models.UserInfo;
+import com.tcd.yaatra.utils.DatabaseUtils;
 import com.tcd.yaatra.utils.SharedPreferenceUtils;
 
 import org.jetbrains.annotations.NotNull;
@@ -19,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 public class MenuContainerActivity extends BaseActivity<ActivityMenuBinding> implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawer;
+    SharedPreferences loginPreferences;
 
     @Override
     int getLayoutResourceId() {
@@ -52,11 +57,15 @@ public class MenuContainerActivity extends BaseActivity<ActivityMenuBinding> imp
             case R.id.logout:
                 handleLogout();
                 break;
-            default: break;
             case R.id.peer2peer:
                 Intent intent = new Intent(MenuContainerActivity.this,PeerToPeerActivity.class);
                 startActivity(intent);
                 break;
+            case R.id.mapbox:
+                intent = new Intent(MenuContainerActivity.this, MapActivity.class);
+                startActivity(intent);
+                break;
+            default: break;
         }
         this.drawer.closeDrawer(GravityCompat.START);
         return true;

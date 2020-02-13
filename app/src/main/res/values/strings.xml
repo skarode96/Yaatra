@@ -23,6 +23,18 @@
     <string name="password">qwerty12340</string>
     <string name="logout">logout</string>
     <string name="peer2peer">Peer2Peer</string>
+    <string name="set_region_name_hint">Search Area</string>
+    <string name="dialog_title">Name new region</string>
+    <string name="dialog_message">Downloads the map region you currently are viewing</string>
+    <string name="dialog_positive_button">Download</string>
+    <string name="dialog_toast">Region name cannot be empty.</string>
+    <string name="dialog_negative_button">Cancel</string>
+    <string name="navigate_title">Offline saved Maps</string>
+    <string name="navigate_positive_button">Navigate to</string>
+    <string name="navigate_neutral_button_title">Delete</string>
+    <string name="navigate_negative_button_title">Cancel</string>
+    <string name="toast_no_regions_yet">You have no downloaded regions yet.</string>
+    <string name="toast_region_deleted">Region deleted</string>
 
     <string-array name="Gender">
         <item>Gender</item>
