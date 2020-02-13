@@ -8,6 +8,7 @@ import com.tcd.yaatra.ui.activities.MapActivity;
 import com.tcd.yaatra.ui.activities.MenuContainerActivity;
 import com.tcd.yaatra.ui.activities.PeerToPeerActivity;
 import com.tcd.yaatra.ui.activities.RegisterActivity;
+import com.tcd.yaatra.ui.activities.RouteInfo;
 
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
@@ -19,7 +20,7 @@ public interface ActivityModule {
     LoginActivity contributeLoginActivity();
 
     @ContributesAndroidInjector
-    DailyCommuteActivity contributetDailyCommuteActivity();
+    DailyCommuteActivity contributeDailyCommuteActivity();
 
     @ContributesAndroidInjector
     DailyCommuteListActivity contributeUserActivity();
@@ -37,5 +38,8 @@ public interface ActivityModule {
     RegisterActivity contributeRegisterActivity();
 
     @ContributesAndroidInjector
-    MapActivity contributesMapActivity();
+    MapActivity contributeMapActivity();
+
+    @ContributesAndroidInjector
+    RouteInfo contributeRouteinfo();
 }
