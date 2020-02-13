@@ -92,24 +92,20 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
         layoutDataBinding.startButton.setOnClickListener(view -> handleOnStartButtonClick());
     }
 
-    private void handleOnStartButtonClick() {/*
-        NavigationViewOptions options = NavigationViewOptions.builder()
-                        .directionsRoute(currentGivenRoute)
-                        .navigationListener(this)
-                        .progressChangeListener(this)
-                        .routeListener(this)
-                        .shouldSimulateRoute(true)
-                        .build();
+    private void handleOnStartButtonClick() {
 
-        NavigationLauncher.startNavigation(RouteInfo.this,setupOptions(currentGivenRoute));
-        startNavigation(currentGivenRoute);*/
+        NavigationLauncherOptions options = NavigationLauncherOptions.builder()
+                .directionsRoute(currentGivenRoute)
+                .shouldSimulateRoute(true)
+                .build();
+
+        NavigationLauncher.startNavigation(RouteInfo.this,options);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Mapbox.getInstance(this,getString(R.string.access_token));
-        setContentView(R.layout.activity_routeinfo);
         mapView = layoutDataBinding.mapView;
         startButton = layoutDataBinding.startButton;
         mapView.onCreate(savedInstanceState);
@@ -176,8 +172,50 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
     }
 
     @Override
-    public void onPermissionResult(boolean granted) {
+    public void onMapReady(MapboxMap mapboxMap) {
+        map = mapboxMap;
+//        map.setMinZoomPreference(15);
+//        map.setStyle(Style.MAPBOX_STREETS);
+        mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
+            @Override
+            public void onStyleLoaded(@NonNull Style style) {
+                enableLocation(style);
 
+            }
+        });
+
+    }
+    @SuppressLint("WrongConstant")
+    private void enableLocation(Style loadedMapStyle){
+
+        if(PermissionsManager.areLocationPermissionsGranted(this)){
+            LocationComponentOptions locationComponentOptions = LocationComponentOptions.builder(this).build();
+            locationComponent = map.getLocationComponent();
+            locationComponent.activateLocationComponent(LocationComponentActivationOptions.builder(this, map.getStyle()).build());
+            locationComponent.setLocationComponentEnabled(true);
+            locationComponent.setCameraMode(CameraMode.TRACKING);
+            showRoute();
+        } else{
+            permissionsManager = new PermissionsManager(this);
+            permissionsManager.requestLocationPermissions(this);
+        }
+    }
+
+    @Override
+    public void onPermissionResult(boolean granted) {
+        if(granted){
+            enableLocation(map.getStyle());
+        }
+        else
+        {
+            Toast.makeText(this,"Permissions not granted",Toast.LENGTH_SHORT).show();
+            finish();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        permissionsManager.onRequestPermissionsResult(requestCode,permissions,grantResults);
     }
 
     @Override
@@ -304,8 +342,4 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
         return Point.fromLngLat(lastKnownLocation.getLongitude(), lastKnownLocation.getLatitude());
     }
 
-    @Override
-    public void onMapReady(@NonNull MapboxMap mapboxMap) {
-
-    }
 }

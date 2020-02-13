@@ -18,6 +18,7 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.widget.Button;
+import android.view.View;
 import android.widget.SearchView;
 
 import com.mapbox.geojson.Point;
@@ -95,7 +96,8 @@ public class MapActivity extends BaseActivity<ActivityMapBinding> implements OnM
     @Override
     public void initEventHandlers() {
         super.initEventHandlers();
-        layoutDataBinding.listButton.setOnClickListener(view -> handleOnListButtonClick());
+        layoutDataBinding.searchDest.setOnQueryTextListener(this);
+        layoutDataBinding.listButton.setOnClickListener(view -> handleOnListButtonClick(view));
         layoutDataBinding.downloadButton.setOnClickListener(view -> handleOnDownloadClick());
         layoutDataBinding.Navigate.setOnClickListener(view -> {
             try {
@@ -111,8 +113,6 @@ public class MapActivity extends BaseActivity<ActivityMapBinding> implements OnM
     public void onCreate(@Nullable Bundle savedInstanceState) {
         Mapbox.getInstance(this,getString(R.string.access_token));
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_map);
-        //mapView = findViewById(layoutDataBinding.mapViewDestination);
         mapView = findViewById(R.id.mapViewDestination);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
@@ -174,8 +174,9 @@ public class MapActivity extends BaseActivity<ActivityMapBinding> implements OnM
         registerReceiver(MyReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
     }
 
-    private void handleOnListButtonClick() {
-        displayOfflineList(mapView, "");// here
+    private void handleOnListButtonClick(View view) {
+        Toast.makeText(this,"Handling list button!",Toast.LENGTH_SHORT).show();
+        //displayOfflineList(view, "");// here
     }
 
     private void handleOnDownloadClick() {
@@ -201,7 +202,6 @@ public class MapActivity extends BaseActivity<ActivityMapBinding> implements OnM
                                 Toast.makeText(MapActivity.this, getString(R.string.dialog_toast), Toast.LENGTH_SHORT).show();
                             } else {
                                 // Begin download process
-
                                 downloadRegion(regionName);
                             }
                         }

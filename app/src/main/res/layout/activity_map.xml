@@ -1,31 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
-    <RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:mapbox="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.activities.MapActivity">
-
-    <LinearLayout
-        android:id="@+id/top_navigation"
+    xmlns:tools="http://schemas.android.com/tools">
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:elevation="8dp"
-        android:paddingBottom="8dp"
-        android:orientation="horizontal">
+        android:layout_height="match_parent"
+        tools:context=".ui.activities.MapActivity">
+
+        <LinearLayout
+            android:id="@+id/top_navigation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:elevation="8dp"
+            android:paddingBottom="8dp"
+            android:orientation="horizontal">
 
         <SearchView
             android:id="@+id/searchDest"
             android:layout_width="300dp"
             android:layout_height="match_parent"
-            android:background="@color/md_grey_200"
             android:layout_marginStart="1dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="1dp"
-            android:layout_marginBottom="1dp">
+            android:layout_marginBottom="1dp"
+            android:background="@color/md_grey_200">
 
         </SearchView>
 
@@ -38,67 +37,67 @@
             android:text="Navigate"
             android:visibility="gone" />
 
-    </LinearLayout>
+        </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/mapBox_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:orientation="horizontal">
-
-        <com.mapbox.mapboxsdk.maps.MapView
-            android:id="@+id/mapViewDestination"
+        <LinearLayout
+            android:id="@+id/mapBox_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/top_navigation"
-            android:layout_marginTop="1dp"
-            android:layout_marginBottom="50dp"
-            mapbox:layout_constraintBottom_toBottomOf="parent"
-            mapbox:layout_constraintEnd_toEndOf="parent"
-            mapbox:layout_constraintHorizontal_bias="0.0"
-            mapbox:layout_constraintStart_toStartOf="parent"
-            mapbox:layout_constraintTop_toTopOf="parent"
-            mapbox:layout_constraintVertical_bias="1.0"
-            mapbox:mapbox_cameraTargetLat="53.3498"
-            mapbox:mapbox_cameraTargetLng="-6.2603"
-            mapbox:mapbox_cameraZoom="12">
-
-
-        </com.mapbox.mapboxsdk.maps.MapView>
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:id="@+id/bottom_navigation"
-        style="?android:attr/buttonBarStyle"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_alignParentBottom="true"
-        android:background="@color/md_grey_200"
-        android:elevation="8dp"
-        android:orientation="horizontal"
-        android:paddingTop="8dp">
-
-        <Button
-            android:id="@+id/listButton"
-            android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="1dp"
-            android:layout_weight="1"
-            android:text="List" />
+            android:layout_alignParentTop="true"
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/downloadButton"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="1dp"
-            android:layout_marginEnd="10dp"
-            android:layout_weight="1"
-            android:clickable="true"
-            android:text="Download" />
-    </LinearLayout>
+            <com.mapbox.mapboxsdk.maps.MapView
+                android:id="@+id/mapViewDestination"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/top_navigation"
+                android:layout_marginTop="1dp"
+                android:layout_marginBottom="50dp"
+                mapbox:layout_constraintBottom_toBottomOf="parent"
+                mapbox:layout_constraintEnd_toEndOf="parent"
+                mapbox:layout_constraintHorizontal_bias="0.0"
+                mapbox:layout_constraintStart_toStartOf="parent"
+                mapbox:layout_constraintTop_toTopOf="parent"
+                mapbox:layout_constraintVertical_bias="1.0"
+                mapbox:mapbox_cameraTargetLat="53.3498"
+                mapbox:mapbox_cameraTargetLng="-6.2603"
+                mapbox:mapbox_cameraZoom="12">
 
-</RelativeLayout>
+
+            </com.mapbox.mapboxsdk.maps.MapView>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/bottom_navigation"
+            style="?android:attr/buttonBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/md_grey_200"
+            android:elevation="8dp"
+            android:orientation="horizontal"
+            android:paddingTop="8dp">
+
+            <Button
+                android:id="@+id/listButton"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:layout_weight="1"
+                android:text="List" />
+
+            <Button
+                android:id="@+id/downloadButton"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:text="Download" />
+        </LinearLayout>
+
+    </RelativeLayout>
 
 </layout>
