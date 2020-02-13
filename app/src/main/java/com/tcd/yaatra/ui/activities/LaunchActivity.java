@@ -25,7 +25,7 @@ public class LaunchActivity extends BaseActivity<ActivityLaunchBinding> {
         Handler handler = new Handler();
         handler.postDelayed(() -> {
             if(!SharedPreferenceUtils.getAuthToken().equals(SharedPreferenceUtils.DEFAULT_TOKEN)) {
-                Intent myIntent = new Intent(LaunchActivity.this, MenuActivity.class);
+                Intent myIntent = new Intent(LaunchActivity.this, MenuContainerActivity.class);
                 startActivity(myIntent);
             } else {
                 Intent myIntent = new Intent(LaunchActivity.this, LoginActivity.class);

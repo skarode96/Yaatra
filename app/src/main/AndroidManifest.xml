@@ -24,10 +24,10 @@
         <activity android:name=".ui.activities.LoginActivity" />
         <activity android:name=".ui.activities.PeerToPeerActivity" />
         <activity android:name=".ui.activities.MapActivity" />
-        <activity android:name=".ui.activities.MapBoxActivity" />
+        <activity android:name=".ui.activities.MapBoxInputFragment" />
         <activity android:name=".ui.activities.DailyCommuteListActivity" />
         <activity android:name=".ui.activities.DailyCommuteActivity" />
-        <activity android:name=".ui.activities.MenuActivity" android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".ui.activities.MenuContainerActivity" android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.activities.LaunchActivity"
             android:label="Yaatra">

@@ -73,7 +73,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
 
                         case SUCCESS:
                             layoutDataBinding.progressBarOverlay.setVisibility(View.GONE);
-                            Intent myIntent = new Intent(LoginActivity.this, MenuActivity.class);
+                            Intent myIntent = new Intent(LoginActivity.this, MenuContainerActivity.class);
                             SharedPreferenceUtils.setAuthToken(loginResponse.getData().getAuthToken());
                             startActivity(myIntent);
                             finish();

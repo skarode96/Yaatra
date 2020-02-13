@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+<layout>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.activities.MapBoxActivity">
+    tools:context=".ui.activities.MapBoxInputFragment">
 
     <ImageView
         android:id="@+id/formLogo"
@@ -69,7 +70,7 @@
             android:selectAllOnFocus="true"
             android:textStyle="bold"
             android:visibility="visible"
-            app:layout_constraintBottom_toTopOf="@+id/button"
+            app:layout_constraintBottom_toTopOf="@+id/goToDestination"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -77,7 +78,7 @@
             app:layout_constraintVertical_bias="0.0" />
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/goToDestination"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:layout_gravity="center"
@@ -86,7 +87,6 @@
             android:paddingLeft="35dp"
             android:paddingRight="30dp"
             android:text="Go to Destination"
-            android:onClick="showRoutes"
             android:textColor="@color/white"
             android:textStyle="bold" />
 
@@ -94,3 +94,4 @@
 
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -5,6 +5,7 @@ import android.app.Application;
 import com.tcd.yaatra.App;
 import com.tcd.yaatra.di.modules.ActivityModule;
 import com.tcd.yaatra.di.modules.AppModule;
+import com.tcd.yaatra.di.modules.FragmentModule;
 import com.tcd.yaatra.di.modules.RepositoryModule;
 import com.tcd.yaatra.di.modules.YaatraApiModule;
 
@@ -19,6 +20,7 @@ import dagger.android.AndroidInjectionModule;
 @Component(modules = {
         AppModule.class,
         ActivityModule.class,
+        FragmentModule.class,
         YaatraApiModule.class,
         RepositoryModule.class,
         ViewModelModule.class,

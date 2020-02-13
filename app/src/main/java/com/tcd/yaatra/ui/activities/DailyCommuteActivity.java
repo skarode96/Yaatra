@@ -51,7 +51,7 @@ public class DailyCommuteActivity extends BaseActivity<ActivityDailyCommuteBindi
     }
 
     private void handleShowRoute() {
-        Intent myIntent = new Intent(DailyCommuteActivity.this, MapBoxActivity.class);
+        Intent myIntent = new Intent(DailyCommuteActivity.this, MapBoxInputFragment.class);
         startActivity(myIntent);
     }
 

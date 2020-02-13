@@ -4,7 +4,7 @@ import com.tcd.yaatra.ui.activities.DailyCommuteActivity;
 import com.tcd.yaatra.ui.activities.DailyCommuteListActivity;
 import com.tcd.yaatra.ui.activities.LaunchActivity;
 import com.tcd.yaatra.ui.activities.LoginActivity;
-import com.tcd.yaatra.ui.activities.MenuActivity;
+import com.tcd.yaatra.ui.activities.MenuContainerActivity;
 import com.tcd.yaatra.ui.activities.PeerToPeerActivity;
 import com.tcd.yaatra.ui.activities.RegisterActivity;
 
@@ -30,7 +30,7 @@ public interface ActivityModule {
     PeerToPeerActivity contributePeerToPeerActivity();
 
     @ContributesAndroidInjector
-    MenuActivity contributeMenuActivity();
+    MenuContainerActivity contributeMenuContainerActivity();
 
     @ContributesAndroidInjector
     RegisterActivity contributeRegisterActivity();
