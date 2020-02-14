@@ -80,7 +80,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
                             Intent myIntent = new Intent(LoginActivity.this, MenuContainerActivity.class);
                             SharedPreferenceUtils.setAuthToken(loginResponse.getData().getAuthToken());
                             SharedPreferenceUtils.setUserName(loginResponse.getData().getUserInfo().getUsername());
-                            userDb.userInfoDao().insertUser(loginResponse.getData().getUserInfo());
+                            //userDb.userInfoDao().insertUser(loginResponse.getData().getUserInfo());
                             startActivity(myIntent);
                             finish();
                             break;

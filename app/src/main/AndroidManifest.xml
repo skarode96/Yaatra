@@ -24,6 +24,7 @@
         <activity android:name=".ui.activities.LoginActivity" />
         <activity android:name=".ui.activities.PeerToPeerActivity" />
         <activity android:name=".ui.activities.MapActivity" />
+        <activity android:name=".ui.activities.RouteInfo" />
         <activity android:name=".ui.activities.MapBoxInputFragment" />
         <activity android:name=".ui.activities.DailyCommuteListActivity" />
         <activity android:name=".ui.activities.DailyCommuteActivity" />
