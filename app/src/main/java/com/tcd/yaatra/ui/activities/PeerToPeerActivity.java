@@ -1,6 +1,8 @@
 package com.tcd.yaatra.ui.activities;
 
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -42,8 +44,18 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         textView = layoutDataBinding.textView2;
+
+        enableWiFi();
         initializePeerCommunicator();
         checkIfLocationPermissionGranted();
+    }
+
+    private void enableWiFi(){
+        WifiManager wifiManager = (WifiManager) this.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+
+        if(!wifiManager.isWifiEnabled()){
+            wifiManager.setWifiEnabled(true);
+        }
     }
 
     private void initializePeerCommunicator(){

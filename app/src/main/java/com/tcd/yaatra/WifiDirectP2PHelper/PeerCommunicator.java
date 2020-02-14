@@ -334,15 +334,33 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
     private Runnable mServiceBroadcastingRunnable = new Runnable() {
         @Override
         public void run() {
-            wifiP2pManager.discoverPeers(wifiP2pChannel, new WifiP2pManager.ActionListener() {
+
+            wifiP2pManager.stopPeerDiscovery(wifiP2pChannel, new WifiP2pManager.ActionListener() {
                 @Override
                 public void onSuccess() {
+                    Log.d(TAG, "Stopped peer discovery");
+
+                    wifiP2pManager.discoverPeers(wifiP2pChannel, new WifiP2pManager.ActionListener() {
+                        @Override
+                        public void onSuccess() {
+
+                            Log.d(TAG, "Started peer discovery");
+                        }
+
+                        @Override
+                        public void onFailure(int error) {
+
+                            Log.d(TAG, "Failed to start peer discovery");
+                        }
+                    });
                 }
 
                 @Override
-                public void onFailure(int error) {
+                public void onFailure(int reason) {
+                    Log.d(TAG, "Failed to stop peer discovery");
                 }
             });
+
             serviceBroadcastingHandler
                     .postDelayed(mServiceBroadcastingRunnable, SERVICE_BROADCASTING_INTERVAL);
         }
