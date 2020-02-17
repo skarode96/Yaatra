@@ -175,8 +175,7 @@ public class MapActivity extends BaseActivity<ActivityMapBinding> implements OnM
     }
 
     private void handleOnListButtonClick(View view) {
-        Toast.makeText(this,"Handling list button!",Toast.LENGTH_SHORT).show();
-        //displayOfflineList(view, "");// here
+        displayOfflineList(view, "");// here
     }
 
     private void handleOnDownloadClick() {
