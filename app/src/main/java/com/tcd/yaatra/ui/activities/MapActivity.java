@@ -99,7 +99,7 @@ public class MapActivity extends BaseActivity<ActivityMapBinding> implements OnM
         layoutDataBinding.searchDest.setOnQueryTextListener(this);
         layoutDataBinding.listButton.setOnClickListener(view -> handleOnListButtonClick(view));
         layoutDataBinding.downloadButton.setOnClickListener(view -> handleOnDownloadClick());
-        layoutDataBinding.Navigate.setOnClickListener(view -> {
+        layoutDataBinding.discoverPeer.setOnClickListener(view -> {
             try {
                 handleOnNavigateClick();
             } catch (UnsupportedEncodingException e) {
@@ -117,7 +117,7 @@ public class MapActivity extends BaseActivity<ActivityMapBinding> implements OnM
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
         destinationArea = layoutDataBinding.searchDest;
-        navigateButton = layoutDataBinding.Navigate;
+        navigateButton = layoutDataBinding.discoverPeer;
         destinationArea.setOnQueryTextListener(this);
         MyReceiver= new MyReceiver();
         broadcastIntent();
@@ -225,6 +225,7 @@ public class MapActivity extends BaseActivity<ActivityMapBinding> implements OnM
 
     private void handleOnNavigateClick() throws UnsupportedEncodingException {
         Intent mapIntent = new Intent(MapActivity.this, RouteInfo.class);
+        //Intent mapIntent = new Intent(MapActivity.this, PeerToPeerActivity.class);
         Bundle bundle = new Bundle();
         double latitude = destination.latitude();
         double longitide = destination.longitude();

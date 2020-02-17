@@ -18,7 +18,7 @@
 
         <SearchView
             android:id="@+id/searchDest"
-            android:layout_width="300dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginStart="1dp"
             android:layout_marginTop="10dp"
@@ -29,12 +29,13 @@
         </SearchView>
 
         <Button
-            android:id="@+id/Navigate"
+            android:id="@+id/discoverPeer"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="1dp"
-            android:text="Navigate"
+            android:layout_marginLeft="300dp"
+            android:text="Discover Peers"
             android:visibility="gone" />
 
         </LinearLayout>
