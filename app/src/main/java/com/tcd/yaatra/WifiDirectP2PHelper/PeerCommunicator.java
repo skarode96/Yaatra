@@ -32,8 +32,8 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
     private static final String SERVICE_INSTANCE = "com.tcd.yaatra.WifiDirectService";
     private static final String SERVICE_TYPE = "tcp";
 
-    private static final int SERVICE_BROADCASTING_INTERVAL = 10000;
-    private static final int SERVICE_DISCOVERING_INTERVAL = 10000;
+    private static final int SERVICE_BROADCASTING_INTERVAL = 11111;
+    //private static final int SERVICE_DISCOVERING_INTERVAL = 10000;
 
     private PeerToPeerActivity peerToPeerActivity;
 
@@ -123,13 +123,12 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
             public void onSuccess() {
                 Log.d(TAG, "Started advertising status of travellers");
 
+                registerListenersForFellowTravellers();
+
                 // service broadcasting started
                 serviceBroadcastingHandler
                         .postDelayed(mServiceBroadcastingRunnable,
                                 SERVICE_BROADCASTING_INTERVAL);
-
-                registerListenersForFellowTravellers();
-                subscribeStatusChangeOfPeers();
             }
 
             @Override
@@ -230,9 +229,9 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
 
             @Override
             public void onSuccess() {
-                serviceDiscoveringHandler.postDelayed(
+                /*serviceDiscoveringHandler.postDelayed(
                         mServiceDiscoveringRunnable,
-                        SERVICE_DISCOVERING_INTERVAL);
+                        SERVICE_DISCOVERING_INTERVAL);*/
                 Log.d(TAG, "Service discovery initiated");
             }
 
@@ -345,6 +344,8 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
                         public void onSuccess() {
 
                             Log.d(TAG, "Started peer discovery");
+
+                            subscribeStatusChangeOfPeers();
                         }
 
                         @Override

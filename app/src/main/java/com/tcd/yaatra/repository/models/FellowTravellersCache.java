@@ -102,8 +102,8 @@ public class FellowTravellersCache {
         return isCacheUpdated;
     }
 
-    private boolean isInformationReceivedThroughHop(TravellerInfo receivedInfo){
-        return !receivedInfo.getInfoProvider().equals(receivedInfo.getUserName());
+    private boolean isInformationReceivedThroughHop(TravellerInfo info){
+        return !info.getInfoProvider().equals(info.getUserName());
     }
 
     private boolean copyChangesIfAny(TravellerInfo receivedInfo, TravellerInfo existingCachedInfo){
