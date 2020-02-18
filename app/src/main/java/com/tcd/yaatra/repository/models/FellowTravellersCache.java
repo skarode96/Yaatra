@@ -19,11 +19,17 @@ public class FellowTravellersCache {
 
     private final HashMap<Integer, TravellerInfo> fellowTravellers = new HashMap<>();
 
-    public HashMap<Integer, TravellerInfo> getFellowTravellers(){
-        return new HashMap<>(fellowTravellers);
+    public HashMap<Integer, TravellerInfo> getFellowTravellers(String infoProviderUserName){
+        HashMap<Integer, TravellerInfo> clonedFellowTravellers = new HashMap<>(fellowTravellers);
+
+        clonedFellowTravellers.forEach((key, info)->{
+            info.setInfoProvider(infoProviderUserName);
+        });
+
+        return clonedFellowTravellers;
     }
 
-    public boolean addOrUpdate(String appUserName, HashMap<Integer, TravellerInfo> receivedPeerTravellersInfo ){
+    public boolean addOrUpdate(HashMap<Integer, TravellerInfo> receivedPeerTravellersInfo ){
         boolean isCacheUpdated = false;
 
         Iterator<Integer> keyIterator = receivedPeerTravellersInfo.keySet().iterator();
@@ -32,7 +38,7 @@ public class FellowTravellersCache {
             Integer userIdKey = keyIterator.next();
             TravellerInfo info = receivedPeerTravellersInfo.get(userIdKey);
 
-            isCacheUpdated = addOrUpdateCache(userIdKey, appUserName, info);
+            isCacheUpdated = addOrUpdateCache(userIdKey, info);
         }
 
         return isCacheUpdated;
@@ -42,7 +48,7 @@ public class FellowTravellersCache {
         fellowTravellers.clear();
     }
 
-    private boolean addOrUpdateCache(Integer userIdKey, String appUserName, TravellerInfo receivedInfo) {
+    private boolean addOrUpdateCache(Integer userIdKey, TravellerInfo receivedInfo) {
 
         boolean isCacheUpdated = false;
 
@@ -51,59 +57,14 @@ public class FellowTravellersCache {
 
             TravellerInfo existingCachedInfo = fellowTravellers.get(userIdKey);
 
-            if(!isInformationReceivedThroughHop(receivedInfo)
-                && !existingCachedInfo.getInfoProvider().equals(appUserName)){
-                //This information is directly provided by the fellow traveller
-                //However, existing cached information was received through a hop
-                //Provide newly received information to other peers with provider as the current app user
-                receivedInfo.setInfoProvider(appUserName);
-
-                fellowTravellers.replace(receivedInfo.getUserId(), receivedInfo);
-                isCacheUpdated = true;
-            }
-            else if(!isInformationReceivedThroughHop(receivedInfo)
-                    && existingCachedInfo.getInfoProvider().equals(appUserName)){
-                //This information is directly provided by the fellow traveller
-                //Check for status updates & save if new status is received
-
-                isCacheUpdated = copyChangesIfAny(receivedInfo, existingCachedInfo);
-            }
-            else if(isInformationReceivedThroughHop(receivedInfo)
-                    && !existingCachedInfo.getInfoProvider().equals(appUserName)){
-                //This information is provided through a hop
-                //We already have received information through a hop
-
-                //Update existing information only if received through same hop
-                if(receivedInfo.getInfoProvider().equals(existingCachedInfo.getInfoProvider())) {
-                    isCacheUpdated = copyChangesIfAny(receivedInfo, existingCachedInfo);
-                }
-                //else ignore
-            }
-            else if(isInformationReceivedThroughHop(receivedInfo)
-                    && existingCachedInfo.getInfoProvider().equals(appUserName)){
-                //This information is provided through a hop
-                //However, we have already received information directly from the fellow traveller
-                //Ignore
-            }
+            isCacheUpdated = copyChangesIfAny(receivedInfo, existingCachedInfo);
         }
         //Fellow traveller not present in cache - save the information
         else {
-
-            if(!isInformationReceivedThroughHop(receivedInfo)){
-                //This information is directly provided by the fellow traveller
-                //Provide this information to other peers with provider as the current app user
-                receivedInfo.setInfoProvider(appUserName);
-            }
-            //else information is received through a hop
-
             fellowTravellers.put(userIdKey, receivedInfo);
             isCacheUpdated = true;
         }
         return isCacheUpdated;
-    }
-
-    private boolean isInformationReceivedThroughHop(TravellerInfo info){
-        return !info.getInfoProvider().equals(info.getUserName());
     }
 
     private boolean copyChangesIfAny(TravellerInfo receivedInfo, TravellerInfo existingCachedInfo){
@@ -111,6 +72,7 @@ public class FellowTravellersCache {
 
             existingCachedInfo.setStatus(receivedInfo.getStatus());
             existingCachedInfo.setStatusUpdateTime(receivedInfo.getStatusUpdateTime());
+            existingCachedInfo.setInfoProvider(receivedInfo.getInfoProvider());
 
             fellowTravellers.replace(receivedInfo.getUserId(), existingCachedInfo);
 

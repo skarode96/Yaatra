@@ -109,7 +109,7 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
     }
 
     private void advertiseStatus() {
-        HashMap<Integer, TravellerInfo> allTravellers = FellowTravellersCache.getCacheInstance().getFellowTravellers();
+        HashMap<Integer, TravellerInfo> allTravellers = FellowTravellersCache.getCacheInstance().getFellowTravellers(appUserName);
         allTravellers.put(appUserId, currentUserTravellerInfo);
 
         Map<String, String> serializedRecord = P2pSerializerDeserializer.serializeToMap(allTravellers.values());
@@ -209,10 +209,10 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
                         HashMap<Integer, TravellerInfo> onlyPeerTravellers = new HashMap<>(fellowTravellers);
                         onlyPeerTravellers.remove(appUserId);
 
-                        boolean isCacheUpdated = FellowTravellersCache.getCacheInstance().addOrUpdate(appUserName, onlyPeerTravellers);
+                        boolean isCacheUpdated = FellowTravellersCache.getCacheInstance().addOrUpdate(onlyPeerTravellers);
 
                         if(isCacheUpdated){
-                            peerToPeerActivity.showFellowTravellers(FellowTravellersCache.getCacheInstance().getFellowTravellers());
+                            peerToPeerActivity.showFellowTravellers(FellowTravellersCache.getCacheInstance().getFellowTravellers(appUserName));
 
                             //Start advertising newly discovered/updated fellow travellers
                             advertiseStatusAndDiscoverFellowTravellers(currentUserTravellerInfo.getStatus());
