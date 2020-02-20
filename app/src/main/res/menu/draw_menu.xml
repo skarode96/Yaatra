@@ -28,5 +28,10 @@
             android:icon="@drawable/ic_logout"
             android:title="@string/logout" />
 
+        <item
+            android:id="@+id/tempdaily"
+            android:icon="@drawable/ic_logout"
+            android:title="tempdaily" />
+
     </group>
 </menu>

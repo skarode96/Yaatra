@@ -1,5 +1,6 @@
 package com.tcd.yaatra.di.modules;
 
+import com.tcd.yaatra.ui.activities.DailyCommuteMapFragment;
 import com.tcd.yaatra.ui.activities.DailyFragment;
 import com.tcd.yaatra.ui.activities.MapFragment;
 import com.tcd.yaatra.ui.activities.MapBoxInputFragment;
@@ -21,5 +22,8 @@ public interface FragmentModule {
     SettingsFragment contributeSettingsFragment();
 
     @ContributesAndroidInjector
-    MapFragment contributeMapActivity();
+    MapFragment contributeMapFragment();
+
+    @ContributesAndroidInjector
+    DailyCommuteMapFragment contributeDailyCommuteMapFragment();
 }

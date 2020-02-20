@@ -2,6 +2,7 @@ package com.tcd.yaatra.di.modules;
 
 import com.tcd.yaatra.ui.activities.DailyCommuteActivity;
 import com.tcd.yaatra.ui.activities.DailyCommuteListActivity;
+import com.tcd.yaatra.ui.activities.DailyCommuteMapFragment;
 import com.tcd.yaatra.ui.activities.LaunchActivity;
 import com.tcd.yaatra.ui.activities.LoginActivity;
 import com.tcd.yaatra.ui.activities.MenuContainerActivity;
@@ -38,4 +39,8 @@ public interface ActivityModule {
 
     @ContributesAndroidInjector
     RouteInfo contributeRouteinfo();
+
+    @ContributesAndroidInjector
+    DailyCommuteMapFragment contributeDailyCommuteMapActivity();
+
 }

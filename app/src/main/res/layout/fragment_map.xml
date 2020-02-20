@@ -31,6 +31,7 @@
         </SearchView>
 
             <RadioGroup
+                android:checkedButton="@+id/walk"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -39,12 +40,12 @@
                 <RadioButton android:id="@+id/walk"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Walk"
+                    android:drawableLeft="@drawable/walk_icon"
                     android:gravity="center"/>
                 <RadioButton android:id="@+id/drive"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Drive"
+                    android:drawableLeft="@drawable/car_icon"
                     android:gravity="center" />
 
                 <RadioButton
@@ -52,7 +53,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="Bicycle" />
+                    android:drawableLeft="@drawable/bicycle_icon" />
             </RadioGroup>
         </LinearLayout>
 
@@ -124,9 +125,9 @@
             android:id="@+id/bottom_navigation"
             style="?android:attr/buttonBarStyle"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
+            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:background="@color/md_grey_200"
+            android:background="@color/colorAccent"
             android:elevation="8dp"
             android:orientation="horizontal"
             android:paddingTop="8dp">
@@ -136,6 +137,7 @@
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="1dp"
+                android:background="@color/md_grey_200"
                 android:layout_weight="1"
                 android:text="List" />
 
@@ -146,6 +148,7 @@
                 android:layout_marginTop="1dp"
                 android:layout_marginEnd="10dp"
                 android:layout_weight="1"
+                android:background="@color/md_grey_200"
                 android:clickable="true"
                 android:text="Download" />
         </LinearLayout>

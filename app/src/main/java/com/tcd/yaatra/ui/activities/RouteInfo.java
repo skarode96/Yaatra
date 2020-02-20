@@ -139,7 +139,7 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
         double latitude = bundle.getDouble("destLatitude");
         double longitude = bundle.getDouble("destLongitude");
         String modeOfTravel =  bundle.getString("modeOfTravel");
-        destinationPosition = Point.fromLngLat(longitude,latitude);
+            destinationPosition = Point.fromLngLat(longitude,latitude);
         originPosition = Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),locationComponent.getLastKnownLocation().getLatitude());
         getRoute(originPosition, destinationPosition, modeOfTravel);
 

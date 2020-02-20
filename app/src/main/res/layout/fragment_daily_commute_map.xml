@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:mapbox="http://schemas.android.com/apk/res-auto">
+    <RelativeLayout
+        android:id="@+id/fullscreen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/top_navigation_daily"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:elevation="8dp"
+            android:paddingBottom="8dp"
+            android:orientation="vertical">
+
+            <SearchView
+                android:id="@+id/dailySearch"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="1dp"
+                android:iconifiedByDefault="false"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="1dp"
+                android:layout_marginBottom="1dp"
+                android:queryHint="Enter Source Region"
+                android:background="@color/md_grey_200">
+
+            </SearchView>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/mapBox_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:orientation="horizontal">
+
+            <com.mapbox.mapboxsdk.maps.MapView
+                android:id="@+id/mapViewDestination"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/top_navigation"
+                android:layout_marginTop="1dp"
+                mapbox:layout_constraintBottom_toBottomOf="parent"
+                mapbox:layout_constraintEnd_toEndOf="parent"
+                mapbox:layout_constraintHorizontal_bias="0.0"
+                mapbox:layout_constraintStart_toStartOf="parent"
+                mapbox:layout_constraintTop_toTopOf="parent"
+                mapbox:layout_constraintVertical_bias="1.0"
+                mapbox:mapbox_cameraTargetLat="53.3498"
+                mapbox:mapbox_cameraTargetLng="-6.2603"
+                mapbox:mapbox_cameraZoom="12">
+
+            </com.mapbox.mapboxsdk.maps.MapView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/bottom_navigation1"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="10dp"
+            android:elevation="8dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:background="@android:color/transparent" >
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/addDestination"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|bottom"
+                android:src="@drawable/add_location_w"
+                android:gravity="center"
+                android:tooltipText=" Enter Destination"
+                android:visibility="visible"
+                android:background="@android:color/transparent" />
+
+            <Button
+                android:id="@+id/journeyPref"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:background="@color/md_grey_200"
+                android:clickable="true"
+                android:text="Add Journey Preferences"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+</layout>
