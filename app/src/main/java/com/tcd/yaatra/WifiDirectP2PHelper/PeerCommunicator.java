@@ -56,7 +56,7 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
     public PeerCommunicator(PeerToPeerActivity activity, String appUserName){
 
         peerToPeerActivity = activity;
-        this.appUserId = 1;
+        this.appUserId = 11453;
         this.appUserName = appUserName;
 
         initializeWiFiDirectComponents();

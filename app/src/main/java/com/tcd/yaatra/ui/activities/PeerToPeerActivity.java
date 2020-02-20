@@ -4,29 +4,34 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
+
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.WifiDirectP2PHelper.PeerCommunicator;
+import com.tcd.yaatra.databinding.ActivityPeerToPeerBinding;
+import com.tcd.yaatra.mocks.PeerTravellerInfoMocks;
 import com.tcd.yaatra.repository.models.TravellerInfo;
 import com.tcd.yaatra.repository.models.TravellerStatus;
-import com.tcd.yaatra.databinding.ActivityPeerToPeerBinding;
+import com.tcd.yaatra.ui.adapter.PeerListAdapter;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> {
 
     PeerCommunicator communicator;
-    TextView textView;
-    private ArrayList<String> peers = new ArrayList<>();
+    private ArrayList<TravellerInfo> travellerInfos = new ArrayList<>();
+
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     boolean isLocationPermissionGranted = false;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager layoutManager;
 
-    //region Activity Initialization
 
     @Override
     int getLayoutResourceId() {
@@ -36,18 +41,22 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
     @Override
     public void initEventHandlers() {
         super.initEventHandlers();
-        layoutDataBinding.buttonDiscoverPeers.setOnClickListener(view -> handleDiscoverButtonClick());
-        layoutDataBinding.buttonSendMessage.setOnClickListener(view -> handleDiscoverButtonClick());
+        layoutDataBinding.peerRecyclerView.setHasFixedSize(true);
+        layoutManager = new LinearLayoutManager(this);
+        layoutDataBinding.peerRecyclerView.setLayoutManager(layoutManager);
+        refreshRecyclerView();
     }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+//        this.travellerInfos = PeerTravellerInfoMocks.getPeerTravellerList();  // for mock purpose
         super.onCreate(savedInstanceState);
-        textView = layoutDataBinding.textView2;
-
         enableWiFi();
         initializePeerCommunicator();
         checkIfLocationPermissionGranted();
+        handleDiscoverButtonClick();
     }
 
     private void enableWiFi(){
@@ -59,7 +68,7 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
     }
 
     private void initializePeerCommunicator(){
-        communicator = new PeerCommunicator(this, "JP");
+        communicator = new PeerCommunicator(this, "Sam");
     }
 
     private void checkIfLocationPermissionGranted(){
@@ -102,7 +111,7 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
 
     @Override
     protected void onPause() {
-        peers.clear();
+//        travellerInfos.clear();
         showPeers();
 
         if(communicator != null){
@@ -121,7 +130,7 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
 
     @Override
     protected void onDestroy() {
-        peers.clear();
+//        travellerInfos.clear();
         showPeers();
 
         if(communicator != null) {
@@ -140,21 +149,17 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
     }
 
     public void showFellowTravellers(HashMap<Integer, TravellerInfo> peerTravellers){
-
-        peers.clear();
-
-        peerTravellers.values().forEach(info-> addPeerAddress(info.getUserName()));
-
+        this.travellerInfos.clear();
+        peerTravellers.values().forEach(travellerInfo -> this.travellerInfos.add(travellerInfo));
         showPeers();
     }
 
-    private void addPeerAddress(String ipAdd){
-        peers.add(ipAdd);
+    private void showPeers(){
+        refreshRecyclerView();
     }
 
-    private void showPeers(){
-        final ListView list = layoutDataBinding.listNearbyDevices;
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, peers);
-        list.setAdapter(arrayAdapter);
+    private void refreshRecyclerView() {
+        mAdapter = new PeerListAdapter(getApplicationContext(), this.travellerInfos);
+        layoutDataBinding.peerRecyclerView.setAdapter(mAdapter);
     }
 }
