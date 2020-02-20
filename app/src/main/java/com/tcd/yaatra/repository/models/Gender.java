@@ -1,8 +1,5 @@
 package com.tcd.yaatra.repository.models;
 
-import com.tcd.yaatra.utils.GenderPreferenceUtils;
-import com.tcd.yaatra.utils.GenderUtils;
-
 import java.util.HashMap;
 import java.util.Map;
 

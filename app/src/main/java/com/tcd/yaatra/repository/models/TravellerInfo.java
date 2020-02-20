@@ -45,6 +45,16 @@ public class TravellerInfo {
         setInfoProvider(infoProvider);
     }
 
+    public TravellerInfo(Integer userId, String userName, Gender gender, Double sourceLatitude, Double sourceLongitude, Double destinationLatitude, Double destinationLongitude) {
+        this.userId = userId;
+        this.userName = userName;
+        this.gender = gender;
+        this.sourceLatitude = sourceLatitude;
+        this.sourceLongitude = sourceLongitude;
+        this.destinationLatitude= destinationLatitude;
+        this.destinationLongitude = destinationLongitude;
+    }
+
     //region Getters & Setters
 
     public Integer getUserId() {
