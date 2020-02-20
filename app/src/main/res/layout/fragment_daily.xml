@@ -1,42 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
-            android:id="@+id/top_navigation_daily"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvDailyTrips"
             android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabNewTrip"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:elevation="8dp"
-            android:paddingBottom="8dp"
-            android:orientation="vertical">
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="40dp"
+            android:layout_marginEnd="20dp"
+            android:clickable="true"
+            android:src="@drawable/ic_add_white_30dp"
+            app:srcCompat="@color/colorAccent" />
 
-        <SearchView
-            android:id="@+id/searchSource"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginStart="1dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="1dp"
-            android:layout_marginBottom="1dp"
-            android:background="@color/md_grey_200">
-
-        </SearchView>
-
-        <SearchView
-            android:id="@+id/searchDestination"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginStart="1dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="1dp"
-            android:layout_marginBottom="1dp"
-            android:background="@color/md_grey_200">
-
-        </SearchView>
-
-        </LinearLayout>
     </RelativeLayout>
 </layout>
