@@ -14,31 +14,48 @@
             android:layout_alignParentTop="true"
             android:elevation="8dp"
             android:paddingBottom="8dp"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
         <SearchView
             android:id="@+id/searchDest"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="1dp"
+            android:iconifiedByDefault="false"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="1dp"
             android:layout_marginBottom="1dp"
+            android:queryHint="Enter Region"
             android:background="@color/md_grey_200">
 
         </SearchView>
 
-        <Button
-            android:id="@+id/discoverPeer"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="1dp"
-            android:layout_marginLeft="300dp"
-            android:text="Discover Peers"
-            android:visibility="gone" />
+            <RadioGroup
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:background="@color/md_grey_200"
+                android:orientation="horizontal">
+                <RadioButton android:id="@+id/walk"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Walk"
+                    android:gravity="center"/>
+                <RadioButton android:id="@+id/drive"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Drive"
+                    android:gravity="center" />
 
+                <RadioButton
+                    android:id="@+id/bicycle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Bicycle" />
+            </RadioGroup>
         </LinearLayout>
+
 
         <LinearLayout
             android:id="@+id/mapBox_layout"
@@ -68,6 +85,40 @@
             </com.mapbox.mapboxsdk.maps.MapView>
         </LinearLayout>
 
+        <LinearLayout
+
+            android:id="@+id/bottom_navigation1"
+            style="?android:attr/buttonBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="59dp"
+            android:elevation="8dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingTop="8dp">
+
+            <Button
+                android:id="@+id/discoverPeer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:text="Discover Peers"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/EnterDestination"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:text="Enter Destination"
+                android:visibility="gone" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/bottom_navigation"

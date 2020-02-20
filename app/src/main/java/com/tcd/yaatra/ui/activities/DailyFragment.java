@@ -32,11 +32,11 @@ public class DailyFragment extends BaseFragment<FragmentDailyBinding> {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
         this.loginPreferences = SharedPreferenceUtils.createLoginSharedPreference();
-        TextView textView = (TextView) (this.layoutDataBinding.text1);
+        //TextView textView = (TextView) (this.layoutDataBinding.text1);
 
         DatabaseUtils userDb = DatabaseUtils.getInstance(getActivity());
         UserInfo user = userDb.userInfoDao().getUserProfile(SharedPreferenceUtils.getUserName());
-        textView.setText(user.getUsername());
+        //textView.setText(user.getUsername());
         return view;
     }
 

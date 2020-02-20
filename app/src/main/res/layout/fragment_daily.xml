@@ -1,17 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/yellowish_green">
+        android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/text1"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/top_navigation_daily"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="Daily Commute Fragment"
-            android:textSize="30sp" />
+            android:layout_alignParentTop="true"
+            android:elevation="8dp"
+            android:paddingBottom="8dp"
+            android:orientation="vertical">
 
+        <SearchView
+            android:id="@+id/searchSource"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="1dp"
+            android:layout_marginBottom="1dp"
+            android:background="@color/md_grey_200">
+
+        </SearchView>
+
+        <SearchView
+            android:id="@+id/searchDestination"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="1dp"
+            android:layout_marginBottom="1dp"
+            android:background="@color/md_grey_200">
+
+        </SearchView>
+
+        </LinearLayout>
     </RelativeLayout>
 </layout>

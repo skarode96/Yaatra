@@ -1,5 +1,6 @@
 package com.tcd.yaatra.ui.activities;
 
+import com.mapbox.api.directions.v5.DirectionsCriteria;
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.utils.MyReceiver;
 import com.tcd.yaatra.databinding.ActivityMapBinding;
@@ -19,6 +20,7 @@ import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.widget.Button;
 import android.view.View;
+import android.widget.RadioButton;
 import android.widget.SearchView;
 
 import com.mapbox.geojson.Point;
@@ -121,6 +123,7 @@ public class MapActivity extends BaseActivity<ActivityMapBinding> implements OnM
         destinationArea.setOnQueryTextListener(this);
         MyReceiver= new MyReceiver();
         broadcastIntent();
+
 
     }
 
@@ -227,10 +230,21 @@ public class MapActivity extends BaseActivity<ActivityMapBinding> implements OnM
         Intent mapIntent = new Intent(MapActivity.this, RouteInfo.class);
         //Intent mapIntent = new Intent(MapActivity.this, PeerToPeerActivity.class);
         Bundle bundle = new Bundle();
+        String modeOfTravel;
         double latitude = destination.latitude();
         double longitide = destination.longitude();
         bundle.putDouble("destLatitude",latitude);
         bundle.putDouble("destLongitude",longitide);
+
+        if(layoutDataBinding.bicycle.isChecked()) {
+            modeOfTravel = DirectionsCriteria.PROFILE_CYCLING;
+        }else if(layoutDataBinding.drive.isChecked()){
+            modeOfTravel = DirectionsCriteria.PROFILE_DRIVING_TRAFFIC;
+        }
+        else{
+            modeOfTravel = DirectionsCriteria.PROFILE_WALKING;
+        }
+        bundle.putString("modeOfTravel",modeOfTravel);
         Toast.makeText(this,String.valueOf(latitude),Toast.LENGTH_SHORT).show();
         mapIntent.putExtras(bundle);
         startActivity(mapIntent);
@@ -319,7 +333,7 @@ public class MapActivity extends BaseActivity<ActivityMapBinding> implements OnM
                             @Override
                             public void onClick(DialogInterface dialog, int id) {
 
-                                Toast.makeText(MapActivity.this, items[regionSelected], Toast.LENGTH_LONG).show();
+                                Toast.makeText(MapActivity.this, "Region: " + items[regionSelected], Toast.LENGTH_LONG).show();
 
                                 // Get the region bounds and zoom
                                 LatLngBounds bounds = (offlineRegions[regionSelected].getDefinition()).getBounds();
@@ -516,14 +530,15 @@ public class MapActivity extends BaseActivity<ActivityMapBinding> implements OnM
             Address loc = address.get(0);
 
             map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(loc.getLatitude(), loc.getLongitude()), 13.0));
-
+            destinationArea.clearFocus();
+            Toast.makeText(this, "Mark location on map", Toast.LENGTH_SHORT).show();
 
         } catch (IOException e) {
             Toast.makeText(this, "Inside catch", Toast.LENGTH_SHORT).show();
             // Get the region bounds and zoom and move the camera.
 
             View view = this.mapView ;
-            displayOfflineList(view , "No Internet available. Please select from ");
+            displayOfflineList(view , "No Internet available. Please select from");
 
         }
         return true;

@@ -138,20 +138,21 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
         Bundle bundle = getIntent().getExtras();
         double latitude = bundle.getDouble("destLatitude");
         double longitude = bundle.getDouble("destLongitude");
+        String modeOfTravel =  bundle.getString("modeOfTravel");
         destinationPosition = Point.fromLngLat(longitude,latitude);
         originPosition = Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),locationComponent.getLastKnownLocation().getLatitude());
-        getRoute(originPosition,destinationPosition);
+        getRoute(originPosition, destinationPosition, modeOfTravel);
 
         startButton.setEnabled(true);
         startButton.setBackgroundResource(R.color.mapbox_blue);
     }
 
-    private void getRoute(Point origin, Point destination){
+    private void getRoute(Point origin, Point destination, String modeOfTravel){
         NavigationRoute.builder(this)
                 .accessToken(Mapbox.getAccessToken())
                 .origin(origin)
                 .destination(destination)
-                .profile(DirectionsCriteria.PROFILE_DRIVING_TRAFFIC)
+                .profile(modeOfTravel)
                 .build()
                 .getRoute(new Callback<DirectionsResponse>() {
                     @Override
@@ -262,11 +263,13 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
     public void onCancelNavigation() {
         // Navigation canceled, finish the activity
         finish();
+
     }
 
     @Override
     public void onNavigationFinished() {
         // Intentionally empty
+        Toast.makeText(this,"End of trip!",Toast.LENGTH_SHORT).show();
     }
 
     @Override
