@@ -7,7 +7,7 @@ public class TravellerInfo {
     private Integer userId;
     private String userName = "";
     private int age;
-    private Gender gender = Gender.NotSpecified;
+    private Gender gender = Gender.NOT_SPECIFIED;
     private Double sourceLatitude;
     private Double sourceLongitude;
     private Double destinationLatitude;

@@ -39,7 +39,7 @@ public class EncryptionUtilsTest {
     private String getSerializedTravellerInfo(){
         Integer userId = 1;
         String userName = "TestUser";
-        TravellerInfo traveller = new TravellerInfo(userId, userName, 20, Gender.Male, 0.0d
+        TravellerInfo traveller = new TravellerInfo(userId, userName, 20, Gender.MALE, 0.0d
                 , 0.0d, 0.0d, 0.0d
                 , TravellerStatus.SeekingFellowTraveller, LocalDateTime.now(), 0.0d
                 , "1.2.3.4", 12345, LocalDateTime.now(), userName);

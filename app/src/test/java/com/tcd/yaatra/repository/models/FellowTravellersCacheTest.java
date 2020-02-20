@@ -141,7 +141,7 @@ public class FellowTravellersCacheTest {
     }
 
     private TravellerInfo getDummyTraveller(Integer userId, String userName){
-        return new TravellerInfo(userId, userName, 20, Gender.Male, 0.0d
+        return new TravellerInfo(userId, userName, 20, Gender.MALE, 0.0d
                 , 0.0d, 0.0d, 0.0d
                 , TravellerStatus.SeekingFellowTraveller, LocalDateTime.now(), 0.0d
                 , "1.2.3.4", 12345, LocalDateTime.now(), userName);

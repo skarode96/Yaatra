@@ -4,20 +4,17 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.tcd.yaatra.R;
-import com.tcd.yaatra.databinding.ActivityLoginBinding;
 import com.tcd.yaatra.databinding.ActivityRegisterBinding;
+import com.tcd.yaatra.repository.models.Gender;
+import com.tcd.yaatra.repository.models.TransportPreference;
 import com.tcd.yaatra.services.api.yaatra.models.RegisterRequestBody;
-import com.tcd.yaatra.ui.viewmodels.LoginActivityViewModel;
 import com.tcd.yaatra.ui.viewmodels.RegisterActivityViewModel;
-import com.tcd.yaatra.utils.SharedPreferenceUtils;
+import com.tcd.yaatra.utils.GenderPreferenceUtils;
+import com.tcd.yaatra.utils.GenderUtils;
 
 import javax.inject.Inject;
 
@@ -44,6 +41,15 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
 
 
     private void handleOnRegisterButtonClick() {
+
+        Gender male = Gender.MALE;
+        Gender female = Gender.FEMALE;
+        Gender noPref = Gender.NOT_SPECIFIED;
+        Gender other = Gender.OTHER;
+
+        TransportPreference noTransportPref = TransportPreference.NO_PREFERENCE;
+        TransportPreference walk = TransportPreference.WALK;
+        TransportPreference taxi = TransportPreference.TAXI;
 
         if(TextUtils.isEmpty(layoutDataBinding.userName.getText().toString()))
         {
@@ -122,20 +128,34 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
             registerObject.setConfirmPassword(layoutDataBinding.userCPassword.getText().toString());
 
             RadioButton genderBtn = (RadioButton)findViewById(layoutDataBinding.genderGroup.getCheckedRadioButtonId());
-            if(genderBtn.getText().toString().equalsIgnoreCase("Male"))
-                registerObject.setGender(1);
-            else if(genderBtn.getText().toString().equalsIgnoreCase("Female"))
-                registerObject.setGender(2);
-            else if(genderBtn.getText().toString().equalsIgnoreCase("Others"))
-                registerObject.setGender(3);
+            if(genderBtn.getText().toString().equalsIgnoreCase(male.stringLabel))
+                registerObject.setGender(male.idName);
+            else if(genderBtn.getText().toString().equalsIgnoreCase(female.stringLabel))
+                registerObject.setGender(female.idName);
+            else if(genderBtn.getText().toString().equalsIgnoreCase(other.stringLabel))
+                registerObject.setGender(other.idName);
 
+
+            RadioButton genderPrefBtn = (RadioButton)findViewById(layoutDataBinding.genderPrefGroup.getCheckedRadioButtonId());
+            if(genderPrefBtn.getText().toString().equalsIgnoreCase(male.stringLabel))
+                registerObject.setPrefGender(male.idNumber);
+            else if(genderPrefBtn.getText().toString().equalsIgnoreCase(female.stringLabel))
+                registerObject.setPrefGender(female.idNumber);
+            else if(genderPrefBtn.getText().toString().equalsIgnoreCase(other.stringLabel))
+                registerObject.setPrefGender(other.idNumber);
+            else if(genderPrefBtn.getText().toString().equalsIgnoreCase(noPref.stringLabel))
+                registerObject.setPrefGender(noPref.idNumber);
+
+            RadioButton transportPrefBtn = (RadioButton)findViewById(layoutDataBinding.transportPrefGroup.getCheckedRadioButtonId());
+            if(transportPrefBtn.getText().toString().equalsIgnoreCase(noTransportPref.stringLabel))
+                registerObject.setPrefGender(noTransportPref.intValue);
+            else if(transportPrefBtn.getText().toString().equalsIgnoreCase(walk.stringLabel))
+                registerObject.setPrefGender(walk.intValue);
+            else if(transportPrefBtn.getText().toString().equalsIgnoreCase(taxi.stringLabel))
+                registerObject.setPrefGender(taxi.intValue);
 
             int phoneNumber = Integer.parseInt(layoutDataBinding.phoneNum.getText().toString());
             String country = layoutDataBinding.country.getText().toString();
-            RadioButton genderPrefBtn = (RadioButton)findViewById(layoutDataBinding.genderPrefGroup.getCheckedRadioButtonId());
-            String genderPref = genderPrefBtn.getText().toString();
-            RadioButton transportPrefBtn = (RadioButton)findViewById(layoutDataBinding.transportPrefGroup.getCheckedRadioButtonId());
-            String transportPref = transportPrefBtn.getText().toString();
 
             registerActivityViewModel.register(registerObject).observe(this,registerResponse -> {
                 switch (registerResponse.getState()) {

@@ -8,7 +8,8 @@ import androidx.room.PrimaryKey;
 
 @Entity
 public class UserInfo {
-    @PrimaryKey(autoGenerate = true)
+    @SerializedName("id")
+    @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name="id")
     private int id;
     @SerializedName("first_name")

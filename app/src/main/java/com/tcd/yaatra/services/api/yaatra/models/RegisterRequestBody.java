@@ -18,7 +18,11 @@ public class RegisterRequestBody {
     @SerializedName("age")
     private int age;
     @SerializedName("gender")
-    private int gender;
+    private String gender;
+    @SerializedName("pref_gender")
+    private int prefGender;
+    @SerializedName("pref_mode_travel")
+    private int prefMode;
 
     public RegisterRequestBody() {
     }
@@ -79,12 +83,28 @@ public class RegisterRequestBody {
         this.age = age;
     }
 
-    public int getGender() {
+    public String getGender() {
         return gender;
     }
 
-    public void setGender(int gender) {
+    public void setGender(String gender) {
         this.gender = gender;
+    }
+
+    public int getPrefGender() {
+        return prefGender;
+    }
+
+    public void setPrefGender(int prefGender) {
+        this.prefGender = prefGender;
+    }
+
+    public int getPrefMode() {
+        return prefMode;
+    }
+
+    public void setPrefMode(int prefMode) {
+        this.prefMode = prefMode;
     }
 
     @Override
@@ -97,7 +117,9 @@ public class RegisterRequestBody {
                 ", confirmPassword='" + confirmPassword + '\'' +
                 ", email='" + email + '\'' +
                 ", age=" + age +
-                ", gender=" + gender +
+                ", gender='" + gender + '\'' +
+                ", prefGender='" + prefGender + '\'' +
+                ", prefMode='" + prefMode + '\'' +
                 '}';
     }
 }

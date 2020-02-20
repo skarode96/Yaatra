@@ -88,7 +88,7 @@ public class P2pSerializerDeserializerTest {
     private TravellerInfo getDummyTravellerInfo(){
         String travellerUserName = "Traveller";
         String userName = "TestUser";
-        return new TravellerInfo(1, travellerUserName, 20, Gender.Male, 0.0d
+        return new TravellerInfo(1, travellerUserName, 20, Gender.MALE, 0.0d
                 , 0.0d, 0.0d, 0.0d
                 , TravellerStatus.SeekingFellowTraveller, LocalDateTime.now(), 0.0d
                 , "1.2.3.4", 12345, LocalDateTime.now(), userName);

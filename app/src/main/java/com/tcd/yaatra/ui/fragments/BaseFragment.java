@@ -1,6 +1,7 @@
 package com.tcd.yaatra.ui.fragments;
 
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 import androidx.fragment.app.Fragment;
 import dagger.android.AndroidInjection;
+import dagger.android.support.AndroidSupportInjection;
 
 public abstract class BaseFragment<DataBindingClass extends ViewDataBinding> extends Fragment {
 
@@ -29,10 +31,12 @@ public abstract class BaseFragment<DataBindingClass extends ViewDataBinding> ext
     }
 
     private void configureDagger() {
-        AndroidInjection.inject(getActivity());
+//        AndroidInjection.inject(getActivity());
+        AndroidSupportInjection.inject(this);
     }
 
     public abstract int getFragmentResourceId();
 
     public void initEventHandlers(){};
+
 }

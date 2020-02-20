@@ -28,10 +28,10 @@ public class MapUtilsTest {
     double distance = 0 ;
 
 
-    TravellerInfo ti1 = new TravellerInfo(1, travellerUserName, 20, Gender.Male, 0.0, 0.0, 0.0d, 0.0 , TravellerStatus.SeekingFellowTraveller, LocalDateTime.now(), 0.0, "1.2.3.4", 12345, LocalDateTime.now(), userName);
-    TravellerInfo ti2 = new TravellerInfo(1, travellerUserName, 20, Gender.Male, 0.0, 0.0, 0.0d, 0.0 , TravellerStatus.SeekingFellowTraveller, LocalDateTime.now(), 0.0, "1.2.3.4", 12345, LocalDateTime.now(), userName);
-    TravellerInfo ti3 = new TravellerInfo(1, travellerUserName, 20, Gender.Male, 0.0, 0.0, 0.0d, 0.0 , TravellerStatus.SeekingFellowTraveller, LocalDateTime.now(), 0.0, "1.2.3.4", 12345, LocalDateTime.now(), userName);
-    TravellerInfo tiu = new TravellerInfo(1, travellerUserName, 20, Gender.Male, 0.0, 0.0, 0.0d, 0.0 , TravellerStatus.SeekingFellowTraveller, LocalDateTime.now(), 0.0, "1.2.3.4", 12345, LocalDateTime.now(), userName);
+    TravellerInfo ti1 = new TravellerInfo(1, travellerUserName, 20, Gender.MALE, 0.0, 0.0, 0.0d, 0.0 , TravellerStatus.SeekingFellowTraveller, LocalDateTime.now(), 0.0, "1.2.3.4", 12345, LocalDateTime.now(), userName);
+    TravellerInfo ti2 = new TravellerInfo(1, travellerUserName, 20, Gender.MALE, 0.0, 0.0, 0.0d, 0.0 , TravellerStatus.SeekingFellowTraveller, LocalDateTime.now(), 0.0, "1.2.3.4", 12345, LocalDateTime.now(), userName);
+    TravellerInfo ti3 = new TravellerInfo(1, travellerUserName, 20, Gender.MALE, 0.0, 0.0, 0.0d, 0.0 , TravellerStatus.SeekingFellowTraveller, LocalDateTime.now(), 0.0, "1.2.3.4", 12345, LocalDateTime.now(), userName);
+    TravellerInfo tiu = new TravellerInfo(1, travellerUserName, 20, Gender.MALE, 0.0, 0.0, 0.0d, 0.0 , TravellerStatus.SeekingFellowTraveller, LocalDateTime.now(), 0.0, "1.2.3.4", 12345, LocalDateTime.now(), userName);
     ArrayList<TravellerInfo> tl = new ArrayList<TravellerInfo>();
 
     MapUtils maputils = new MapUtils();

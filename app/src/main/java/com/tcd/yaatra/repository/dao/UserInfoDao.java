@@ -4,6 +4,7 @@ import com.tcd.yaatra.services.api.yaatra.models.UserInfo;
 
 import java.util.List;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -17,7 +18,7 @@ public interface UserInfoDao {
     List<UserInfo> getUserList();
 
     @Query("Select * from userInfo where username = :userName")
-    UserInfo getUserProfile(String userName);
+    LiveData<UserInfo> getUserProfile(String userName);
 
     @Insert
     void insertUser(UserInfo user);

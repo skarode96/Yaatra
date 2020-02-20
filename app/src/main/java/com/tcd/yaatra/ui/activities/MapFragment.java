@@ -2,8 +2,9 @@ package com.tcd.yaatra.ui.activities;
 
 import com.mapbox.api.directions.v5.DirectionsCriteria;
 import com.tcd.yaatra.R;
+import com.tcd.yaatra.databinding.FragmentMapBinding;
+import com.tcd.yaatra.ui.fragments.BaseFragment;
 import com.tcd.yaatra.utils.MyReceiver;
-import com.tcd.yaatra.databinding.ActivityMapBinding;
 import com.tcd.yaatra.ui.viewmodels.MapActivityViewModel;
 
 import java.util.List;
@@ -15,9 +16,9 @@ import android.annotation.SuppressLint;
 import androidx.annotation.Nullable;
 //import android.content.SharedPreferences;
 import android.content.BroadcastReceiver;
-import android.content.IntentFilter;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.view.View;
 import android.widget.RadioButton;
@@ -58,16 +59,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
-import android.os.PersistableBundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import javax.inject.Inject;
 
-@SuppressLint("NewApi")
-public class MapActivity extends BaseActivity<ActivityMapBinding> implements OnMapReadyCallback, PermissionsListener, MapboxMap.OnMapClickListener, SearchView.OnQueryTextListener {
+public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnMapReadyCallback, PermissionsListener, MapboxMap.OnMapClickListener, SearchView.OnQueryTextListener {
 
     private MapboxMap map;
     private MapView mapView;
@@ -88,12 +86,16 @@ public class MapActivity extends BaseActivity<ActivityMapBinding> implements OnM
     public static final String JSON_CHARSET = "UTF-8";
     public static final String JSON_FIELD_REGION_NAME = "FIELD_REGION_NAME";
 
+    View view;
+
     @Inject
     MapActivityViewModel MapActivityViewModel;
     //SharedPreferences loginPreferences;
 
     @Override
-    int getLayoutResourceId() { return R.layout.activity_map; }
+    public int getFragmentResourceId() {
+        return R.layout.fragment_map;
+    }
 
     @Override
     public void initEventHandlers() {
@@ -112,38 +114,37 @@ public class MapActivity extends BaseActivity<ActivityMapBinding> implements OnM
 
     @SuppressLint("NewApi")
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        Mapbox.getInstance(this,getString(R.string.access_token));
-        super.onCreate(savedInstanceState);
-        mapView = findViewById(R.id.mapViewDestination);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Mapbox.getInstance(getContext(),getString(R.string.access_token));
+        view = super.onCreateView(inflater, container, savedInstanceState);
+        mapView = view.findViewById(R.id.mapViewDestination);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
         destinationArea = layoutDataBinding.searchDest;
         navigateButton = layoutDataBinding.discoverPeer;
         destinationArea.setOnQueryTextListener(this);
         MyReceiver= new MyReceiver();
-        broadcastIntent();
-
-
+        //broadcastIntent();
+        return view;
     }
 
     @SuppressLint("WrongConstant")
     private void enableLocation(Style loadedMapStyle){
 
-        if(PermissionsManager.areLocationPermissionsGranted(this)){
-            LocationComponentOptions.builder(this).build();
+        if(PermissionsManager.areLocationPermissionsGranted(getActivity())){
+            LocationComponentOptions.builder(getActivity()).build();
             locationComponent = map.getLocationComponent();
-            locationComponent.activateLocationComponent(LocationComponentActivationOptions.builder(this, map.getStyle()).build());
+            locationComponent.activateLocationComponent(LocationComponentActivationOptions.builder(getActivity(), map.getStyle()).build());
             locationComponent.setLocationComponentEnabled(true);
             locationComponent.setCameraMode(CameraMode.TRACKING);
 
-            offlineManager = offlineManager.getInstance(MapActivity.this);
-            downloadButton = findViewById(R.id.downloadButton);
+            offlineManager = offlineManager.getInstance(getActivity());
+            downloadButton = view.findViewById(R.id.downloadButton);
             listButton = layoutDataBinding.listButton; //Why is this required!!
 
         } else{
             permissionsManager = new PermissionsManager(this);
-            permissionsManager.requestLocationPermissions(this);
+            permissionsManager.requestLocationPermissions(getActivity());
         }
     }
     @Override
@@ -153,8 +154,8 @@ public class MapActivity extends BaseActivity<ActivityMapBinding> implements OnM
         }
         else
         {
-            Toast.makeText(this,"Permissions not granted",Toast.LENGTH_SHORT).show();
-            finish();
+            Toast.makeText(getActivity(),"Permissions not granted",Toast.LENGTH_SHORT).show();
+//            finish();
         }
     }
 
@@ -172,18 +173,18 @@ public class MapActivity extends BaseActivity<ActivityMapBinding> implements OnM
         mapboxMap.setStyle(Style.MAPBOX_STREETS, style -> enableLocation(style));
 
     }
-
-    public void broadcastIntent() {
-        registerReceiver(MyReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-    }
+//
+//    public void broadcastIntent() {
+//        registerReceiver(MyReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+//    }
 
     private void handleOnListButtonClick(View view) {
         displayOfflineList(view, "");// here
     }
 
     private void handleOnDownloadClick() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(MapActivity.this);
-        final EditText regionNameEdit = new EditText(MapActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        final EditText regionNameEdit = new EditText(getActivity());
         regionNameEdit.setHint(getString(R.string.set_region_name_hint));
 
         try {
@@ -201,7 +202,7 @@ public class MapActivity extends BaseActivity<ActivityMapBinding> implements OnM
                             // If the user-provided string is empty, display
                             // a toast message and do not begin download.
                             if (regionName.length() == 0) {
-                                Toast.makeText(MapActivity.this, getString(R.string.dialog_toast), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), getString(R.string.dialog_toast), Toast.LENGTH_SHORT).show();
                             } else {
                                 // Begin download process
                                 downloadRegion(regionName);
@@ -227,8 +228,8 @@ public class MapActivity extends BaseActivity<ActivityMapBinding> implements OnM
     }
 
     private void handleOnNavigateClick() throws UnsupportedEncodingException {
-        Intent mapIntent = new Intent(MapActivity.this, RouteInfo.class);
-        //Intent mapIntent = new Intent(MapActivity.this, PeerToPeerActivity.class);
+        Intent mapIntent = new Intent(getActivity(), RouteInfo.class);
+        //Intent mapIntent = new Intent(MapFragment.this, PeerToPeerActivity.class);
         Bundle bundle = new Bundle();
         String modeOfTravel;
         double latitude = destination.latitude();
@@ -245,7 +246,7 @@ public class MapActivity extends BaseActivity<ActivityMapBinding> implements OnM
             modeOfTravel = DirectionsCriteria.PROFILE_WALKING;
         }
         bundle.putString("modeOfTravel",modeOfTravel);
-        Toast.makeText(this,String.valueOf(latitude),Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(),String.valueOf(latitude),Toast.LENGTH_SHORT).show();
         mapIntent.putExtras(bundle);
         startActivity(mapIntent);
     }
@@ -308,7 +309,7 @@ public class MapActivity extends BaseActivity<ActivityMapBinding> implements OnM
                 // Check result. If no regions have been
                 // downloaded yet, notify user and return
                 if (offlineRegions == null || offlineRegions.length == 0) {
-                    Toast.makeText(getApplicationContext(), getString(R.string.toast_no_regions_yet), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.toast_no_regions_yet), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -320,7 +321,7 @@ public class MapActivity extends BaseActivity<ActivityMapBinding> implements OnM
                 final CharSequence[] items = offlineRegionsNames.toArray(new CharSequence[offlineRegionsNames.size()]);
 
                 // Build a dialog containing the list of regions
-                AlertDialog dialog = new AlertDialog.Builder(MapActivity.this)
+                AlertDialog dialog = new AlertDialog.Builder(getActivity())
                         .setTitle(info + getString(R.string.navigate_title))
                         .setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener() {
                             @Override
@@ -333,7 +334,7 @@ public class MapActivity extends BaseActivity<ActivityMapBinding> implements OnM
                             @Override
                             public void onClick(DialogInterface dialog, int id) {
 
-                                Toast.makeText(MapActivity.this, "Region: " + items[regionSelected], Toast.LENGTH_LONG).show();
+                                Toast.makeText(getActivity(), "Region: " + items[regionSelected], Toast.LENGTH_LONG).show();
 
                                 // Get the region bounds and zoom
                                 LatLngBounds bounds = (offlineRegions[regionSelected].getDefinition()).getBounds();
@@ -358,7 +359,7 @@ public class MapActivity extends BaseActivity<ActivityMapBinding> implements OnM
                                 offlineRegions[regionSelected].delete(new OfflineRegion.OfflineRegionDeleteCallback() {
                                     @Override
                                     public void onDelete() {
-                                        Toast.makeText(getApplicationContext(), getString(R.string.toast_region_deleted),
+                                        Toast.makeText(getActivity(), getString(R.string.toast_region_deleted),
                                                 Toast.LENGTH_LONG).show();
                                     }
 
@@ -396,7 +397,7 @@ public class MapActivity extends BaseActivity<ActivityMapBinding> implements OnM
                 LatLngBounds bounds = map.getProjection().getVisibleRegion().latLngBounds;
                 double minZoom = map.getCameraPosition().zoom;
                 double maxZoom = map.getMaxZoomLevel();
-                float pixelRatio = MapActivity.this.getResources().getDisplayMetrics().density;
+                float pixelRatio = MapFragment.this.getResources().getDisplayMetrics().density;
                 OfflineTilePyramidRegionDefinition definition = new OfflineTilePyramidRegionDefinition(styleUrl,bounds,minZoom,maxZoom,pixelRatio);
 
                 byte[] metadata = null;
@@ -417,7 +418,7 @@ public class MapActivity extends BaseActivity<ActivityMapBinding> implements OnM
                     @Override
                     public void onCreate(OfflineRegion offlineRegion) {
                         Log.d(TAG, "onCreate: Offline region to be created"+regionName);
-                        MapActivity.this.offlineRegion = offlineRegion;
+                        MapFragment.this.offlineRegion = offlineRegion;
                         launchDownload();
                     }
 
@@ -434,39 +435,39 @@ public class MapActivity extends BaseActivity<ActivityMapBinding> implements OnM
 
     @Override
     public void onExplanationNeeded(List<String> permissionsToExplain) {
-        Toast.makeText(this,"Location needed to route",Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(),"Location needed to route",Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    protected void onStart() {
+    public void onStart() {
         super.onStart();
         mapView.onStart();
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         mapView.onResume();
     }
 
     @Override
-    protected void onPause() {
+    public void onPause() {
         super.onPause();
         mapView.onPause();
-        unregisterReceiver(MyReceiver);
+        //unregisterReceiver(MyReceiver);
     }
 
     @Override
-    protected void onStop() {
+    public void onStop() {
         super.onStop();
         mapView.onStop();
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        super.onSaveInstanceState(outState, outPersistentState);
-        mapView.onSaveInstanceState(outState);
-    }
+//    @Override
+//    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+//        super.onSaveInstanceState(outState, outPersistentState);
+//        mapView.onSaveInstanceState(outState);
+//    }
 
     @Override
     public void onLowMemory() {
@@ -475,7 +476,7 @@ public class MapActivity extends BaseActivity<ActivityMapBinding> implements OnM
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
         mapView.onDestroy();
     }
@@ -499,7 +500,7 @@ public class MapActivity extends BaseActivity<ActivityMapBinding> implements OnM
     public boolean onQueryTextSubmit(String query) {
 
         final String name = query;
-        Geocoder coder = new Geocoder(this);
+        Geocoder coder = new Geocoder(getActivity());
         List<Address> address;
         List<Address> countries;
         try {
@@ -513,28 +514,28 @@ public class MapActivity extends BaseActivity<ActivityMapBinding> implements OnM
             }
             else
             {
-                Toast.makeText(this, "No country found", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "No country found", Toast.LENGTH_SHORT).show();
                 return false;
                 //query = query + ","+locationComponent.getLastKnownLocation().getLongitude()+","+locationComponent.getLastKnownLocation().getLatitude();
             }
             final String regionName = query;
-            Toast.makeText(this, query, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), query, Toast.LENGTH_SHORT).show();
 //        if(isInternetAvailable()){
 
 
             address = coder.getFromLocationName(query, 5);
             if (address == null) {
-                Toast.makeText(this, "No place found", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "No place found", Toast.LENGTH_SHORT).show();
                 return false;
             }
             Address loc = address.get(0);
 
             map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(loc.getLatitude(), loc.getLongitude()), 13.0));
             destinationArea.clearFocus();
-            Toast.makeText(this, "Mark location on map", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Mark location on map", Toast.LENGTH_SHORT).show();
 
         } catch (IOException e) {
-            Toast.makeText(this, "Inside catch", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Inside catch", Toast.LENGTH_SHORT).show();
             // Get the region bounds and zoom and move the camera.
 
             View view = this.mapView ;

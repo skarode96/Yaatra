@@ -13,9 +13,10 @@ import androidx.annotation.Nullable;
 
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.databinding.ActivityLoginBinding;
-import com.tcd.yaatra.services.api.yaatra.models.UserInfo;
+import com.tcd.yaatra.repository.Executor;
+import com.tcd.yaatra.repository.JourneySharingDatabase;
+import com.tcd.yaatra.repository.UserInfoRepository;
 import com.tcd.yaatra.ui.viewmodels.LoginActivityViewModel;
-import com.tcd.yaatra.utils.DatabaseUtils;
 import com.tcd.yaatra.utils.SharedPreferenceUtils;
 
 import javax.inject.Inject;
@@ -25,7 +26,9 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
     @Inject
     LoginActivityViewModel loginActivityViewModel;
     SharedPreferences loginPreferences;
-    DatabaseUtils userDb;
+
+    @Inject
+    UserInfoRepository userInfoRepository;
 
 
     @Override
@@ -45,7 +48,6 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.loginPreferences = SharedPreferenceUtils.createLoginSharedPreference();
-        this.userDb = DatabaseUtils.getInstance(this);
     }
 
     private void handleOnLoginButtonClick() {
@@ -80,7 +82,17 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
                             Intent myIntent = new Intent(LoginActivity.this, MenuContainerActivity.class);
                             SharedPreferenceUtils.setAuthToken(loginResponse.getData().getAuthToken());
                             SharedPreferenceUtils.setUserName(loginResponse.getData().getUserInfo().getUsername());
-                            //userDb.userInfoDao().insertUser(loginResponse.getData().getUserInfo());
+
+                            userInfoRepository.getUserProfile(loginResponse.getData().getUserInfo().getUsername()).observe(this, response -> {
+                                if(response==null) {
+                                    Executor.IOThread(() -> userInfoRepository.insertUser(loginResponse.getData().getUserInfo()));
+                                }
+                                else {
+                                    Executor.IOThread(() -> userInfoRepository.updateUser(loginResponse.getData().getUserInfo()));
+                                }
+                            });
+
+
                             startActivity(myIntent);
                             finish();
                             break;

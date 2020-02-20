@@ -78,7 +78,7 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
 
         LocalDateTime now = LocalDateTime.now();
         currentUserTravellerInfo =
-                new TravellerInfo(appUserId, appUserName, 20, Gender.NotSpecified
+                new TravellerInfo(appUserId, appUserName, 20, Gender.NOT_SPECIFIED
                         , 0.0d, 0.0d, 0.0d, 0.0d
                         , TravellerStatus.None, now, 0.0d
                         , NetworkUtils.getWiFiIPAddress(peerToPeerActivity)

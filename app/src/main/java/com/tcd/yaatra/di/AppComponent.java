@@ -7,13 +7,18 @@ import com.tcd.yaatra.di.modules.ActivityModule;
 import com.tcd.yaatra.di.modules.AppModule;
 import com.tcd.yaatra.di.modules.FragmentModule;
 import com.tcd.yaatra.di.modules.RepositoryModule;
+import com.tcd.yaatra.di.modules.RoomModule;
 import com.tcd.yaatra.di.modules.YaatraApiModule;
+import com.tcd.yaatra.repository.JourneySharingDatabase;
+import com.tcd.yaatra.repository.UserInfoRepository;
+import com.tcd.yaatra.repository.dao.UserInfoDao;
 
 import javax.inject.Singleton;
 
 import dagger.BindsInstance;
 import dagger.Component;
 import dagger.android.AndroidInjectionModule;
+import dagger.android.AndroidInjector;
 
 
 @Singleton
@@ -24,7 +29,8 @@ import dagger.android.AndroidInjectionModule;
         YaatraApiModule.class,
         RepositoryModule.class,
         ViewModelModule.class,
-        AndroidInjectionModule.class
+        AndroidInjectionModule.class,
+        RoomModule.class
 })
 public interface AppComponent {
 
@@ -39,4 +45,9 @@ public interface AppComponent {
     }
 
     void inject(App app);
+
+//    UserInfoDao userInfoDao();
+//    JourneySharingDatabase journeySharingDatabase();
+//    UserInfoRepository userInfoRepository();
+//    Application application();
 }
