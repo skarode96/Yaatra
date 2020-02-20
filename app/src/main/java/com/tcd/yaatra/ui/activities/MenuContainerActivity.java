@@ -69,8 +69,7 @@ public class MenuContainerActivity extends BaseActivity<ActivityMenuBinding> imp
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new MapFragment()).commit();
                 break;
             case R.id.tempdaily:
-                intent = new Intent(MenuContainerActivity.this, DailyCommuteMapFragment.class);
-                startActivity(intent);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new DailyCommuteMapFragment()).commit();
                 break;
             default: break;
         }

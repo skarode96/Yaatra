@@ -40,7 +40,5 @@ public interface ActivityModule {
     @ContributesAndroidInjector
     RouteInfo contributeRouteinfo();
 
-    @ContributesAndroidInjector
-    DailyCommuteMapFragment contributeDailyCommuteMapActivity();
 
 }

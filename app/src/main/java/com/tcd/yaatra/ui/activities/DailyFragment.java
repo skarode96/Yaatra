@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.databinding.FragmentDailyBinding;
+import com.tcd.yaatra.databinding.FragmentDailyCommuteMapBinding;
 import com.tcd.yaatra.services.api.yaatra.models.Journey;
 import com.tcd.yaatra.ui.adapters.DailyTripAdapter;
 import com.tcd.yaatra.ui.fragments.BaseFragment;
