@@ -6,17 +6,21 @@ import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
+import android.os.Handler;
 import android.util.Log;
+
+import com.tcd.yaatra.repository.UserInfoRepository;
+import com.tcd.yaatra.repository.models.FellowTravellersCache;
 import com.tcd.yaatra.repository.models.Gender;
 import com.tcd.yaatra.repository.models.TravellerInfo;
 import com.tcd.yaatra.repository.models.TravellerStatus;
-import com.tcd.yaatra.repository.models.FellowTravellersCache;
 import com.tcd.yaatra.ui.activities.PeerToPeerActivity;
 import com.tcd.yaatra.utils.NetworkUtils;
+import com.tcd.yaatra.utils.SharedPreferenceUtils;
+
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import android.os.Handler;
 
 import static android.content.Context.WIFI_P2P_SERVICE;
 
@@ -53,11 +57,13 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
 
     //endregion
 
-    public PeerCommunicator(PeerToPeerActivity activity, String appUserName){
+    public PeerCommunicator(PeerToPeerActivity activity, UserInfoRepository userInfoRepository){
 
+        userInfoRepository.getUserProfile(SharedPreferenceUtils.getUserName()).observe(activity,response -> {
+            this.appUserName = response.getUsername();
+            this.appUserId = response.getId();
+        });
         peerToPeerActivity = activity;
-        this.appUserId = 11453;
-        this.appUserName = appUserName;
 
         initializeWiFiDirectComponents();
 
