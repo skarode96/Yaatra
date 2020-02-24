@@ -28,7 +28,6 @@ public class MapBoxInputFragment extends BaseFragment<ActivityMapboxInputBinding
     @Override
     public void initEventHandlers() {
         super.initEventHandlers();
-        Toast.makeText(getActivity(),"initEventHandlers",Toast.LENGTH_SHORT).show();
         this.layoutDataBinding.goToDestination.setOnClickListener(view -> {
             showRoutes();
         });

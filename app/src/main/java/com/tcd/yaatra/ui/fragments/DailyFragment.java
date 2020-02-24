@@ -1,4 +1,4 @@
-package com.tcd.yaatra.ui.activities;
+package com.tcd.yaatra.ui.fragments;
 
 import android.app.Activity;
 import android.content.Context;

@@ -134,7 +134,7 @@
 
             <Button
                 android:id="@+id/listButton"
-                android:layout_width="200dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="1dp"
                 android:background="@color/md_grey_200"
@@ -143,10 +143,9 @@
 
             <Button
                 android:id="@+id/downloadButton"
-                android:layout_width="200dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="1dp"
-                android:layout_marginEnd="10dp"
                 android:layout_weight="1"
                 android:background="@color/md_grey_200"
                 android:clickable="true"

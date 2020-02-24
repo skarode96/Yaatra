@@ -34,6 +34,7 @@ import com.mapbox.mapboxsdk.plugins.locationlayer.modes.CameraMode;
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.databinding.FragmentDailyCommuteMapBinding;
 import com.tcd.yaatra.ui.fragments.BaseFragment;
+import com.tcd.yaatra.ui.fragments.DailyFragment;
 
 import java.io.IOException;
 import java.util.List;

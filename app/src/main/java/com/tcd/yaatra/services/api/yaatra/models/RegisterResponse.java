@@ -49,6 +49,11 @@ public class RegisterResponse {
     public RegisterResponse() {
     }
 
+    public RegisterResponse(String message, String response) {
+        this.message = message;
+        this.response = response;
+    }
+
     public String getFirstName() {
         return firstName;
     }
