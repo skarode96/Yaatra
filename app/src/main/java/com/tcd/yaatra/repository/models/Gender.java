@@ -8,7 +8,7 @@ public enum Gender {
     NOT_SPECIFIED("No Preference","n",0),
     FEMALE("Female", "f",1),
     MALE("Male", "m",2),
-    OTHER("Other", "o",3);
+    OTHER("Others", "o",3);
 
     private static final Map<String, Gender> LABEL = new HashMap<>();
     private static final Map<String, Gender> ID_NAME = new HashMap<>();

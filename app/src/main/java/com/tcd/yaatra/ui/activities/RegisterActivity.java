@@ -13,8 +13,6 @@ import com.tcd.yaatra.repository.models.Gender;
 import com.tcd.yaatra.repository.models.TransportPreference;
 import com.tcd.yaatra.services.api.yaatra.models.RegisterRequestBody;
 import com.tcd.yaatra.ui.viewmodels.RegisterActivityViewModel;
-import com.tcd.yaatra.utils.GenderPreferenceUtils;
-import com.tcd.yaatra.utils.GenderUtils;
 
 import javax.inject.Inject;
 

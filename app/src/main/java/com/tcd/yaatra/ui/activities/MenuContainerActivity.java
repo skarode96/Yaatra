@@ -14,6 +14,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.databinding.ActivityMenuBinding;
 import com.tcd.yaatra.repository.UserInfoRepository;
+import com.tcd.yaatra.ui.fragments.DailyFragment;
 import com.tcd.yaatra.ui.fragments.SettingsFragment;
 import com.tcd.yaatra.utils.SharedPreferenceUtils;
 
