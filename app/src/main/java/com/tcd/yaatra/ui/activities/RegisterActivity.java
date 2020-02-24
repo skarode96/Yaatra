@@ -171,7 +171,7 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
 
                     case FAILURE:
                         layoutDataBinding.progressBarOverlay.setVisibility(View.GONE);
-                        Toast.makeText(this, registerResponse.getData().getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show();
                         break;
                 }
             });

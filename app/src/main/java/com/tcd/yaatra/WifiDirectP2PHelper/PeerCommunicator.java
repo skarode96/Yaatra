@@ -14,6 +14,7 @@ import com.tcd.yaatra.repository.models.FellowTravellersCache;
 import com.tcd.yaatra.repository.models.Gender;
 import com.tcd.yaatra.repository.models.TravellerInfo;
 import com.tcd.yaatra.repository.models.TravellerStatus;
+import com.tcd.yaatra.services.api.yaatra.models.UserInfo;
 import com.tcd.yaatra.ui.activities.PeerToPeerActivity;
 import com.tcd.yaatra.utils.NetworkUtils;
 import com.tcd.yaatra.utils.SharedPreferenceUtils;
@@ -60,8 +61,7 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
     public PeerCommunicator(PeerToPeerActivity activity, UserInfoRepository userInfoRepository){
 
         userInfoRepository.getUserProfile(SharedPreferenceUtils.getUserName()).observe(activity,response -> {
-            this.appUserName = response.getUsername();
-            this.appUserId = response.getId();
+            updateTraveller(response);
         });
         peerToPeerActivity = activity;
 
@@ -89,6 +89,17 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
                         , TravellerStatus.None, now, 0.0d
                         , NetworkUtils.getWiFiIPAddress(peerToPeerActivity)
                         , 12345, now, appUserName);
+    }
+
+    private void updateTraveller(UserInfo response){
+
+        LocalDateTime now = LocalDateTime.now();
+        currentUserTravellerInfo =
+                new TravellerInfo(response.getId(), response.getUsername(), response.getAge(), Gender.valueOf(response.getGender())
+                        , 0.0d, 0.0d, 0.0d, 0.0d
+                        , TravellerStatus.None, now, response.getRating()
+                        , NetworkUtils.getWiFiIPAddress(peerToPeerActivity)
+                        , 12345, now, response.getUsername());
     }
 
     public void advertiseStatusAndDiscoverFellowTravellers(TravellerStatus status){
@@ -130,6 +141,8 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
                 Log.d(TAG, "Started advertising status of travellers");
 
                 registerListenersForFellowTravellers();
+
+                mServiceBroadcastingRunnable.run();
 
                 // service broadcasting started
                 serviceBroadcastingHandler
