@@ -9,7 +9,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.tcd.yaatra.services.api.yaatra.models.Journey;
-import com.tcd.yaatra.ui.activities.DailyFragment;
+import com.tcd.yaatra.ui.fragments.DailyFragment;
 import com.tcd.yaatra.R;
 
 import java.util.ArrayList;
