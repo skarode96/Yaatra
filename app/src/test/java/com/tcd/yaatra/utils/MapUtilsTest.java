@@ -21,12 +21,6 @@ public class MapUtilsTest {
 
     String travellerUserName = "Traveller";
     String userName = "TestUser";
-    double lat1 = 53.343901;
-    double long1 = -6.255591;
-    double lat2 = 53.341629;
-    double long2 = -6.252580;
-    double distance = 0 ;
-
 
     TravellerInfo ti1 = new TravellerInfo(1, travellerUserName, 20, Gender.MALE, 0.0, 0.0, 0.0d, 0.0 , TravellerStatus.SeekingFellowTraveller, LocalDateTime.now(), 0.0, "1.2.3.4", 12345, LocalDateTime.now(), userName);
     TravellerInfo ti2 = new TravellerInfo(1, travellerUserName, 20, Gender.MALE, 0.0, 0.0, 0.0d, 0.0 , TravellerStatus.SeekingFellowTraveller, LocalDateTime.now(), 0.0, "1.2.3.4", 12345, LocalDateTime.now(), userName);
@@ -49,12 +43,8 @@ public class MapUtilsTest {
         this.tl.add(this.ti3);
         this.tiu.setDestinationLatitude(53.343249);
         this.tiu.setDestinationLongitude(-6.255898);
-        ArrayList<TravellerInfo> ul = new ArrayList<TravellerInfo>();
-
+        ArrayList<TravellerInfo> ul = new ArrayList<>();
         ul = maputils.getFellowTravelers(tiu, tl);
-
         assertEquals(2,ul.size());
-
-
     }
 }
