@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.WifiDirectP2PHelper.PeerCommunicator;
 import com.tcd.yaatra.databinding.ActivityPeerToPeerBinding;
-import com.tcd.yaatra.mocks.PeerTravellerInfoMocks;
+import com.tcd.yaatra.repository.UserInfoRepository;
 import com.tcd.yaatra.repository.models.TravellerInfo;
 import com.tcd.yaatra.repository.models.TravellerStatus;
 import com.tcd.yaatra.ui.adapter.PeerListAdapter;
@@ -21,8 +21,13 @@ import com.tcd.yaatra.ui.adapter.PeerListAdapter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.inject.Inject;
+
 public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> {
 
+
+    @Inject
+    UserInfoRepository userInfoRepository;
     PeerCommunicator communicator;
     private ArrayList<TravellerInfo> travellerInfos = new ArrayList<>();
 
@@ -68,7 +73,7 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
     }
 
     private void initializePeerCommunicator(){
-        communicator = new PeerCommunicator(this, "Sam");
+        communicator = new PeerCommunicator(this, userInfoRepository);
     }
 
     private void checkIfLocationPermissionGranted(){
