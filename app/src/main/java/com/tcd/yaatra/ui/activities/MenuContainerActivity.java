@@ -80,6 +80,7 @@ public class MenuContainerActivity extends BaseActivity<ActivityMenuBinding> imp
 
     private void handleLogout() {
         SharedPreferenceUtils.clearAuthToken();
+        SharedPreferenceUtils.clearUserName();
         Intent myIntent = new Intent(this, LoginActivity.class);
         startActivity(myIntent);
         finish();
