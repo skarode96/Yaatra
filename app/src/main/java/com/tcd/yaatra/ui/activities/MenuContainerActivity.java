@@ -41,8 +41,8 @@ public class MenuContainerActivity extends BaseActivity<ActivityMenuBinding> imp
 
         ActionBarDrawerToggle toggle = initActionBarDrawer();
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().replace(layoutDataBinding.fragmentContainer.getId(), new MapBoxInputFragment()).commit();
-            layoutDataBinding.navView.setCheckedItem(R.id.ad_hoc);
+            getSupportFragmentManager().beginTransaction().replace(layoutDataBinding.fragmentContainer.getId(), new MapFragment()).commit();
+            layoutDataBinding.navView.setCheckedItem(R.id.mapbox);
             this.drawer.addDrawerListener(toggle);
         }
     }
