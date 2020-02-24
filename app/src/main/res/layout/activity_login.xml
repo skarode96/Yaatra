@@ -127,12 +127,13 @@
 
                 <TextView
                     android:id="@+id/registerLink"
-                    android:layout_width="176dp"
-                    android:layout_height="wrap_content"
+                    android:layout_width="246dp"
+                    android:layout_height="39dp"
                     android:layout_gravity="center"
                     android:text="New User?"
                     android:textAlignment="center"
-                    android:textColor="#003989" />
+                    android:textColor="#003989"
+                    android:textSize="18sp" />
 
             </LinearLayout>
 
