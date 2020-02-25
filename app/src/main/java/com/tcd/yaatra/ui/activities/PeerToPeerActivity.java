@@ -1,6 +1,7 @@
 package com.tcd.yaatra.ui.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -50,8 +51,8 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
         layoutManager = new LinearLayoutManager(this);
         layoutDataBinding.peerRecyclerView.setLayoutManager(layoutManager);
         refreshRecyclerView();
+        layoutDataBinding.startNavigation.setOnClickListener(view -> handleStartNavigationClick());
     }
-
 
 
     @Override
@@ -62,6 +63,7 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
         initializePeerCommunicator();
         checkIfLocationPermissionGranted();
         handleDiscoverButtonClick();
+
     }
 
     private void enableWiFi(){
@@ -84,8 +86,8 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
 
             //if (Build.VERSION.SDK_INT >= 23) {
             ActivityCompat.requestPermissions(this
-                                        , new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}
-                                        , LOCATION_PERMISSION_REQUEST_CODE);
+                    , new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}
+                    , LOCATION_PERMISSION_REQUEST_CODE);
             //}
         }
         else {
@@ -152,7 +154,12 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
             communicator.advertiseStatusAndDiscoverFellowTravellers(TravellerStatus.SeekingFellowTraveller);
         }
     }
-
+    private void handleStartNavigationClick(){
+        Intent mapIntent = new Intent(PeerToPeerActivity.this, RouteInfo.class);
+        Bundle bundle = getIntent().getExtras();
+        mapIntent.putExtras(bundle);
+        startActivity(mapIntent);
+    }
     public void showFellowTravellers(HashMap<Integer, TravellerInfo> peerTravellers){
         this.travellerInfos.clear();
         peerTravellers.values().forEach(travellerInfo -> this.travellerInfos.add(travellerInfo));
