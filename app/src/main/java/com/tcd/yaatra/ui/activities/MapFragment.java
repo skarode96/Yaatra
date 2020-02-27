@@ -15,6 +15,7 @@ import java.io.UnsupportedEncodingException;
 import android.annotation.SuppressLint;
 import androidx.annotation.Nullable;
 //import android.content.SharedPreferences;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -78,7 +79,7 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
     private BroadcastReceiver MyReceiver = null;
     SearchView destinationArea;
     private Button listButton;
-    private Button navigateButton;
+    private Button discoverPeersButton;
     private Button downloadButton;
     LocationComponent locationComponent;
     private PermissionsManager permissionsManager;
@@ -121,7 +122,7 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
         destinationArea = layoutDataBinding.searchDest;
-        navigateButton = layoutDataBinding.discoverPeer;
+        discoverPeersButton = layoutDataBinding.discoverPeer;
         destinationArea.setOnQueryTextListener(this);
         MyReceiver= new MyReceiver();
         //broadcastIntent();
@@ -232,10 +233,11 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
         Intent mapIntent = new Intent(getActivity(), PeerToPeerActivity.class);
         Bundle bundle = new Bundle();
         String modeOfTravel;
-        double latitude = destination.latitude();
-        double longitude = destination.longitude();
-        bundle.putDouble("destLatitude",latitude);
-        bundle.putDouble("destLongitude",longitude);
+
+        bundle.putDouble("srcLatitude",locationComponent.getLastKnownLocation().getLongitude());
+        bundle.putDouble("srcLongitude",locationComponent.getLastKnownLocation().getLatitude());
+        bundle.putDouble("destLatitude",destination.latitude());
+        bundle.putDouble("destLongitude", destination.longitude());
 
         if(layoutDataBinding.bicycle.isChecked()) {
             modeOfTravel = DirectionsCriteria.PROFILE_CYCLING;
@@ -246,7 +248,6 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
             modeOfTravel = DirectionsCriteria.PROFILE_WALKING;
         }
         bundle.putString("modeOfTravel",modeOfTravel);
-        Toast.makeText(getActivity(),String.valueOf(latitude),Toast.LENGTH_SHORT).show();
         mapIntent.putExtras(bundle);
         startActivity(mapIntent);
     }
@@ -442,7 +443,7 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
 
         destinationMarker = map.addMarker(new MarkerOptions().position(point));
         destination = Point.fromLngLat(point.getLongitude(),point.getLatitude());
-        navigateButton.setVisibility(View.VISIBLE);
+        discoverPeersButton.setVisibility(View.VISIBLE);
 
         return true;
     }
