@@ -92,6 +92,8 @@ dependencies {
     //Recycler view
     implementation 'com.android.support:recyclerview-v7:28.0.0'
     implementation 'com.android.support:cardview-v7:28.0.0'
-    androidTestImplementation 'androidx.test:rules:1.2.0-beta01'
+    androidTestImplementation 'com.android.support.test:rules:1.0.2'
+
+    testImplementation 'androidx.test:core:1.0.0'
 
 }
