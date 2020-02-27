@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 
 public class MapUtils {
-    public ArrayList<TravellerInfo> getFellowTravelers (TravellerInfo userInfo, ArrayList<TravellerInfo> fellowUsersInfo)
+    public static ArrayList<TravellerInfo> filterFellowTravellers(TravellerInfo userInfo, ArrayList<TravellerInfo> fellowUsersInfo)
     {
         int nearLimit = 1000; //In meters
         ArrayList<TravellerInfo> nearUsersList = new ArrayList<>();

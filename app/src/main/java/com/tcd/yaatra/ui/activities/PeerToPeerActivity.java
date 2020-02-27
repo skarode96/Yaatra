@@ -14,12 +14,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.WifiDirectP2PHelper.PeerCommunicator;
 import com.tcd.yaatra.databinding.ActivityPeerToPeerBinding;
-import com.tcd.yaatra.mocks.PeerTravellerInfoMocks;
 import com.tcd.yaatra.repository.UserInfoRepository;
 import com.tcd.yaatra.repository.models.FellowTravellersCache;
 import com.tcd.yaatra.repository.models.TravellerInfo;
 import com.tcd.yaatra.repository.models.TravellerStatus;
 import com.tcd.yaatra.ui.adapter.PeerListAdapter;
+import com.tcd.yaatra.utils.MapUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -123,7 +123,7 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
     @Override
     protected void onPause() {
 //        travellerInfos.clear();
-        showPeers();
+        refreshRecyclerView();
 
         if(communicator != null){
             communicator.cleanup();
@@ -142,7 +142,7 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
     @Override
     protected void onDestroy() {
 //        travellerInfos.clear();
-        showPeers();
+        refreshRecyclerView();
 
         if(communicator != null) {
             communicator.cleanup();
@@ -164,13 +164,10 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
         mapIntent.putExtras(bundle);
         startActivity(mapIntent);
     }
-    public void showFellowTravellers(HashMap<Integer, TravellerInfo> peerTravellers){
+    public void showFellowTravellers(HashMap<Integer, TravellerInfo> peerTravellers, TravellerInfo ownTravellerInfo){
         this.travellerInfos.clear();
-        peerTravellers.values().forEach(travellerInfo -> this.travellerInfos.add(travellerInfo));
-        showPeers();
-    }
-
-    private void showPeers(){
+        ArrayList<TravellerInfo> peerTravellerArrayList = new ArrayList<>(peerTravellers.values());
+        MapUtils.filterFellowTravellers(ownTravellerInfo, peerTravellerArrayList).forEach(travellerInfo -> this.travellerInfos.add(travellerInfo));
         refreshRecyclerView();
     }
 

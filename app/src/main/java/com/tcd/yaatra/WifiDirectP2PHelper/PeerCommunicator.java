@@ -231,13 +231,14 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
                         HashMap<Integer, TravellerInfo> fellowTravellers = P2pSerializerDeserializer.deserializeFromMap(travellersInfoMap);
 
                         HashMap<Integer, TravellerInfo> onlyPeerTravellers = new HashMap<>(fellowTravellers);
+//                        TravellerInfo ownTravellerInfo = onlyPeerTravellers.get(Integer.valueOf(SharedPreferenceUtils.getUserId()));
                         onlyPeerTravellers.remove(Integer.valueOf(SharedPreferenceUtils.getUserId()));
                         onlyPeerTravellers.remove(appUserId);
 
                         boolean isCacheUpdated = FellowTravellersCache.getCacheInstance().addOrUpdate(onlyPeerTravellers);
 
                         if(isCacheUpdated){
-                            peerToPeerActivity.showFellowTravellers(FellowTravellersCache.getCacheInstance().getFellowTravellers(appUserName));
+                            peerToPeerActivity.showFellowTravellers(FellowTravellersCache.getCacheInstance().getFellowTravellers(appUserName), currentUserTravellerInfo);
 
                             //Start advertising newly discovered/updated fellow travellers
                             advertiseStatusAndDiscoverFellowTravellers(currentUserTravellerInfo.getStatus());
