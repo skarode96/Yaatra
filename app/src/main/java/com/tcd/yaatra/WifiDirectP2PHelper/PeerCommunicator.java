@@ -14,6 +14,7 @@ import com.tcd.yaatra.repository.models.FellowTravellersCache;
 import com.tcd.yaatra.repository.models.Gender;
 import com.tcd.yaatra.repository.models.TravellerInfo;
 import com.tcd.yaatra.repository.models.TravellerStatus;
+import com.tcd.yaatra.services.api.yaatra.models.UserInfo;
 import com.tcd.yaatra.ui.activities.PeerToPeerActivity;
 import com.tcd.yaatra.utils.NetworkUtils;
 import com.tcd.yaatra.utils.SharedPreferenceUtils;
@@ -60,8 +61,8 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
     public PeerCommunicator(PeerToPeerActivity activity, UserInfoRepository userInfoRepository){
 
         userInfoRepository.getUserProfile(SharedPreferenceUtils.getUserName()).observe(activity,response -> {
-            this.appUserName = response.getUsername();
-            this.appUserId = response.getId();
+            updateTraveller(response);
+            activity.handleDiscoverButtonClick();
         });
         peerToPeerActivity = activity;
 
@@ -91,6 +92,17 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
                         , 12345, now, appUserName);
     }
 
+    private void updateTraveller(UserInfo response){
+
+        LocalDateTime now = LocalDateTime.now();
+        currentUserTravellerInfo =
+                new TravellerInfo(response.getId(), response.getUsername(), response.getAge(), Gender.valueOfIdName(response.getGender())
+                        , 0.0d, 0.0d, 0.0d, 0.0d
+                        , TravellerStatus.None, now, response.getRating()
+                        , NetworkUtils.getWiFiIPAddress(peerToPeerActivity)
+                        , 12345, now, response.getUsername());
+    }
+
     public void advertiseStatusAndDiscoverFellowTravellers(TravellerStatus status){
 
         setCurrentStatusOfAppUser(status);
@@ -115,8 +127,8 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
     }
 
     private void advertiseStatus() {
-        HashMap<Integer, TravellerInfo> allTravellers = FellowTravellersCache.getCacheInstance().getFellowTravellers(appUserName);
-        allTravellers.put(appUserId, currentUserTravellerInfo);
+        HashMap<Integer, TravellerInfo> allTravellers = FellowTravellersCache.getCacheInstance().getFellowTravellers(SharedPreferenceUtils.getUserName());
+        allTravellers.put(Integer.valueOf(SharedPreferenceUtils.getUserId()), currentUserTravellerInfo);
 
         Map<String, String> serializedRecord = P2pSerializerDeserializer.serializeToMap(allTravellers.values());
 
@@ -130,6 +142,8 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
                 Log.d(TAG, "Started advertising status of travellers");
 
                 registerListenersForFellowTravellers();
+
+                mServiceBroadcastingRunnable.run();
 
                 // service broadcasting started
                 serviceBroadcastingHandler
@@ -213,6 +227,7 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
                         HashMap<Integer, TravellerInfo> fellowTravellers = P2pSerializerDeserializer.deserializeFromMap(travellersInfoMap);
 
                         HashMap<Integer, TravellerInfo> onlyPeerTravellers = new HashMap<>(fellowTravellers);
+                        onlyPeerTravellers.remove(Integer.valueOf(SharedPreferenceUtils.getUserId()));
                         onlyPeerTravellers.remove(appUserId);
 
                         boolean isCacheUpdated = FellowTravellersCache.getCacheInstance().addOrUpdate(onlyPeerTravellers);

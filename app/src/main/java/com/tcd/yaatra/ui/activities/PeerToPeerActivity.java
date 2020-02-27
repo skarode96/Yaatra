@@ -62,7 +62,6 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
         enableWiFi();
         initializePeerCommunicator();
         checkIfLocationPermissionGranted();
-        handleDiscoverButtonClick();
 
     }
 
@@ -149,7 +148,7 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
 
     //endregion
 
-    private void handleDiscoverButtonClick(){
+    public void handleDiscoverButtonClick(){
         if(isLocationPermissionGranted){
             communicator.advertiseStatusAndDiscoverFellowTravellers(TravellerStatus.SeekingFellowTraveller);
         }

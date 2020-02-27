@@ -37,8 +37,8 @@ public class UserRepository {
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                 switch (response.code()) {
                     case 200: loginResponseLiveData.postValue(AsyncData.getSuccessState(response.body()));break;
-                    case 401: loginResponseLiveData.postValue(AsyncData.getFailureState(new LoginResponse(response.body().getMessage(), "Error")));break;
-                    case 400: loginResponseLiveData.postValue(AsyncData.getFailureState(new LoginResponse(response.body().getMessage(), "Error")));break;
+                    case 401: loginResponseLiveData.postValue(AsyncData.getFailureState(new LoginResponse("User not Found! Please provide correct username and password", "Error")));break;
+                    case 400: loginResponseLiveData.postValue(AsyncData.getFailureState(new LoginResponse("Use post request", "Error")));break;
                     default: loginResponseLiveData.postValue(AsyncData.getFailureState(new LoginResponse("Fatal Error", "Error")));
                 }
             }
@@ -64,7 +64,7 @@ public class UserRepository {
             public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
                 switch (response.code()) {
                     case 201: registerResponseLiveData.postValue(AsyncData.getSuccessState(response.body()));break;
-                    case 400: registerResponseLiveData.postValue(AsyncData.getFailureState(new RegisterResponse(response.body().getMessage(), "Error")));break;
+                    case 400: registerResponseLiveData.postValue(AsyncData.getFailureState(new RegisterResponse("Incorrect data, Either email exists or username exists or password did not match", "Error")));break;
                     default: registerResponseLiveData.postValue(AsyncData.getFailureState(null));
                 }
             }
