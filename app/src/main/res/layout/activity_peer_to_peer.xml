@@ -4,30 +4,43 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.activities.PeerToPeerActivity">
-
-
-
-    <ListView
-        android:id="@+id/listNearbyDevices"
-        android:layout_width="411dp"
-        android:layout_height="206dp"
-        android:layout_marginTop="52dp"
-        android:background="#00FFFFFF"
-        android:scrollbarAlwaysDrawVerticalTrack="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/peer_recycler_view"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        tools:context=".ui.activities.PeerToPeerActivity">
+        <ListView
+            android:id="@+id/listNearbyDevices"
+            android:layout_width="411dp"
+            android:layout_height="206dp"
+            android:layout_marginTop="52dp"
+            android:background="#00FFFFFF"
+            android:scrollbarAlwaysDrawVerticalTrack="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/peer_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <Button
+            android:id="@+id/startNavigation"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_marginLeft="10dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/register_button"
+            android:paddingLeft="30dp"
+            android:paddingRight="20dp"
+            android:text="Start Navigation"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:layout_alignBottom="@+id/peer_recycler_view"
+            android:paddingBottom="10dp"
+            />
+    </RelativeLayout>
 
 </layout>
