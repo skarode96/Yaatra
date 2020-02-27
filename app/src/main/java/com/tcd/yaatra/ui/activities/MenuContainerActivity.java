@@ -50,9 +50,6 @@ public class MenuContainerActivity extends BaseActivity<ActivityMenuBinding> imp
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         switch (menuItem.getItemId()) {
-            case R.id.ad_hoc:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new MapBoxInputFragment()).commit();
-                break;
             case R.id.daily:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new DailyFragment()).commit();
                 break;
@@ -61,10 +58,6 @@ public class MenuContainerActivity extends BaseActivity<ActivityMenuBinding> imp
                 break;
             case R.id.logout:
                 handleLogout();
-                break;
-            case R.id.peer2peer:
-                Intent intent = new Intent(MenuContainerActivity.this,PeerToPeerActivity.class);
-                startActivity(intent);
                 break;
             case R.id.mapbox:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new MapFragment()).commit();

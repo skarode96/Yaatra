@@ -4,11 +4,13 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.tcd.yaatra.R;
+import com.tcd.yaatra.repository.models.Gender;
 import com.tcd.yaatra.repository.models.TravellerInfo;
 
 import java.util.ArrayList;
@@ -31,6 +33,7 @@ public class PeerListAdapter extends RecyclerView.Adapter<PeerListAdapter.ViewHo
         public TextView peerSourceLongitude;
         public TextView peerDestinationLattitude;
         public TextView peerDestinationLongitude;
+        public ImageView profileIcon;
 
         public ViewHolder(View v){
 
@@ -41,6 +44,7 @@ public class PeerListAdapter extends RecyclerView.Adapter<PeerListAdapter.ViewHo
             peerSourceLongitude = (TextView)v.findViewById(R.id.peer_source_longitude);
             peerDestinationLattitude = (TextView)v.findViewById(R.id.peer_destination_lattitude);
             peerDestinationLongitude = (TextView)v.findViewById(R.id.peer_destination_longitude);
+            profileIcon = (ImageView) v.findViewById(R.id.profile_icon);
 
         }
     }
@@ -55,12 +59,14 @@ public class PeerListAdapter extends RecyclerView.Adapter<PeerListAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder holder, int position){
         ArrayList<TravellerInfo> travellerInfos = this.travellerInfos;
+        Gender gender = travellerInfos.get(position).getGender();
         holder.peerUsername.setText(travellerInfos.get(position).getUserName());
-        holder.peerGender.setText(travellerInfos.get(position).getGender().toString());
+        holder.peerGender.setText(gender.toString());
         holder.peerSourceLattitude.setText(travellerInfos.get(position).getSourceLatitude().toString());
         holder.peerSourceLongitude.setText(travellerInfos.get(position).getSourceLongitude().toString());
         holder.peerDestinationLattitude.setText(travellerInfos.get(position).getDestinationLatitude().toString());
         holder.peerDestinationLongitude.setText(travellerInfos.get(position).getDestinationLongitude().toString());
+        holder.profileIcon.setImageResource(gender == Gender.MALE ? R.drawable.guy : R.drawable.girl);
     }
 
     @Override

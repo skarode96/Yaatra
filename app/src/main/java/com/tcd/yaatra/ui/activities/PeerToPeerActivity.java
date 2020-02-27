@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.WifiDirectP2PHelper.PeerCommunicator;
 import com.tcd.yaatra.databinding.ActivityPeerToPeerBinding;
+import com.tcd.yaatra.mocks.PeerTravellerInfoMocks;
 import com.tcd.yaatra.repository.UserInfoRepository;
 import com.tcd.yaatra.repository.models.FellowTravellersCache;
 import com.tcd.yaatra.repository.models.TravellerInfo;
