@@ -228,14 +228,14 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
     }
 
     private void handleOnNavigateClick() throws UnsupportedEncodingException {
-        Intent mapIntent = new Intent(getActivity(), RouteInfo.class);
-        //Intent mapIntent = new Intent(MapFragment.this, PeerToPeerActivity.class);
+        //Intent mapIntent = new Intent(getActivity(), RouteInfo.class);
+        Intent mapIntent = new Intent(getActivity(), PeerToPeerActivity.class);
         Bundle bundle = new Bundle();
         String modeOfTravel;
         double latitude = destination.latitude();
-        double longitide = destination.longitude();
+        double longitude = destination.longitude();
         bundle.putDouble("destLatitude",latitude);
-        bundle.putDouble("destLongitude",longitide);
+        bundle.putDouble("destLongitude",longitude);
 
         if(layoutDataBinding.bicycle.isChecked()) {
             modeOfTravel = DirectionsCriteria.PROFILE_CYCLING;
@@ -432,55 +432,6 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
         });
 
     }
-
-    @Override
-    public void onExplanationNeeded(List<String> permissionsToExplain) {
-        Toast.makeText(getActivity(),"Location needed to route",Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        mapView.onStart();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        mapView.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        mapView.onPause();
-        //unregisterReceiver(MyReceiver);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        mapView.onStop();
-    }
-
-//    @Override
-//    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-//        super.onSaveInstanceState(outState, outPersistentState);
-//        mapView.onSaveInstanceState(outState);
-//    }
-
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-        mapView.onLowMemory();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mapView.onDestroy();
-    }
-
     @Override
     public boolean onMapClick(@NonNull LatLng point) {
 
@@ -544,4 +495,53 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
         }
         return true;
     }
+
+    @Override
+    public void onExplanationNeeded(List<String> permissionsToExplain) {
+        Toast.makeText(getActivity(),"Location needed to route",Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mapView.onStart();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mapView.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mapView.onPause();
+        //unregisterReceiver(MyReceiver);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mapView.onStop();
+    }
+
+//    @Override
+//    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+//        super.onSaveInstanceState(outState, outPersistentState);
+//        mapView.onSaveInstanceState(outState);
+//    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mapView.onLowMemory();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mapView.onDestroy();
+    }
+
 }
