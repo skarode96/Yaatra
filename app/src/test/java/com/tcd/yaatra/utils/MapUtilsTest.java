@@ -1,11 +1,5 @@
 package com.tcd.yaatra.utils;
 
-import static org.junit.Assert.*;
-import org.junit.Test;
-import org.junit.Assert;
-
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
@@ -44,7 +38,7 @@ public class MapUtilsTest {
         this.tiu.setDestinationLatitude(53.343249);
         this.tiu.setDestinationLongitude(-6.255898);
         ArrayList<TravellerInfo> ul = new ArrayList<>();
-        ul = maputils.getFellowTravelers(tiu, tl);
+        ul = maputils.filterFellowTravellers(tiu, tl);
         assertEquals(2,ul.size());
     }
 }
