@@ -6,6 +6,7 @@ import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
+import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 
@@ -58,10 +59,10 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
 
     //endregion
 
-    public PeerCommunicator(PeerToPeerActivity activity, UserInfoRepository userInfoRepository){
+    public PeerCommunicator(PeerToPeerActivity activity, UserInfoRepository userInfoRepository, Bundle savedInstanceState){
 
         userInfoRepository.getUserProfile(SharedPreferenceUtils.getUserName()).observe(activity,response -> {
-            updateTraveller(response);
+            updateTraveller(response, savedInstanceState);
             activity.handleDiscoverButtonClick();
         });
         peerToPeerActivity = activity;
@@ -92,12 +93,15 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
                         , 12345, now, appUserName);
     }
 
-    private void updateTraveller(UserInfo response){
+    private void updateTraveller(UserInfo response, Bundle savedInstanceState){
 
         LocalDateTime now = LocalDateTime.now();
+        double destLatitude = savedInstanceState.getDouble("destLatitude");
+        double destLongitude = savedInstanceState.getDouble("destLongitude");
+        String modeOfTravel =  savedInstanceState.getString("modeOfTravel");
         currentUserTravellerInfo =
                 new TravellerInfo(response.getId(), response.getUsername(), response.getAge(), Gender.valueOfIdName(response.getGender())
-                        , 0.0d, 0.0d, 0.0d, 0.0d
+                        , 0.0d, 0.0d, destLatitude, destLongitude
                         , TravellerStatus.None, now, response.getRating()
                         , NetworkUtils.getWiFiIPAddress(peerToPeerActivity)
                         , 12345, now, response.getUsername());

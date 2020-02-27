@@ -32,6 +32,7 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
     UserInfoRepository userInfoRepository;
     PeerCommunicator communicator;
     private ArrayList<TravellerInfo> travellerInfos = new ArrayList<>();
+    private Bundle bundle;
 
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
@@ -60,7 +61,7 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
     protected void onCreate(Bundle savedInstanceState) {
 //        this.travellerInfos = PeerTravellerInfoMocks.getPeerTravellerList();  // for mock purpose
         super.onCreate(savedInstanceState);
-
+        this.bundle = getIntent().getExtras();
         FellowTravellersCache.getCacheInstance().clear();
         enableWiFi();
         initializePeerCommunicator();
@@ -77,7 +78,7 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
     }
 
     private void initializePeerCommunicator(){
-        communicator = new PeerCommunicator(this, userInfoRepository);
+        communicator = new PeerCommunicator(this, userInfoRepository, bundle);
     }
 
     private void checkIfLocationPermissionGranted(){

@@ -2,6 +2,13 @@ package com.tcd.yaatra.utils;
 
 import android.util.Log;
 
+import java.nio.ByteBuffer;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.util.Base64;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -9,12 +16,6 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.nio.ByteBuffer;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.util.Base64;
 
 public class EncryptionUtils {
 
@@ -49,7 +50,7 @@ public class EncryptionUtils {
 
             String encryptedText = Base64.getEncoder().encodeToString(cipherMessage);
 
-            return encryptedText;
+            return plainText;
         }catch (NoSuchAlgorithmException e){
             Log.e(TAG, "Failed to encrypt text", e);
         }
@@ -74,41 +75,42 @@ public class EncryptionUtils {
 
     public static String decrypt(String encryptedText){
 
-        try {
-
-            byte[] decodedBytes = Base64.getDecoder().decode(encryptedText);
-
-            ByteBuffer byteBuffer = ByteBuffer.wrap(decodedBytes);
-            int ivLength = byteBuffer.getInt();
-            byte[] iv = new byte[ivLength];
-            byteBuffer.get(iv);
-            byte[] cipherText = new byte[byteBuffer.remaining()];
-            byteBuffer.get(cipherText);
-
-            final Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
-            cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(key, "AES"), new GCMParameterSpec(128, iv));
-            byte[] plainTextBytes= cipher.doFinal(cipherText);
-
-            return new String(plainTextBytes);
-        }catch (NoSuchAlgorithmException e){
-            Log.e(TAG, "Failed to decrypt text", e);
-        }
-        catch (BadPaddingException e){
-            Log.e(TAG, "Failed to decrypt text", e);
-        }
-        catch (NoSuchPaddingException e){
-            Log.e(TAG, "Failed to decrypt text", e);
-        }
-        catch (InvalidKeyException e){
-            Log.e(TAG, "Failed to decrypt text", e);
-        }
-        catch (IllegalBlockSizeException e){
-            Log.e(TAG, "Failed to decrypt text", e);
-        }
-        catch (InvalidAlgorithmParameterException e){
-            Log.e(TAG, "Failed to decrypt text", e);
-        }
-
-        return encryptedText;
+//        try {
+//
+//            byte[] decodedBytes = Base64.getDecoder().decode(encryptedText);
+//
+//            ByteBuffer byteBuffer = ByteBuffer.wrap(decodedBytes);
+//            int ivLength = byteBuffer.getInt();
+//            byte[] iv = new byte[ivLength];
+//            byteBuffer.get(iv);
+//            byte[] cipherText = new byte[byteBuffer.remaining()];
+//            byteBuffer.get(cipherText);
+//
+//            final Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+//            cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(key, "AES"), new GCMParameterSpec(128, iv));
+//            byte[] plainTextBytes= cipher.doFinal(cipherText);
+//
+////            return new String(plainTextBytes);
+            return encryptedText;
+//        }catch (NoSuchAlgorithmException e){
+//            Log.e(TAG, "Failed to decrypt text", e);
+//        }
+//        catch (BadPaddingException e){
+//            Log.e(TAG, "Failed to decrypt text", e);
+//        }
+//        catch (NoSuchPaddingException e){
+//            Log.e(TAG, "Failed to decrypt text", e);
+//        }
+//        catch (InvalidKeyException e){
+//            Log.e(TAG, "Failed to decrypt text", e);
+//        }
+//        catch (IllegalBlockSizeException e){
+//            Log.e(TAG, "Failed to decrypt text", e);
+//        }
+//        catch (InvalidAlgorithmParameterException e){
+//            Log.e(TAG, "Failed to decrypt text", e);
+//        }
+//
+//        return encryptedText;
     }
 }
