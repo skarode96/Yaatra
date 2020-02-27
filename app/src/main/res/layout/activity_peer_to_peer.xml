@@ -25,22 +25,21 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <Button
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/startNavigation"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:layout_marginLeft="10dp"
-            android:layout_gravity="center"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/register_button"
-            android:paddingLeft="30dp"
-            android:paddingRight="20dp"
-            android:text="Start Navigation"
-            android:textColor="@color/white"
-            android:textStyle="bold"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:src="@drawable/ic_btn_navigation"
+            android:gravity="center"
+            android:tooltipText=" Enter Destination"
+            android:visibility="visible"
+            android:background="@android:color/transparent"
             android:layout_alignBottom="@+id/peer_recycler_view"
-            android:paddingBottom="10dp"
-            />
+            android:paddingTop="200dp"
+            android:layout_marginLeft="270dp"
+            android:layout_marginBottom="50dp"/>
+
     </RelativeLayout>
 
 </layout>
