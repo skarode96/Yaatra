@@ -15,6 +15,7 @@ import com.tcd.yaatra.R;
 import com.tcd.yaatra.WifiDirectP2PHelper.PeerCommunicator;
 import com.tcd.yaatra.databinding.ActivityPeerToPeerBinding;
 import com.tcd.yaatra.repository.UserInfoRepository;
+import com.tcd.yaatra.repository.models.FellowTravellersCache;
 import com.tcd.yaatra.repository.models.TravellerInfo;
 import com.tcd.yaatra.repository.models.TravellerStatus;
 import com.tcd.yaatra.ui.adapter.PeerListAdapter;
@@ -59,6 +60,8 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
     protected void onCreate(Bundle savedInstanceState) {
 //        this.travellerInfos = PeerTravellerInfoMocks.getPeerTravellerList();  // for mock purpose
         super.onCreate(savedInstanceState);
+
+        FellowTravellersCache.getCacheInstance().clear();
         enableWiFi();
         initializePeerCommunicator();
         checkIfLocationPermissionGranted();
