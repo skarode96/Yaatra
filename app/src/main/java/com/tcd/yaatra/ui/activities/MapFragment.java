@@ -86,7 +86,8 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
     private static final String TAG = "DestinationActivity";
     public static final String JSON_CHARSET = "UTF-8";
     public static final String JSON_FIELD_REGION_NAME = "FIELD_REGION_NAME";
-
+    private String destname;
+    private String sourceName;
     View view;
 
     @Inject
@@ -233,7 +234,15 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
         Intent mapIntent = new Intent(getActivity(), PeerToPeerActivity.class);
         Bundle bundle = new Bundle();
         String modeOfTravel;
+        Geocoder coder = new Geocoder(getActivity());
+        List<Address> startLoc;
+        try{
+            startLoc = coder.getFromLocation(locationComponent.getLastKnownLocation().getLatitude(),locationComponent.getLastKnownLocation().getLongitude(),1);
+            sourceName = startLoc.get(0).getAddressLine(0);
+        }catch (Exception e){ Toast.makeText(getActivity(), "Error generating geoname", Toast.LENGTH_SHORT).show();}
 
+        bundle.putString("sourceName", sourceName);
+        bundle.putString("destName",destname);
         bundle.putDouble("srcLatitude",locationComponent.getLastKnownLocation().getLongitude());
         bundle.putDouble("srcLongitude",locationComponent.getLastKnownLocation().getLatitude());
         bundle.putDouble("destLatitude",destination.latitude());
@@ -435,7 +444,8 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
     }
     @Override
     public boolean onMapClick(@NonNull LatLng point) {
-
+        Geocoder coder = new Geocoder(getActivity());
+        List<Address> destinationName;
         if(destinationMarker != null)
         {
             map.removeMarker(destinationMarker);
@@ -444,7 +454,11 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
         destinationMarker = map.addMarker(new MarkerOptions().position(point));
         destination = Point.fromLngLat(point.getLongitude(),point.getLatitude());
         discoverPeersButton.setVisibility(View.VISIBLE);
-
+        try{
+            destinationName = coder.getFromLocation(point.getLatitude(),point.getLongitude(),1);
+            destname = destinationName.get(0).getAddressLine(0);
+        }catch(Exception e)
+        { Toast.makeText(getActivity(), "Error generating geoname", Toast.LENGTH_SHORT).show();}
         return true;
     }
 
@@ -460,6 +474,8 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
 
             //query = query + ","+locationComponent.getLastKnownLocation().getLongitude()+","+locationComponent.getLastKnownLocation().getLatitude();
             countries = coder.getFromLocation(locationComponent.getLastKnownLocation().getLatitude(),locationComponent.getLastKnownLocation().getLongitude(),1);
+            sourceName = countries.get(0).getAddressLine(0);
+
             if(countries.size()>0)
             {
                 query = query + "," + countries.get(0).getCountryName();
