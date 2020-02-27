@@ -62,6 +62,7 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
 
         userInfoRepository.getUserProfile(SharedPreferenceUtils.getUserName()).observe(activity,response -> {
             updateTraveller(response);
+            activity.handleDiscoverButtonClick();
         });
         peerToPeerActivity = activity;
 
@@ -95,7 +96,7 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
 
         LocalDateTime now = LocalDateTime.now();
         currentUserTravellerInfo =
-                new TravellerInfo(response.getId(), response.getUsername(), response.getAge(), Gender.valueOf(response.getGender())
+                new TravellerInfo(response.getId(), response.getUsername(), response.getAge(), Gender.valueOfIdName(response.getGender())
                         , 0.0d, 0.0d, 0.0d, 0.0d
                         , TravellerStatus.None, now, response.getRating()
                         , NetworkUtils.getWiFiIPAddress(peerToPeerActivity)
@@ -126,8 +127,8 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
     }
 
     private void advertiseStatus() {
-        HashMap<Integer, TravellerInfo> allTravellers = FellowTravellersCache.getCacheInstance().getFellowTravellers(appUserName);
-        allTravellers.put(appUserId, currentUserTravellerInfo);
+        HashMap<Integer, TravellerInfo> allTravellers = FellowTravellersCache.getCacheInstance().getFellowTravellers(SharedPreferenceUtils.getUserName());
+        allTravellers.put(Integer.valueOf(SharedPreferenceUtils.getUserId()), currentUserTravellerInfo);
 
         Map<String, String> serializedRecord = P2pSerializerDeserializer.serializeToMap(allTravellers.values());
 
@@ -226,6 +227,7 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
                         HashMap<Integer, TravellerInfo> fellowTravellers = P2pSerializerDeserializer.deserializeFromMap(travellersInfoMap);
 
                         HashMap<Integer, TravellerInfo> onlyPeerTravellers = new HashMap<>(fellowTravellers);
+                        onlyPeerTravellers.remove(Integer.valueOf(SharedPreferenceUtils.getUserId()));
                         onlyPeerTravellers.remove(appUserId);
 
                         boolean isCacheUpdated = FellowTravellersCache.getCacheInstance().addOrUpdate(onlyPeerTravellers);
