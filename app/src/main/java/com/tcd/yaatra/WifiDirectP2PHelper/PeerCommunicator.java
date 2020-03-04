@@ -23,6 +23,7 @@ import com.tcd.yaatra.utils.SharedPreferenceUtils;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import static android.content.Context.WIFI_P2P_SERVICE;
 
@@ -152,7 +153,7 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
                 // service broadcasting started
                 serviceBroadcastingHandler
                         .postDelayed(mServiceBroadcastingRunnable,
-                                SERVICE_BROADCASTING_INTERVAL);
+                                getRandomServiceBroadcastingInterval());
             }
 
             @Override
@@ -279,6 +280,10 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
 
             isDiscoveryStarted = false;
         }
+    }
+
+    private int getRandomServiceBroadcastingInterval(){
+        return (new Random()).nextInt((13111 - 8111) + 1) + 8111;
     }
 
     public void registerPeerActivityListener(){
