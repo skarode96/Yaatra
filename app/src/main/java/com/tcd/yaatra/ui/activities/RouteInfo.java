@@ -1,14 +1,17 @@
 package com.tcd.yaatra.ui.activities;
 
 import com.tcd.yaatra.R;
+import com.tcd.yaatra.ui.fragments.SettingsFragment;
 import com.tcd.yaatra.ui.viewmodels.RouteInfoViewModel;
 import com.tcd.yaatra.databinding.ActivityRouteinfoBinding;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -56,6 +59,7 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
     private MapboxMap map;
     LocationComponent locationComponent;
     private Button startButton;
+    private Button endTrip;
     private PermissionsManager permissionsManager;
     private Point originPosition;
     private Point destinationPosition;
@@ -85,6 +89,7 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
         super.onCreate(savedInstanceState);
         mapView = layoutDataBinding.mapView;
         startButton = layoutDataBinding.startButton;
+        endTrip = layoutDataBinding.endNavigation;
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
     }
@@ -97,6 +102,8 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
                 .build();
 
         NavigationLauncher.startNavigation(RouteInfo.this,options);
+        startButton.setVisibility(View.GONE);
+        endTrip.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -108,7 +115,6 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
             @Override
             public void onStyleLoaded(@NonNull Style style) {
                 enableLocation(style);
-
             }
         });
 
@@ -262,7 +268,7 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
     @Override
     public void onCancelNavigation() {
         // Navigation canceled, finish the activity
-        finish();
+        Toast.makeText(this,"End of trip!",Toast.LENGTH_SHORT).show();
 
     }
 
