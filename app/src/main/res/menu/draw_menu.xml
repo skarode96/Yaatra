@@ -8,6 +8,14 @@
             android:icon="@drawable/ic_adhoc"
             android:title="@string/ad_hoc" />
         <item
+            android:id="@+id/ad_hoc"
+            android:icon="@drawable/ic_adhoc"
+            android:title="@string/ad_hoc" />
+        <item
+            android:id="@+id/peer2peer"
+            android:icon="@drawable/ic_adhoc"
+            android:title="@string/peer2peer" />
+        <item
             android:id="@+id/daily"
             android:icon="@drawable/ic_scheduled"
             android:title="@string/daily" />
