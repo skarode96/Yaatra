@@ -15,6 +15,7 @@ import com.tcd.yaatra.R;
 import com.tcd.yaatra.databinding.ActivityMenuBinding;
 import com.tcd.yaatra.repository.UserInfoRepository;
 import com.tcd.yaatra.ui.fragments.DailyFragment;
+import com.tcd.yaatra.ui.fragments.CreateDailyCommuteFragment;
 import com.tcd.yaatra.ui.fragments.SettingsFragment;
 import com.tcd.yaatra.utils.SharedPreferenceUtils;
 
@@ -50,14 +51,21 @@ public class MenuContainerActivity extends BaseActivity<ActivityMenuBinding> imp
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         switch (menuItem.getItemId()) {
+            case R.id.ad_hoc:
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new MapBoxInputFragment()).commit();
+                break;
             case R.id.daily:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new DailyFragment()).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new CreateDailyCommuteFragment()).commit();
                 break;
             case R.id.settings:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SettingsFragment()).commit();
                 break;
             case R.id.logout:
                 handleLogout();
+                break;
+            case R.id.peer2peer:
+                Intent intent = new Intent(MenuContainerActivity.this,PeerToPeerActivity.class);
+                startActivity(intent);
                 break;
             case R.id.mapbox:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new MapFragment()).commit();

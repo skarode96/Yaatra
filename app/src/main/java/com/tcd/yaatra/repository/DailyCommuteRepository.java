@@ -4,7 +4,10 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.tcd.yaatra.repository.models.AsyncData;
+import com.tcd.yaatra.services.api.yaatra.api.CreateDailyCommuteApi;
 import com.tcd.yaatra.services.api.yaatra.api.DailyCommuteApi;
+import com.tcd.yaatra.services.api.yaatra.models.CreateDailyCommuteRequestBody;
+import com.tcd.yaatra.services.api.yaatra.models.CreateDailyCommuteResponse;
 import com.tcd.yaatra.services.api.yaatra.models.Journey;
 
 import java.util.List;
@@ -17,10 +20,12 @@ import retrofit2.Response;
 
 public class DailyCommuteRepository {
     private DailyCommuteApi dailyCommuteApi;
+    private CreateDailyCommuteApi createDailyCommuteApi;
 
     @Inject
-    public DailyCommuteRepository(DailyCommuteApi dailyCommuteApi){
+    public DailyCommuteRepository(DailyCommuteApi dailyCommuteApi, CreateDailyCommuteApi createDailyCommuteApi) {
         this.dailyCommuteApi = dailyCommuteApi;
+        this.createDailyCommuteApi = createDailyCommuteApi;
     }
 
     public LiveData<AsyncData<List<Journey>>> getDailyCommute() {
@@ -44,4 +49,29 @@ public class DailyCommuteRepository {
         dailyCommuteResponseLiveData.postValue(AsyncData.getLoadingState());
         return dailyCommuteResponseLiveData;
     }
+
+    public LiveData<AsyncData<CreateDailyCommuteResponse>> createDailyCommute(CreateDailyCommuteRequestBody createDailyCommuteRequestBody){
+
+        MutableLiveData<AsyncData<CreateDailyCommuteResponse>> createDailyCommuteResponseLiveData = new MutableLiveData<>();
+
+        this.createDailyCommuteApi.createDailyCommute(createDailyCommuteRequestBody).enqueue(new Callback<CreateDailyCommuteResponse>() {
+            @Override
+            public void onResponse(Call<CreateDailyCommuteResponse> call, Response<CreateDailyCommuteResponse> response) {
+                switch (response.code()) {
+                    case 201: createDailyCommuteResponseLiveData.postValue(AsyncData.getSuccessState(response.body()));break;
+                    default: createDailyCommuteResponseLiveData.postValue(AsyncData.getFailureState(null));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CreateDailyCommuteResponse> call, Throwable t) {
+                createDailyCommuteResponseLiveData.postValue(AsyncData.getFailureState(null));
+            }
+        });
+
+        createDailyCommuteResponseLiveData.postValue(AsyncData.getLoadingState());
+
+        return createDailyCommuteResponseLiveData;
+    }
+
 }
