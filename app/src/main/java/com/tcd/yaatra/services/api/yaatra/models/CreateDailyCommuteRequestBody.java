@@ -15,6 +15,8 @@ public class CreateDailyCommuteRequestBody {
     private double destinationLong;
     @SerializedName("start_time")
     private String startTime;
+    @SerializedName("time_of_commute")
+    private String timeOfCommute;
     @SerializedName("journey_frequency")
     private int journeyFrequency;
     @SerializedName("pref_mode_travel")
@@ -73,6 +75,14 @@ public class CreateDailyCommuteRequestBody {
 
     public void setStartTime(String startTime) {
         this.startTime = startTime;
+    }
+
+    public String getTimeOfCommute() {
+        return timeOfCommute;
+    }
+
+    public void setTimeOfCommute(String timeOfCommute) {
+        this.timeOfCommute = timeOfCommute;
     }
 
     public int getJourneyFrequency() {
