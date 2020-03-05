@@ -21,13 +21,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity android:name=".ui.fragments.CreateDailyCommuteFragment"></activity>
         <activity android:name=".ui.activities.LoginActivity" />
         <activity android:name=".ui.activities.PeerToPeerActivity" />
         <activity android:name=".ui.activities.MapFragment" />
         <activity android:name=".ui.activities.RouteInfo" />
         <activity android:name=".ui.activities.DailyCommuteMapFragment" />
         <activity android:name=".ui.activities.MapBoxInputFragment" />
-        <activity android:name=".ui.activities.MenuContainerActivity" android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.activities.MenuContainerActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.activities.LaunchActivity"
             android:theme="@style/AppTheme.NoActionBar"

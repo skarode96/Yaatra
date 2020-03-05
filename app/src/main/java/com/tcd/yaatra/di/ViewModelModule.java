@@ -2,6 +2,7 @@ package com.tcd.yaatra.di;
 
 import androidx.lifecycle.ViewModelProvider;
 
+import com.tcd.yaatra.ui.viewmodels.CreateDailyCommuteFragmentViewModel;
 import com.tcd.yaatra.ui.viewmodels.DailyCommuteActivityViewModel;
 import com.tcd.yaatra.ui.viewmodels.LoginActivityViewModel;
 import com.tcd.yaatra.ui.viewmodels.RegisterActivityViewModel;
@@ -31,4 +32,10 @@ public abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(RegisterActivityViewModel.class)
     abstract RegisterActivityViewModel bindRegisterActivityViewModel(RegisterActivityViewModel registerActivityViewModel);
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(CreateDailyCommuteFragmentViewModel.class)
+    abstract CreateDailyCommuteFragmentViewModel bindCreateDailyCommuteFragmentViewModel(CreateDailyCommuteFragmentViewModel createDailyCommuteFragmentViewModel);
+
 }
