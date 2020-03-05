@@ -2,6 +2,8 @@ package com.tcd.yaatra.ui.fragments;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
@@ -25,11 +27,14 @@ import com.tcd.yaatra.repository.models.JourneyFrequency;
 import com.tcd.yaatra.repository.models.TransportPreference;
 import com.tcd.yaatra.services.api.yaatra.models.CreateDailyCommuteRequestBody;
 import com.tcd.yaatra.ui.activities.LoginActivity;
+import com.tcd.yaatra.ui.activities.MapBoxInputFragment;
 import com.tcd.yaatra.ui.activities.RegisterActivity;
 import com.tcd.yaatra.ui.viewmodels.CreateDailyCommuteFragmentViewModel;
 import com.tcd.yaatra.ui.viewmodels.RegisterActivityViewModel;
 import com.tcd.yaatra.utils.SharedPreferenceUtils;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import javax.inject.Inject;
@@ -100,8 +105,10 @@ public class CreateDailyCommuteFragment extends BaseFragment<FragmentCreateDaily
             createDailyRequestBody.setSourceLat(23.89);
             createDailyRequestBody.setDestinationLong(57.33);
             createDailyRequestBody.setDestinationLat(56.11);
-            createDailyRequestBody.setStartTime(layoutDataBinding.journeyStartDate.getText().toString() + " " + layoutDataBinding.journeyStartTime.getText().toString());
-            createDailyRequestBody.setUserId(SharedPreferenceUtils.getUserId());
+//            DateFormat df = new SimpleDateFormat("yyyy-mm-dd");
+            createDailyRequestBody.setStartTime(layoutDataBinding.journeyStartDate.getText().toString());
+//            createDailyRequestBody.setUserId(SharedPreferenceUtils.getUserId());
+            createDailyRequestBody.setTimeOfCommute(layoutDataBinding.journeyStartTime.getText().toString() + ":00");
 
             RadioButton genderPrefBtn = (RadioButton) view.findViewById(layoutDataBinding.genderPrefGroup.getCheckedRadioButtonId());
             if (genderPrefBtn.getText().toString().equalsIgnoreCase(male.stringLabel))
@@ -137,9 +144,10 @@ public class CreateDailyCommuteFragment extends BaseFragment<FragmentCreateDaily
 
                     case SUCCESS:
                         layoutDataBinding.progressBarOverlay.setVisibility(View.GONE);
-//                        Toast.makeText(getActivity(), "daily commute creation successful", Toast.LENGTH_SHORT).show();
-//                        Intent myIntent = new Intent(getActivity(), DailyCommuteListActivity.class);
-//                        startActivity(myIntent);
+                        Toast.makeText(getActivity(), "daily commute creation successful", Toast.LENGTH_SHORT).show();
+                        FragmentActivity fragment = new FragmentActivity();
+                        FragmentTransaction transaction = fragment.getSupportFragmentManager().beginTransaction();
+                        transaction.replace(R.id.fragment_container,new DailyFragment()).commit();
                         break;
 
                     case FAILURE:
@@ -161,7 +169,7 @@ public class CreateDailyCommuteFragment extends BaseFragment<FragmentCreateDaily
             picker = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
                 @Override
                 public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                    date.setText(dayOfMonth + "/" + (month + 1) + "/" + year);
+                    date.setText(year + "-" + (month + 1) + "-" + dayOfMonth);
                 }
             }, year, month, day);
             picker.show();

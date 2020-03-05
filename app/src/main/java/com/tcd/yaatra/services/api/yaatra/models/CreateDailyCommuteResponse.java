@@ -2,6 +2,8 @@ package com.tcd.yaatra.services.api.yaatra.models;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Date;
+
 public class CreateDailyCommuteResponse {
     @SerializedName("journey_title")
     private String journeyTitle;
@@ -14,9 +16,11 @@ public class CreateDailyCommuteResponse {
     @SerializedName("destination_long")
     private double destinationLong;
     @SerializedName("start_time")
-    private String startTime;
+    private Date startTime;
     @SerializedName("journey_frequency")
     private int journeyFrequency;
+    @SerializedName("journey_id")
+    private int journeyID;
     @SerializedName("message")
     private String message;
     @SerializedName("response")
@@ -65,11 +69,19 @@ public class CreateDailyCommuteResponse {
         this.destinationLong = destinationLong;
     }
 
-    public String getStartTime() {
+    public int getJourneyID() {
+        return journeyID;
+    }
+
+    public void setJourneyID(int journeyID) {
+        this.journeyID = journeyID;
+    }
+
+    public Date getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(String startTime) {
+    public void setStartTime(Date startTime) {
         this.startTime = startTime;
     }
 
@@ -107,6 +119,7 @@ public class CreateDailyCommuteResponse {
                 ", destinationLong=" + destinationLong +
                 ", startTime='" + startTime + '\'' +
                 ", journeyFrequency=" + journeyFrequency +
+                ", journeyID=" + journeyID +
                 ", message='" + message + '\'' +
                 ", response='" + response + '\'' +
                 '}';
