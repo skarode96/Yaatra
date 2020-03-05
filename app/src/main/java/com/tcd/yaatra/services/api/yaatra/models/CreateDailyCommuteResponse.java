@@ -16,7 +16,7 @@ public class CreateDailyCommuteResponse {
     @SerializedName("destination_long")
     private double destinationLong;
     @SerializedName("start_time")
-    private Date startTime;
+    private String startTime;
     @SerializedName("journey_frequency")
     private int journeyFrequency;
     @SerializedName("journey_id")
@@ -77,11 +77,11 @@ public class CreateDailyCommuteResponse {
         this.journeyID = journeyID;
     }
 
-    public Date getStartTime() {
+    public String getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(Date startTime) {
+    public void setStartTime(String startTime) {
         this.startTime = startTime;
     }
 
