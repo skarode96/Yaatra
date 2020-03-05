@@ -24,6 +24,11 @@ public class RegisterRequestBody {
     @SerializedName("pref_mode_travel")
     private int prefMode;
 
+    @SerializedName("country")
+    private String country;
+    @SerializedName("phone_number")
+    private int phoneNumber;
+
     public RegisterRequestBody() {
     }
 
@@ -107,6 +112,22 @@ public class RegisterRequestBody {
         this.prefMode = prefMode;
     }
 
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public int getPhoneNumber() {
+        return phoneNumber;
+    }
+    public void setPhoneNumber(int phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
     @Override
     public String toString() {
         return "RegisterRequestBody{" +
@@ -120,6 +141,8 @@ public class RegisterRequestBody {
                 ", gender='" + gender + '\'' +
                 ", prefGender='" + prefGender + '\'' +
                 ", prefMode='" + prefMode + '\'' +
+                ", country='" + country + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
                 '}';
     }
 }

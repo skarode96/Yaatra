@@ -124,6 +124,12 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
             registerObject.setAge(Integer.parseInt(layoutDataBinding.age.getText().toString()));
             registerObject.setPassword(layoutDataBinding.userPassword.getText().toString());
             registerObject.setConfirmPassword(layoutDataBinding.userCPassword.getText().toString());
+            registerObject.setConfirmPassword(layoutDataBinding.userCPassword.getText().toString());
+
+            int phoneNumber = Integer.parseInt(layoutDataBinding.phoneNum.getText().toString());
+            String country = layoutDataBinding.country.getText().toString();
+            registerObject.setCountry(country);
+            registerObject.setPhoneNumber(phoneNumber);
 
             RadioButton genderBtn = (RadioButton)findViewById(layoutDataBinding.genderGroup.getCheckedRadioButtonId());
             if(genderBtn.getText().toString().equalsIgnoreCase(male.stringLabel))
@@ -152,8 +158,7 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
             else if(transportPrefBtn.getText().toString().equalsIgnoreCase(taxi.stringLabel))
                 registerObject.setPrefGender(taxi.intValue);
 
-            int phoneNumber = Integer.parseInt(layoutDataBinding.phoneNum.getText().toString());
-            String country = layoutDataBinding.country.getText().toString();
+
 
             registerActivityViewModel.register(registerObject).observe(this,registerResponse -> {
                 switch (registerResponse.getState()) {
