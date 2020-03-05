@@ -6,6 +6,7 @@ import com.tcd.yaatra.ui.activities.MenuContainerActivity;
 import com.tcd.yaatra.ui.activities.PeerToPeerActivity;
 import com.tcd.yaatra.ui.activities.RegisterActivity;
 import com.tcd.yaatra.ui.activities.RouteInfo;
+import com.tcd.yaatra.ui.activities.UserRatingActivity;
 
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
@@ -31,5 +32,6 @@ public interface ActivityModule {
     @ContributesAndroidInjector
     RouteInfo contributeRouteinfo();
 
-
+    @ContributesAndroidInjector
+    UserRatingActivity contributeUserRatingActivity();
 }

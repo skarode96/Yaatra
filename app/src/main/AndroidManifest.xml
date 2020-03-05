@@ -26,6 +26,7 @@
         <activity android:name=".ui.activities.MapFragment" />
         <activity android:name=".ui.activities.RouteInfo" />
         <activity android:name=".ui.activities.DailyCommuteMapFragment" />
+        <activity android:name=".ui.activities.UserRatingActivity"/>
         <activity android:name=".ui.activities.MapBoxInputFragment" />
         <activity android:name=".ui.activities.MenuContainerActivity" android:theme="@style/AppTheme.NoActionBar" />
         <activity

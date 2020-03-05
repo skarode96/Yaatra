@@ -81,6 +81,12 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
     public void initEventHandlers() {
         super.initEventHandlers();
         layoutDataBinding.startButton.setOnClickListener(view -> handleOnStartButtonClick());
+        layoutDataBinding.endNavigation.setOnClickListener(view -> handleOnendNavigationClick());
+    }
+
+    private void handleOnendNavigationClick() {
+        Intent userrate = new Intent(this, UserRatingActivity.class);
+        startActivity(userrate);
     }
 
     @Override

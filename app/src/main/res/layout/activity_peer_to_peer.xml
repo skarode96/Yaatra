@@ -29,16 +29,16 @@
             android:id="@+id/startNavigation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end|bottom"
-            android:src="@drawable/ic_btn_navigation"
-            android:gravity="center"
-            android:tooltipText=" Enter Destination"
-            android:visibility="visible"
-            android:background="@android:color/transparent"
             android:layout_alignBottom="@+id/peer_recycler_view"
+            android:layout_gravity="end|bottom"
+            android:layout_marginLeft="350dp"
+            android:layout_marginBottom="37dp"
+            android:background="@android:color/transparent"
+            android:gravity="center"
             android:paddingTop="200dp"
-            android:layout_marginLeft="270dp"
-            android:layout_marginBottom="50dp"/>
+            android:src="@drawable/ic_btn_navigation"
+            android:tooltipText=" Enter Destination"
+            android:visibility="visible" />
 
     </RelativeLayout>
 
