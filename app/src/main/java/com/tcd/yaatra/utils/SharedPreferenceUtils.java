@@ -55,17 +55,12 @@ public class SharedPreferenceUtils {
         return true;
     }
 
-    public static boolean setUserId(int userId) {
-        getLoginSharedPreference().edit().putInt(USER_NAME,userId).apply();
-        return true;
-    }
-
-    public static int getUserId() {
-        return getLoginSharedPreference().getInt(USER_NAME, 0);
+    public static String getUserId() {
+        return getLoginSharedPreference().getString(USER_ID, "0");
     }
 
     public static boolean clearUserId() {
-        getLoginSharedPreference().edit().remove(USER_NAME).apply();
+        getLoginSharedPreference().edit().remove(USER_ID).apply();
         return true;
     }
 
