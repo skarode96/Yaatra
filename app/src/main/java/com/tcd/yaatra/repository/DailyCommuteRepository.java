@@ -8,7 +8,7 @@ import com.tcd.yaatra.services.api.yaatra.api.CreateDailyCommuteApi;
 import com.tcd.yaatra.services.api.yaatra.api.DailyCommuteApi;
 import com.tcd.yaatra.services.api.yaatra.models.CreateDailyCommuteRequestBody;
 import com.tcd.yaatra.services.api.yaatra.models.CreateDailyCommuteResponse;
-import com.tcd.yaatra.services.api.yaatra.models.Journey;
+import com.tcd.yaatra.services.api.yaatra.models.DailyCommuteResponse;
 
 import java.util.List;
 
@@ -28,20 +28,20 @@ public class DailyCommuteRepository {
         this.createDailyCommuteApi = createDailyCommuteApi;
     }
 
-    public LiveData<AsyncData<List<Journey>>> getDailyCommute() {
-        MutableLiveData<AsyncData<List<Journey>>> dailyCommuteResponseLiveData = new MutableLiveData<>();
-        this.dailyCommuteApi.getDailyCommute().enqueue(new Callback<List<Journey>>() {
+    public LiveData<AsyncData<DailyCommuteResponse>> getDailyCommute() {
+        MutableLiveData<AsyncData<DailyCommuteResponse>> dailyCommuteResponseLiveData = new MutableLiveData<>();
+
+        this.dailyCommuteApi.getDailyCommute().enqueue(new Callback<DailyCommuteResponse>() {
             @Override
-            public void onResponse(Call<List<Journey>> call, Response<List<Journey>> response) {
-                if(response.code() == 200) {
-                    dailyCommuteResponseLiveData.postValue(AsyncData.getSuccessState(response.body()));
-                } else {
-                    dailyCommuteResponseLiveData.postValue(AsyncData.getFailureState(null));
+            public void onResponse(Call<DailyCommuteResponse> call, Response<DailyCommuteResponse> response) {
+                switch (response.code()) {
+                    case 200: dailyCommuteResponseLiveData.postValue(AsyncData.getSuccessState(response.body()));break;
+                    default: dailyCommuteResponseLiveData.postValue(AsyncData.getFailureState(null));
                 }
             }
 
             @Override
-            public void onFailure(Call<List<Journey>> call, Throwable t) {
+            public void onFailure(Call<DailyCommuteResponse> call, Throwable t) {
                 dailyCommuteResponseLiveData.postValue(AsyncData.getFailureState(null));
             }
         });

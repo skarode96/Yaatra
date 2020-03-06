@@ -1,5 +1,8 @@
 package com.tcd.yaatra.ui.adapters;
 
+import android.content.Context;
+import android.location.Address;
+import android.location.Geocoder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,17 +11,28 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.tcd.yaatra.services.api.yaatra.models.Journey;
+
+import com.mapbox.geojson.Point;
+import com.mapbox.mapboxsdk.annotations.MarkerOptions;
+import com.tcd.yaatra.repository.models.Gender;
+import com.tcd.yaatra.repository.models.JourneyFrequency;
+import com.tcd.yaatra.services.api.yaatra.models.JourneyDetails;
 import com.tcd.yaatra.ui.fragments.DailyFragment;
 import com.tcd.yaatra.R;
+import com.tcd.yaatra.utils.MapUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class DailyTripAdapter extends RecyclerView.Adapter<DailyTripAdapter.DailyTripViewHolder> {
 
-    private ArrayList<Journey> dataSet;
+    private ArrayList<JourneyDetails> dataSet;
+    JourneyFrequency daily = JourneyFrequency.DAILY;
+    JourneyFrequency weekly = JourneyFrequency.WEEKLY;
+    JourneyFrequency weekend = JourneyFrequency.WEEKEND;
+    Context context;
 
-    public DailyTripAdapter(ArrayList<Journey> data) {
+    public DailyTripAdapter(ArrayList<JourneyDetails> data) {
         this.dataSet = data;
     }
 
@@ -27,7 +41,7 @@ public class DailyTripAdapter extends RecyclerView.Adapter<DailyTripAdapter.Dail
                                                   int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.daily_trip_row, parent, false);
-
+        context = parent.getContext();
         view.setOnClickListener(DailyFragment.dailyTripOnClickListener);
 
         DailyTripViewHolder myViewHolder = new DailyTripViewHolder(view);
@@ -37,13 +51,30 @@ public class DailyTripAdapter extends RecyclerView.Adapter<DailyTripAdapter.Dail
     @Override
     public void onBindViewHolder(final DailyTripViewHolder holder, final int listPosition) {
 
-        TextView textViewName = holder.textViewName;
-        TextView textViewVersion = holder.textViewVersion;
+
+        TextView title = holder.title;
+        TextView source = holder.source;
+        TextView destination = holder.destination;
+        TextView frequency = holder.frequency;
+        TextView time = holder.time;
         ImageView imageView = holder.imageViewIcon;
 
-        textViewName.setText(dataSet.get(listPosition).getJourneyId());
-        textViewVersion.setText(dataSet.get(listPosition).getTitle());
-        //imageView.setImageResource(dataSet.get(listPosition).getImage());
+        title.setText(dataSet.get(listPosition).getJourney_title());
+
+        String sourceName = MapUtils.locationName(context,dataSet.get(listPosition).getSourceLat(),dataSet.get(listPosition).getSourceLong());
+        source.setText(sourceName);
+
+        String destinationName = MapUtils.locationName(context,dataSet.get(listPosition).getDestinationLat(),dataSet.get(listPosition).getDestinationLong());
+        destination.setText(destinationName);
+
+        if(dataSet.get(listPosition).getJourneyFrequency()==daily.intValue)
+            frequency.setText(daily.stringLabel);
+        else if(dataSet.get(listPosition).getJourneyFrequency()==weekly.intValue)
+            frequency.setText(weekly.stringLabel);
+        else if(dataSet.get(listPosition).getJourneyFrequency()==weekend.intValue)
+            frequency.setText(weekend.stringLabel);
+
+        time.setText(dataSet.get(listPosition).getTimeOfCommute());
     }
 
     @Override
@@ -53,14 +84,20 @@ public class DailyTripAdapter extends RecyclerView.Adapter<DailyTripAdapter.Dail
 
     public static class DailyTripViewHolder extends RecyclerView.ViewHolder {
 
-        TextView textViewName;
-        TextView textViewVersion;
+        TextView title;
+        TextView source;
+        TextView destination;
+        TextView frequency;
+        TextView time;
         ImageView imageViewIcon;
 
         public DailyTripViewHolder(View itemView) {
             super(itemView);
-            this.textViewName = (TextView) itemView.findViewById(R.id.textViewName);
-            this.textViewVersion = (TextView) itemView.findViewById(R.id.textViewVersion);
+            this.title = (TextView) itemView.findViewById(R.id.Title);
+            this.source = (TextView) itemView.findViewById(R.id.Source);
+            this.destination = (TextView) itemView.findViewById(R.id.Destination);
+            this.frequency = (TextView) itemView.findViewById(R.id.Frequency);
+            this.time = (TextView) itemView.findViewById(R.id.Time);
             this.imageViewIcon = (ImageView) itemView.findViewById(R.id.imageView);
         }
     }

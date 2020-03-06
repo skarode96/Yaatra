@@ -1,6 +1,5 @@
 package com.tcd.yaatra.ui.fragments;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -17,13 +16,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.databinding.FragmentDailyBinding;
-import com.tcd.yaatra.databinding.FragmentDailyCommuteMapBinding;
-import com.tcd.yaatra.services.api.yaatra.models.Journey;
+import com.tcd.yaatra.services.api.yaatra.models.DailyCommuteResponse;
+import com.tcd.yaatra.services.api.yaatra.models.JourneyDetails;
 import com.tcd.yaatra.ui.adapters.DailyTripAdapter;
-import com.tcd.yaatra.ui.fragments.BaseFragment;
+import com.tcd.yaatra.ui.viewmodels.DailyCommuteActivityViewModel;
 import com.tcd.yaatra.utils.SharedPreferenceUtils;
 
 import java.util.ArrayList;
+
+import javax.inject.Inject;
 
 public class DailyFragment extends BaseFragment<FragmentDailyBinding> {
 
@@ -31,21 +32,26 @@ public class DailyFragment extends BaseFragment<FragmentDailyBinding> {
     private static RecyclerView.Adapter adapter;
     private static RecyclerView.LayoutManager layoutManager;
     private static RecyclerView recyclerView;
-    private static ArrayList<Journey> data;
+    private static ArrayList<JourneyDetails> data;
     public static View.OnClickListener dailyTripOnClickListener;
+
+
+    @Inject
+    DailyCommuteActivityViewModel dailyCommuteActivityViewModel;
 
     @Override
     public int getFragmentResourceId() {
         return R.layout.fragment_daily;
     }
 
-    @Nullable
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
         dailyTripOnClickListener = new DailyTripOnClickListener(this.getContext());
 
         this.loginPreferences = SharedPreferenceUtils.createLoginSharedPreference();
+        data = new ArrayList<JourneyDetails>();
 
         final Context context = this.getActivity();
         FloatingActionButton fab = layoutDataBinding.fabNewTrip;
@@ -63,18 +69,33 @@ public class DailyFragment extends BaseFragment<FragmentDailyBinding> {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        data = new ArrayList<Journey>();
-        for (int i = 0; i < 3; i++) {
+        dailyCommuteActivityViewModel.getDailyCommute().observe(getActivity(), dailyCommuteResponse -> {
+            switch (dailyCommuteResponse.getState()){
+                case LOADING:
+                    layoutDataBinding.progressBarOverlay.setVisibility(View.VISIBLE);
+                    break;
 
-            Journey j = new Journey();
-            j.setJourneyId(String.valueOf(i));
-            j.setTitle("Title"+i);
+                case SUCCESS:
+                    layoutDataBinding.progressBarOverlay.setVisibility(View.GONE);
+//                        Toast.makeText(getActivity(), "daily commute creation successful", Toast.LENGTH_SHORT).show();
+//                        Intent myIntent = new Intent(getActivity(), DailyCommuteListActivity.class);
+//                        startActivity(myIntent);
 
-            data.add(j);
-        }
+                    for (int i = 0; i < dailyCommuteResponse.getData().getJourneyDetails().size(); i++) {
 
-        adapter = new DailyTripAdapter(data);
-        recyclerView.setAdapter(adapter);
+                        JourneyDetails j = dailyCommuteResponse.getData().getJourneyDetails().get(i);
+                        data.add(j);
+                    }
+                    adapter = new DailyTripAdapter(data);
+                    recyclerView.setAdapter(adapter);
+                    break;
+
+                case FAILURE:
+                    layoutDataBinding.progressBarOverlay.setVisibility(View.GONE);
+                    Toast.makeText(getActivity(), dailyCommuteResponse.getData().getMessage(), Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        });
 
         return view;
     }
