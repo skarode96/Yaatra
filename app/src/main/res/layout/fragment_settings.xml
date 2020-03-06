@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -36,7 +36,7 @@
                         android:paddingStart="10dp"
                         android:drawableLeft="@drawable/ic_username"
                         android:text="User Name"
-
+                        android:gravity="center"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                         android:textSize="20sp" />
 
@@ -49,7 +49,9 @@
                         android:layout_marginEnd="15dp"
                         android:layout_marginBottom="10dp"
                         android:enabled="false"
+                        android:gravity="center"
                         android:hint="User Name"
+                        android:textColor="#070606"
                         android:textSize="20sp" />
 
                 </LinearLayout>
@@ -75,16 +77,18 @@
                         android:textSize="20sp" />
 
                     <TextView
-                            android:id="@+id/firstName"
-                            android:layout_width="160dp"
-                            android:layout_height="40dp"
-                            android:layout_marginStart="15dp"
-                            android:layout_marginTop="10dp"
-                            android:layout_marginEnd="15dp"
-                            android:layout_marginBottom="10dp"
-                            android:hint="First Name"
-                            android:enabled="false"
-                            android:textSize="20sp" />
+                        android:id="@+id/firstName"
+                        android:layout_width="160dp"
+                        android:layout_height="40dp"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="15dp"
+                        android:layout_marginBottom="10dp"
+                        android:enabled="false"
+                        android:gravity="center"
+                        android:hint="First Name"
+                        android:textColor="#070606"
+                        android:textSize="20sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -115,8 +119,10 @@
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="15dp"
                         android:layout_marginBottom="10dp"
-                        android:hint="Last Name"
                         android:enabled="false"
+                        android:gravity="center"
+                        android:hint="Last Name"
+                        android:textColor="#070606"
                         android:textSize="20sp" />
                 </LinearLayout>
 
@@ -148,9 +154,11 @@
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="15dp"
                         android:layout_marginBottom="10dp"
-                        android:hint="Email Id"
                         android:enabled="false"
+                        android:gravity="center"
+                        android:hint="Email Id"
                         android:inputType="textEmailAddress"
+                        android:textColor="#070606"
                         android:textSize="20sp" />
                 </LinearLayout>
 
@@ -182,9 +190,11 @@
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="15dp"
                         android:layout_marginBottom="10dp"
+                        android:enabled="false"
+                        android:gravity="center"
                         android:hint="Phone Number"
                         android:inputType="phone"
-                        android:enabled="false"
+                        android:textColor="#070606"
                         android:textSize="20sp" />
                 </LinearLayout>
 
@@ -216,9 +226,11 @@
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="15dp"
                         android:layout_marginBottom="10dp"
+                        android:enabled="false"
+                        android:gravity="center"
                         android:hint="Country"
                         android:inputType="textPersonName"
-                        android:enabled="false"
+                        android:textColor="#070606"
                         android:textSize="20sp" />
 
                 </LinearLayout>
@@ -251,9 +263,11 @@
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="15dp"
                         android:layout_marginBottom="10dp"
+                        android:enabled="false"
+                        android:gravity="center"
                         android:hint="Age"
                         android:inputType="number"
-                        android:enabled="false"
+                        android:textColor="#070606"
                         android:textSize="20sp" />
                 </LinearLayout>
 
@@ -282,11 +296,13 @@
                         android:layout_width="160dp"
                         android:layout_height="40dp"
                         android:layout_marginStart="15dp"
+                        android:layout_marginTop="10dp"
                         android:layout_marginEnd="15dp"
                         android:layout_marginBottom="10dp"
-                        android:layout_marginTop="10dp"
-                        android:hint="Rating"
                         android:enabled="false"
+                        android:gravity="center"
+                        android:hint="Rating"
+                        android:textColor="#070606"
                         android:textSize="20sp" />
 
                 </LinearLayout>
@@ -317,28 +333,31 @@
                             android:id="@+id/maleBtn"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                            android:textSize="20sp"
                             android:enabled="false"
-                            android:text="Male" />
+                            android:text="Male"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                            android:textColor="#070606"
+                            android:textSize="20sp" />
 
                         <RadioButton
                             android:id="@+id/femaleBtn"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                            android:textSize="20sp"
                             android:enabled="false"
-                            android:text="Female" />
+                            android:text="Female"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                            android:textColor="#070606"
+                            android:textSize="20sp" />
 
                         <RadioButton
                             android:id="@+id/otherBtn"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                            android:textSize="20sp"
                             android:enabled="false"
-                            android:text="Others" />
+                            android:text="Others"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                            android:textColor="#070606"
+                            android:textSize="20sp" />
                     </RadioGroup>
 
                 <TextView
@@ -367,37 +386,41 @@
                             android:id="@+id/noGenderPrefBtn"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                            android:textSize="20sp"
                             android:enabled="false"
-                            android:text="No Preference" />
+                            android:text="No Preference"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                            android:textColor="#070606"
+                            android:textSize="20sp" />
 
                         <RadioButton
                             android:id="@+id/malePrefBtn"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                            android:textSize="20sp"
                             android:enabled="false"
-                            android:text="Male" />
+                            android:text="Male"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                            android:textColor="#070606"
+                            android:textSize="20sp" />
 
                         <RadioButton
                             android:id="@+id/femalePrefBtn"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                            android:textSize="20sp"
                             android:enabled="false"
-                            android:text="Female" />
+                            android:text="Female"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                            android:textColor="#070606"
+                            android:textSize="20sp" />
 
                         <RadioButton
                             android:id="@+id/otherPrefBtn"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                            android:textSize="20sp"
                             android:enabled="false"
-                            android:text="Others" />
+                            android:text="Others"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                            android:textColor="#070606"
+                            android:textSize="20sp" />
                     </RadioGroup>
 
                 <TextView
@@ -426,28 +449,31 @@
                             android:id="@+id/noTransportPrefBtn"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                            android:textSize="20sp"
                             android:enabled="false"
-                            android:text="No Preference" />
+                            android:text="No Preference"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                            android:textColor="#070606"
+                            android:textSize="20sp" />
 
                         <RadioButton
                             android:id="@+id/walkPrefBtn"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                            android:textSize="20sp"
                             android:enabled="false"
-                            android:text="Walk" />
+                            android:text="Walk"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                            android:textColor="#070606"
+                            android:textSize="20sp" />
 
                         <RadioButton
                             android:id="@+id/taxiPrefBtn"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                            android:textSize="20sp"
                             android:enabled="false"
-                            android:text="Taxi" />
+                            android:text="Taxi"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                            android:textColor="#070606"
+                            android:textSize="20sp" />
                     </RadioGroup>
             </LinearLayout>
 
