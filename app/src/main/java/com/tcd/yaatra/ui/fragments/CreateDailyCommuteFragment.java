@@ -34,6 +34,7 @@ import com.tcd.yaatra.ui.viewmodels.RegisterActivityViewModel;
 import com.tcd.yaatra.utils.SharedPreferenceUtils;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -45,6 +46,8 @@ public class CreateDailyCommuteFragment extends BaseFragment<FragmentCreateDaily
     SharedPreferences loginPreferences;
     DatePickerDialog picker;
     EditText date;
+    private static DecimalFormat df = new DecimalFormat("0.0000");
+
 
     @Inject
     CreateDailyCommuteFragmentViewModel createDailyCommuteFragmentViewModel;
@@ -101,13 +104,17 @@ public class CreateDailyCommuteFragment extends BaseFragment<FragmentCreateDaily
 
             CreateDailyCommuteRequestBody createDailyRequestBody = new CreateDailyCommuteRequestBody();
             createDailyRequestBody.setJourneyTitle(layoutDataBinding.title.getText().toString());
-            createDailyRequestBody.setSourceLong(23.66);
-            createDailyRequestBody.setSourceLat(23.89);
-            createDailyRequestBody.setDestinationLong(57.33);
-            createDailyRequestBody.setDestinationLat(56.11);
-//            DateFormat df = new SimpleDateFormat("yyyy-mm-dd");
+
+            double sourceLat = getArguments().getDouble("sourceLat");
+            double sourceLong = getArguments().getDouble("sourceLong");
+            double destinationLat = getArguments().getDouble("destinationLat");
+            double destinationLong = getArguments().getDouble("destinationLong");
+
+            createDailyRequestBody.setSourceLong(Math.round(sourceLong*1000000.0)/1000000.0);
+            createDailyRequestBody.setSourceLat(Math.round(sourceLat*1000000.0)/1000000.0);
+            createDailyRequestBody.setDestinationLong(Math.round(destinationLong*1000000.0)/1000000.0);
+            createDailyRequestBody.setDestinationLat(Math.round(destinationLat*1000000.0)/1000000.0);
             createDailyRequestBody.setStartTime(layoutDataBinding.journeyStartDate.getText().toString());
-//            createDailyRequestBody.setUserId(SharedPreferenceUtils.getUserId());
             createDailyRequestBody.setTimeOfCommute(layoutDataBinding.journeyStartTime.getText().toString() + ":00");
 
             RadioButton genderPrefBtn = (RadioButton) view.findViewById(layoutDataBinding.genderPrefGroup.getCheckedRadioButtonId());
@@ -145,8 +152,7 @@ public class CreateDailyCommuteFragment extends BaseFragment<FragmentCreateDaily
                     case SUCCESS:
                         layoutDataBinding.progressBarOverlay.setVisibility(View.GONE);
                         Toast.makeText(getActivity(), "daily commute creation successful", Toast.LENGTH_SHORT).show();
-                        FragmentActivity fragment = new FragmentActivity();
-                        FragmentTransaction transaction = fragment.getSupportFragmentManager().beginTransaction();
+                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
                         transaction.replace(R.id.fragment_container,new DailyFragment()).commit();
                         break;
 

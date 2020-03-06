@@ -55,7 +55,7 @@ public class MenuContainerActivity extends BaseActivity<ActivityMenuBinding> imp
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new MapBoxInputFragment()).commit();
                 break;
             case R.id.daily:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new CreateDailyCommuteFragment()).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new DailyFragment()).commit();
                 break;
             case R.id.settings:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SettingsFragment()).commit();

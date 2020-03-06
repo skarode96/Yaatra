@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,6 +20,8 @@ import com.tcd.yaatra.R;
 import com.tcd.yaatra.databinding.FragmentDailyBinding;
 import com.tcd.yaatra.services.api.yaatra.models.DailyCommuteResponse;
 import com.tcd.yaatra.services.api.yaatra.models.JourneyDetails;
+import com.tcd.yaatra.databinding.FragmentDailyCommuteMapBinding;
+import com.tcd.yaatra.ui.activities.DailyCommuteMapFragment;
 import com.tcd.yaatra.ui.adapters.DailyTripAdapter;
 import com.tcd.yaatra.ui.viewmodels.DailyCommuteActivityViewModel;
 import com.tcd.yaatra.utils.SharedPreferenceUtils;
@@ -59,6 +63,8 @@ public class DailyFragment extends BaseFragment<FragmentDailyBinding> {
             @Override
             public void onClick(View view) {
                 Toast.makeText(context, "Hello", Toast.LENGTH_SHORT).show();
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_container,new DailyCommuteMapFragment()).commit();
             }
         });
 
