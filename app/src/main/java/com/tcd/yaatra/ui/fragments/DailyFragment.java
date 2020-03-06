@@ -1,7 +1,7 @@
 package com.tcd.yaatra.ui.fragments;
 
 import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -18,13 +18,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.databinding.FragmentDailyBinding;
-import com.tcd.yaatra.services.api.yaatra.models.DailyCommuteResponse;
 import com.tcd.yaatra.services.api.yaatra.models.JourneyDetails;
-import com.tcd.yaatra.databinding.FragmentDailyCommuteMapBinding;
 import com.tcd.yaatra.ui.activities.DailyCommuteMapFragment;
 import com.tcd.yaatra.ui.adapters.DailyTripAdapter;
 import com.tcd.yaatra.ui.viewmodels.DailyCommuteActivityViewModel;
-import com.tcd.yaatra.utils.SharedPreferenceUtils;
 
 import java.util.ArrayList;
 
@@ -32,7 +29,6 @@ import javax.inject.Inject;
 
 public class DailyFragment extends BaseFragment<FragmentDailyBinding> {
 
-    SharedPreferences loginPreferences;
     private static RecyclerView.Adapter adapter;
     private static RecyclerView.LayoutManager layoutManager;
     private static RecyclerView recyclerView;
@@ -54,7 +50,6 @@ public class DailyFragment extends BaseFragment<FragmentDailyBinding> {
         View view = super.onCreateView(inflater, container, savedInstanceState);
         dailyTripOnClickListener = new DailyTripOnClickListener(this.getContext());
 
-        this.loginPreferences = SharedPreferenceUtils.createLoginSharedPreference();
         data = new ArrayList<JourneyDetails>();
 
         final Context context = this.getActivity();
@@ -62,7 +57,6 @@ public class DailyFragment extends BaseFragment<FragmentDailyBinding> {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, "Hello", Toast.LENGTH_SHORT).show();
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.replace(R.id.fragment_container,new DailyCommuteMapFragment()).commit();
             }
@@ -106,7 +100,7 @@ public class DailyFragment extends BaseFragment<FragmentDailyBinding> {
         return view;
     }
 
-    private static class DailyTripOnClickListener implements View.OnClickListener {
+    private class DailyTripOnClickListener implements View.OnClickListener {
 
         private final Context context;
 
@@ -116,11 +110,19 @@ public class DailyFragment extends BaseFragment<FragmentDailyBinding> {
 
         @Override
         public void onClick(View v) {
-            showDetails(v);
+            int itemPosition = recyclerView.getChildLayoutPosition(v);
+            showDetails(v,itemPosition);
         }
 
-        private void showDetails(View v) {
-            Toast.makeText(context, "List Item Clicked", Toast.LENGTH_SHORT).show();
+        private void showDetails(View v, int item) {
+            Intent dailyDetailsIntent = new Intent(context, DailyCommuteDetailsFragment.class);
+            Bundle bundle = new Bundle();
+            bundle.putInt("journeyId",data.get(item).getJourneyId());
+            dailyDetailsIntent.putExtras(bundle);
+            Fragment f = new DailyCommuteDetailsFragment();
+            f.setArguments(bundle);
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container,f).commit();
         }
     }
 }
