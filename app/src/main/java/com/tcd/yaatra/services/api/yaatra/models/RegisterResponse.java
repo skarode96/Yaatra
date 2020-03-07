@@ -14,7 +14,7 @@ public class RegisterResponse {
     @SerializedName("age")
     private int age;
     @SerializedName("gender")
-    private int gender;
+    private String gender;
     @SerializedName("message")
     private String message;
     @SerializedName("response")
@@ -94,11 +94,11 @@ public class RegisterResponse {
         this.age = age;
     }
 
-    public int getGender() {
+    public String getGender() {
         return gender;
     }
 
-    public void setGender(int gender) {
+    public void setGender(String gender) {
         this.gender = gender;
     }
 
