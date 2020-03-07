@@ -9,6 +9,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.View;
@@ -109,7 +110,13 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
 
         NavigationLauncher.startNavigation(RouteInfo.this,options);
         startButton.setVisibility(View.GONE);
-        endTrip.setVisibility(View.VISIBLE);
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                endTrip.setVisibility(View.VISIBLE);
+            }
+        }, 5000);
     }
 
     @Override
