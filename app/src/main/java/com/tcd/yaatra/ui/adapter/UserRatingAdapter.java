@@ -11,18 +11,19 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.tcd.yaatra.R;
-import com.tcd.yaatra.ui.activities.UserRatingActivity;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class UserRatingAdapter extends RecyclerView.Adapter<UserRatingAdapter.ViewHolder> {
 
     Context context;
-    String[] rate;
+    List<String> user;
 
     public UserRatingAdapter(Context applicationContext, String rate[]) {
         this.context = applicationContext;
-        this.rate = rate;
+        this.user = Arrays.asList(rate);
     }
 
     @NonNull
@@ -35,13 +36,13 @@ public class UserRatingAdapter extends RecyclerView.Adapter<UserRatingAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.userName.setText(rate[position]);
+        holder.userName.setText(user.get(position));
         holder.rating.setRating(3);
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return user.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{

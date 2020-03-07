@@ -12,6 +12,7 @@ import com.tcd.yaatra.ui.adapter.UserRatingAdapter;
 
 public class UserRatingActivity extends BaseActivity<ActivityUserRatingBinding> {
 
+    private RecyclerView recyclerView;
     private RecyclerView.Adapter urAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private String[] user = {"Chetan", "Rohan", "Kavya"};
@@ -24,15 +25,16 @@ public class UserRatingActivity extends BaseActivity<ActivityUserRatingBinding> 
     @Override
     public void initEventHandlers() {
         super.initEventHandlers();
-        layoutDataBinding.userList.setHasFixedSize(true);
-        layoutManager = new LinearLayoutManager(this);
-        layoutDataBinding.userList.setLayoutManager(layoutManager);
     }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        recyclerView = (RecyclerView) layoutDataBinding.userList;
+        recyclerView.setHasFixedSize(true);
+        layoutManager = new LinearLayoutManager(UserRatingActivity.this);
+        recyclerView.setLayoutManager(layoutManager);
         urAdapter = new UserRatingAdapter(getApplicationContext(), user);
-        layoutDataBinding.userList.setAdapter(urAdapter);
+        recyclerView.setAdapter(urAdapter);
     }
 }
