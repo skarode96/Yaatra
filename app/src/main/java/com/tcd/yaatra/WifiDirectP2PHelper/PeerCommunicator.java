@@ -91,7 +91,7 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
         currentUserTravellerInfo =
                 new TravellerInfo(appUserId, appUserName, 20, Gender.NOT_SPECIFIED
                         , 0.0d, 0.0d, 0.0d, 0.0d
-                        , TravellerStatus.None, "testMode", now, 0.0d
+                        , TravellerStatus.None, "test", "test", "testMode", now, 0.0d
                         , NetworkUtils.getWiFiIPAddress(peerToPeerActivity)
                         , 12345, now, appUserName);
     }
@@ -103,11 +103,13 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
         double sourceLongitude = savedInstanceState.getDouble("sourceLongitude");
         double destinationLatitude = savedInstanceState.getDouble("destinationLatitude");
         double destinationLongitude = savedInstanceState.getDouble("destinationLongitude");
+        String sourceName = savedInstanceState.getString("sourceName").substring(0,10);
+        String destinationName = savedInstanceState.getString("destinationName").substring(0,10);
         String modeOfTravel =  savedInstanceState.getString("peerModeOfTravel");
         currentUserTravellerInfo =
                 new TravellerInfo(response.getId(), response.getUsername(), response.getAge(), Gender.valueOfIdName(response.getGender())
                         , sourceLatitude, sourceLongitude, destinationLatitude, destinationLongitude
-                        , TravellerStatus.None, modeOfTravel, now, response.getRating()
+                        , TravellerStatus.None, sourceName, destinationName, modeOfTravel, now, response.getRating()
                         , NetworkUtils.getWiFiIPAddress(peerToPeerActivity)
                         , 12345, now, response.getUsername());
     }
