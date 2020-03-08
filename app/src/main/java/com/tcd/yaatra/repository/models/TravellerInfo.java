@@ -14,6 +14,25 @@ public class TravellerInfo {
     private Double destinationLongitude;
     private String modeOfTravel;
     private TravellerStatus status = TravellerStatus.None;
+    private String sourceName;
+
+    public String getSourceName() {
+        return sourceName;
+    }
+
+    public void setSourceName(String sourceName) {
+        this.sourceName = sourceName;
+    }
+
+    public String getDestinationName() {
+        return destinationName;
+    }
+
+    public void setDestinationName(String destinationName) {
+        this.destinationName = destinationName;
+    }
+
+    private String destinationName;
     private LocalDateTime requestStartTime = LocalDateTime.now();
     private Double userRating;
     private String ipAddress = "";
@@ -24,7 +43,7 @@ public class TravellerInfo {
     public TravellerInfo(Integer userId, String userName, int age, Gender gender
             , Double sourceLatitude, Double sourceLongitude
             , Double destinationLatitude, Double destinationLongitude
-            , TravellerStatus status, String modeOfTravel,  LocalDateTime requestStartTime
+            , TravellerStatus status,String sourceName, String destinationName, String modeOfTravel,  LocalDateTime requestStartTime
             , Double userRating, String ipAddress, int port
             , LocalDateTime statusUpdateTime
             , String infoProvider){
@@ -39,6 +58,8 @@ public class TravellerInfo {
         setDestinationLongitude(destinationLongitude);
         setModeOfTravel(modeOfTravel);
         setStatus(status);
+        setSourceName(sourceName);
+        setDestinationName(destinationName);
         setRequestStartTime(requestStartTime);
         setUserRating(userRating);
         setIpAddress(ipAddress);
@@ -47,7 +68,7 @@ public class TravellerInfo {
         setInfoProvider(infoProvider);
     }
 
-    public TravellerInfo(Integer userId, String userName, Gender gender, Double sourceLatitude, Double sourceLongitude, Double destinationLatitude, Double destinationLongitude, String modeOfTravel) {
+    public TravellerInfo(Integer userId, String userName, Gender gender, Double sourceLatitude, Double sourceLongitude, Double destinationLatitude, Double destinationLongitude, String sourceName, String destinationName, String modeOfTravel) {
         this.userId = userId;
         this.userName = userName;
         this.gender = gender;
@@ -56,6 +77,8 @@ public class TravellerInfo {
         this.destinationLatitude= destinationLatitude;
         this.destinationLongitude = destinationLongitude;
         this.modeOfTravel = modeOfTravel;
+        this.sourceName = sourceName;
+        this.destinationName = destinationName;
     }
 
     //region Getters & Setters

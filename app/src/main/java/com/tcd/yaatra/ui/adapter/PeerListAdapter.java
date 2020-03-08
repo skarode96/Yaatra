@@ -28,11 +28,8 @@ public class PeerListAdapter extends RecyclerView.Adapter<PeerListAdapter.ViewHo
     public static class ViewHolder extends RecyclerView.ViewHolder{
 
         public TextView peerUsername;
-        public TextView peerGender;
-        public TextView peerSourceLattitude;
-        public TextView peerSourceLongitude;
-        public TextView peerDestinationLattitude;
-        public TextView peerDestinationLongitude;
+        public TextView peerSourceName;
+        public TextView peerDestinationName;
         public TextView peerModeOfTravel;
         public ImageView profileIcon;
 
@@ -40,10 +37,8 @@ public class PeerListAdapter extends RecyclerView.Adapter<PeerListAdapter.ViewHo
 
             super(v);
             peerUsername = (TextView)v.findViewById(R.id.peer_username);
-            peerSourceLattitude = (TextView)v.findViewById(R.id.peer_source_latitude);
-            peerSourceLongitude = (TextView)v.findViewById(R.id.peer_source_longitude);
-            peerDestinationLattitude = (TextView)v.findViewById(R.id.peer_destination_latitude);
-            peerDestinationLongitude = (TextView)v.findViewById(R.id.peer_destination_longitude);
+            peerSourceName = (TextView)v.findViewById(R.id.peer_source_name);
+            peerDestinationName = (TextView)v.findViewById(R.id.peer_destination_name);
             peerModeOfTravel = (TextView)v.findViewById(R.id.peer_mode_of_travel);
             profileIcon = (ImageView) v.findViewById(R.id.profile_icon);
 
@@ -62,10 +57,8 @@ public class PeerListAdapter extends RecyclerView.Adapter<PeerListAdapter.ViewHo
         ArrayList<TravellerInfo> travellerInfos = this.travellerInfos;
         Gender gender = travellerInfos.get(position).getGender();
         holder.peerUsername.setText(travellerInfos.get(position).getUserName());
-        holder.peerSourceLattitude.setText(travellerInfos.get(position).getSourceLatitude().toString());
-        holder.peerSourceLongitude.setText(travellerInfos.get(position).getSourceLongitude().toString());
-        holder.peerDestinationLattitude.setText(travellerInfos.get(position).getDestinationLatitude().toString());
-        holder.peerDestinationLongitude.setText(travellerInfos.get(position).getDestinationLongitude().toString());
+        holder.peerSourceName.setText(travellerInfos.get(position).getSourceName());
+        holder.peerDestinationName.setText(travellerInfos.get(position).getDestinationName());
         holder.peerModeOfTravel.setText(travellerInfos.get(position).getModeOfTravel());
         holder.profileIcon.setImageResource(gender == Gender.MALE ? R.drawable.guy : R.drawable.girl);
     }
