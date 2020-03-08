@@ -31,6 +31,7 @@ public class P2pSerializerDeserializer {
                     traveller.getDestinationLatitude() + VALUE_SEPARATOR +
                     traveller.getDestinationLongitude() + VALUE_SEPARATOR +
                     traveller.getStatus() + VALUE_SEPARATOR +
+                    traveller.getModeOfTravel() + VALUE_SEPARATOR +
                     traveller.getRequestStartTime().format(DATE_TIME_FORMATTER) + VALUE_SEPARATOR +
                     traveller.getUserRating() + VALUE_SEPARATOR +
                     traveller.getIpAddress() + VALUE_SEPARATOR +
@@ -59,13 +60,14 @@ public class P2pSerializerDeserializer {
                     , Gender.valueOf(fieldValues[2])
                     , Double.parseDouble(fieldValues[3]), Double.parseDouble(fieldValues[4])
                     , Double.parseDouble(fieldValues[5]), Double.parseDouble(fieldValues[6])
-                    , TravellerStatus.valueOf(fieldValues[7])
-                    , LocalDateTime.parse(fieldValues[8], DATE_TIME_FORMATTER)
-                    , Double.parseDouble(fieldValues[9])
-                    , fieldValues[10]
-                    , Integer.parseInt(fieldValues[11])
-                    , LocalDateTime.parse(fieldValues[12], DATE_TIME_FORMATTER)
-                    , fieldValues[13]);
+                    , TravellerStatus.valueOf(fieldValues[7]),
+                            fieldValues[8]
+                    , LocalDateTime.parse(fieldValues[9], DATE_TIME_FORMATTER)
+                    , Double.parseDouble(fieldValues[10])
+                    , fieldValues[11]
+                    , Integer.parseInt(fieldValues[12])
+                    , LocalDateTime.parse(fieldValues[13], DATE_TIME_FORMATTER)
+                    , fieldValues[14]);
 
             allTravellers.put(Integer.parseInt(userId), info);
         });

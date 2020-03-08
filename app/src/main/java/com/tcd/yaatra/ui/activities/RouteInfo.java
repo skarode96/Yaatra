@@ -1,11 +1,5 @@
 package com.tcd.yaatra.ui.activities;
 
-import com.mapbox.geojson.Feature;
-import com.mapbox.mapboxsdk.style.layers.LineLayer;
-import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
-import com.tcd.yaatra.R;
-import com.tcd.yaatra.ui.viewmodels.RouteInfoViewModel;
-import com.tcd.yaatra.databinding.ActivityRouteinfoBinding;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
@@ -18,12 +12,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-import com.mapbox.geojson.FeatureCollection;
+
+import androidx.annotation.NonNull;
+
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
-import com.mapbox.api.directions.v5.DirectionsCriteria;
 import com.mapbox.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
+import com.mapbox.geojson.Feature;
+import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
@@ -36,27 +33,33 @@ import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
 import com.mapbox.mapboxsdk.plugins.locationlayer.modes.CameraMode;
+import com.mapbox.mapboxsdk.style.layers.LineLayer;
+import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
+import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
 import com.mapbox.services.android.navigation.ui.v5.NavigationLauncherOptions;
+import com.mapbox.services.android.navigation.ui.v5.NavigationView;
 import com.mapbox.services.android.navigation.ui.v5.NavigationViewOptions;
 import com.mapbox.services.android.navigation.ui.v5.OnNavigationReadyCallback;
 import com.mapbox.services.android.navigation.ui.v5.listeners.NavigationListener;
+import com.mapbox.services.android.navigation.ui.v5.listeners.RouteListener;
 import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute;
 import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
 import com.mapbox.services.android.navigation.v5.routeprogress.ProgressChangeListener;
 import com.mapbox.services.android.navigation.v5.routeprogress.RouteProgress;
-import com.mapbox.services.android.navigation.ui.v5.listeners.RouteListener;
-import com.mapbox.services.android.navigation.ui.v5.NavigationView;
+import com.tcd.yaatra.R;
+import com.tcd.yaatra.databinding.ActivityRouteinfoBinding;
+import com.tcd.yaatra.ui.viewmodels.RouteInfoViewModel;
 
-import java.nio.BufferUnderflowException;
-import java.util.List;
 import java.util.ArrayList;
-import androidx.annotation.NonNull;
+import java.util.List;
+
 import javax.inject.Inject;
-import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconIgnorePlacement;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
@@ -224,7 +227,7 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
         Bundle bundle = getIntent().getExtras();
         double latitude = bundle.getDouble("destLatitude");
         double longitude = bundle.getDouble("destLongitude");
-        String modeOfTravel =  bundle.getString("modeOfTravel");
+        String modeOfTravel =  bundle.getString("peerModeOfTravel");
         Boolean multiDestination = bundle.getBoolean("multiDestination");
         if(multiDestination){
             ArrayList<LatLng> locations  = bundle.getParcelableArrayList("destLocations");

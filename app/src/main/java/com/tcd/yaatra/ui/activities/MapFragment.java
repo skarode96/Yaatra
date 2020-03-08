@@ -1,70 +1,68 @@
 package com.tcd.yaatra.ui.activities;
 
-import com.mapbox.api.directions.v5.DirectionsCriteria;
-import com.tcd.yaatra.R;
-import com.tcd.yaatra.databinding.FragmentMapBinding;
-import com.tcd.yaatra.ui.fragments.BaseFragment;
-import com.tcd.yaatra.utils.MyReceiver;
-import com.tcd.yaatra.ui.viewmodels.MapActivityViewModel;
-
-import java.util.List;
-import java.util.ArrayList;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-
 import android.annotation.SuppressLint;
-import androidx.annotation.Nullable;
-//import android.content.SharedPreferences;
-import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.view.View;
-import android.widget.RadioButton;
-import android.widget.SearchView;
-
-import com.mapbox.geojson.Point;
-import com.mapbox.mapboxsdk.Mapbox;
-import com.mapbox.mapboxsdk.maps.Style;
-import com.mapbox.mapboxsdk.maps.MapView;
-import com.mapbox.mapboxsdk.maps.MapboxMap;
-import com.mapbox.mapboxsdk.geometry.LatLng;
-import com.mapbox.mapboxsdk.annotations.Marker;
-import com.mapbox.mapboxsdk.geometry.LatLngBounds;
-import com.mapbox.mapboxsdk.offline.OfflineRegion;
-import com.mapbox.mapboxsdk.camera.CameraPosition;
-import com.mapbox.mapboxsdk.offline.OfflineManager;
-import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
-import com.mapbox.mapboxsdk.annotations.MarkerOptions;
-import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
-import com.mapbox.mapboxsdk.offline.OfflineRegionError;
-import com.mapbox.mapboxsdk.location.LocationComponent;
-import com.mapbox.mapboxsdk.offline.OfflineRegionStatus;
-import com.mapbox.mapboxsdk.location.LocationComponentOptions;
-import com.mapbox.android.core.permissions.PermissionsManager;
-import com.mapbox.android.core.permissions.PermissionsListener;
-import com.mapbox.mapboxsdk.plugins.locationlayer.modes.CameraMode;
-import com.mapbox.mapboxsdk.offline.OfflineTilePyramidRegionDefinition;
-import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import androidx.annotation.NonNull;
-import timber.log.Timber;
-
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
+import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.SearchView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.mapbox.android.core.permissions.PermissionsListener;
+import com.mapbox.android.core.permissions.PermissionsManager;
+import com.mapbox.api.directions.v5.DirectionsCriteria;
+import com.mapbox.geojson.Point;
+import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.annotations.Marker;
+import com.mapbox.mapboxsdk.annotations.MarkerOptions;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
+import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.geometry.LatLngBounds;
+import com.mapbox.mapboxsdk.location.LocationComponent;
+import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
+import com.mapbox.mapboxsdk.location.LocationComponentOptions;
+import com.mapbox.mapboxsdk.maps.MapView;
+import com.mapbox.mapboxsdk.maps.MapboxMap;
+import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
+import com.mapbox.mapboxsdk.maps.Style;
+import com.mapbox.mapboxsdk.offline.OfflineManager;
+import com.mapbox.mapboxsdk.offline.OfflineRegion;
+import com.mapbox.mapboxsdk.offline.OfflineRegionError;
+import com.mapbox.mapboxsdk.offline.OfflineRegionStatus;
+import com.mapbox.mapboxsdk.offline.OfflineTilePyramidRegionDefinition;
+import com.mapbox.mapboxsdk.plugins.locationlayer.modes.CameraMode;
+import com.tcd.yaatra.R;
+import com.tcd.yaatra.databinding.FragmentMapBinding;
+import com.tcd.yaatra.ui.fragments.BaseFragment;
+import com.tcd.yaatra.ui.viewmodels.MapActivityViewModel;
+import com.tcd.yaatra.utils.MyReceiver;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
+
+import timber.log.Timber;
+
+//import android.content.SharedPreferences;
 
 public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnMapReadyCallback, PermissionsListener, MapboxMap.OnMapClickListener, SearchView.OnQueryTextListener {
 
@@ -243,10 +241,11 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
 
         bundle.putString("sourceName", sourceName);
         bundle.putString("destName",destname);
-        bundle.putDouble("srcLatitude",locationComponent.getLastKnownLocation().getLongitude());
-        bundle.putDouble("srcLongitude",locationComponent.getLastKnownLocation().getLatitude());
-        bundle.putDouble("destLatitude",destination.latitude());
-        bundle.putDouble("destLongitude", destination.longitude());
+        bundle.putDouble("sourceLatitude",locationComponent.getLastKnownLocation().getLatitude());
+        bundle.putDouble("sourceLatitude",locationComponent.getLastKnownLocation().getLatitude());
+        bundle.putDouble("sourceLongitude",locationComponent.getLastKnownLocation().getLongitude());
+        bundle.putDouble("destinationLatitude",destination.latitude());
+        bundle.putDouble("destinationLongitude", destination.longitude());
 
         if(layoutDataBinding.bicycle.isChecked()) {
             modeOfTravel = DirectionsCriteria.PROFILE_CYCLING;
@@ -256,7 +255,7 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
         else{
             modeOfTravel = DirectionsCriteria.PROFILE_WALKING;
         }
-        bundle.putString("modeOfTravel",modeOfTravel);
+        bundle.putString("peerModeOfTravel",modeOfTravel);
         mapIntent.putExtras(bundle);
         startActivity(mapIntent);
     }

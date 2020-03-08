@@ -12,6 +12,7 @@ public class TravellerInfo {
     private Double sourceLongitude;
     private Double destinationLatitude;
     private Double destinationLongitude;
+    private String modeOfTravel;
     private TravellerStatus status = TravellerStatus.None;
     private LocalDateTime requestStartTime = LocalDateTime.now();
     private Double userRating;
@@ -23,7 +24,7 @@ public class TravellerInfo {
     public TravellerInfo(Integer userId, String userName, int age, Gender gender
             , Double sourceLatitude, Double sourceLongitude
             , Double destinationLatitude, Double destinationLongitude
-            , TravellerStatus status, LocalDateTime requestStartTime
+            , TravellerStatus status, String modeOfTravel,  LocalDateTime requestStartTime
             , Double userRating, String ipAddress, int port
             , LocalDateTime statusUpdateTime
             , String infoProvider){
@@ -36,6 +37,7 @@ public class TravellerInfo {
         setSourceLongitude(sourceLongitude);
         setDestinationLatitude(destinationLatitude);
         setDestinationLongitude(destinationLongitude);
+        setModeOfTravel(modeOfTravel);
         setStatus(status);
         setRequestStartTime(requestStartTime);
         setUserRating(userRating);
@@ -45,7 +47,7 @@ public class TravellerInfo {
         setInfoProvider(infoProvider);
     }
 
-    public TravellerInfo(Integer userId, String userName, Gender gender, Double sourceLatitude, Double sourceLongitude, Double destinationLatitude, Double destinationLongitude) {
+    public TravellerInfo(Integer userId, String userName, Gender gender, Double sourceLatitude, Double sourceLongitude, Double destinationLatitude, Double destinationLongitude, String modeOfTravel) {
         this.userId = userId;
         this.userName = userName;
         this.gender = gender;
@@ -53,6 +55,7 @@ public class TravellerInfo {
         this.sourceLongitude = sourceLongitude;
         this.destinationLatitude= destinationLatitude;
         this.destinationLongitude = destinationLongitude;
+        this.modeOfTravel = modeOfTravel;
     }
 
     //region Getters & Setters
@@ -175,5 +178,13 @@ public class TravellerInfo {
         this.infoProvider = infoProvider;
     }
 
+
+    public String getModeOfTravel() {
+        return modeOfTravel;
+    }
+
+    public void setModeOfTravel(String modeOfTravel) {
+        this.modeOfTravel = modeOfTravel;
+    }
     //endregion
 }
