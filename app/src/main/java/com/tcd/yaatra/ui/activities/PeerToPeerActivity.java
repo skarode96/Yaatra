@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.WifiDirectP2PHelper.PeerCommunicator;
 import com.tcd.yaatra.databinding.ActivityPeerToPeerBinding;
@@ -161,6 +162,18 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
     private void handleStartNavigationClick(){
         Intent mapIntent = new Intent(PeerToPeerActivity.this, RouteInfo.class);
         Bundle bundle = getIntent().getExtras();
+
+        //rohan+chetan: Mocking multi destination start
+        ArrayList<LatLng> locations = new ArrayList<>();
+        Boolean multidestination = false;
+        LatLng point1 = new LatLng(53.34684951262867,-6.259117126464844);
+        LatLng point2 = new LatLng(53.34587597399326,-6.255190372467041);
+        LatLng point3 = new LatLng(53.345145805428125,-6.254847049713134);
+        LatLng point4 = new LatLng(53.34490241312763,-6.253151893615723);
+        locations.add(point1);locations.add(point2); locations.add(point3);locations.add(point4);
+        bundle.putParcelableArrayList("destLocations", locations);
+        bundle.putBoolean("multiDestination", multidestination);
+        //rohan+chetan: Mocking multi destination end
         mapIntent.putExtras(bundle);
         startActivity(mapIntent);
     }
