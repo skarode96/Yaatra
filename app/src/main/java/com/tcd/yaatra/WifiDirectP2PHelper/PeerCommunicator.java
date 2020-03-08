@@ -21,6 +21,8 @@ import com.tcd.yaatra.utils.NetworkUtils;
 import com.tcd.yaatra.utils.SharedPreferenceUtils;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -135,7 +137,7 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
         HashMap<Integer, TravellerInfo> allTravellers = FellowTravellersCache.getCacheInstance().getFellowTravellers(SharedPreferenceUtils.getUserName());
         allTravellers.put(Integer.valueOf(SharedPreferenceUtils.getUserId()), currentUserTravellerInfo);
 
-        Map<String, String> serializedRecord = P2pSerializerDeserializer.serializeToMap(allTravellers.values());
+        /*Map<String, String> serializedRecord = P2pSerializerDeserializer.serializeToMap(allTravellers.values());
 
         WifiP2pDnsSdServiceInfo service = WifiP2pDnsSdServiceInfo.newInstance(
                 SERVICE_INSTANCE, SERVICE_TYPE, serializedRecord);
@@ -160,7 +162,55 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
             public void onFailure(int error) {
                 Log.e(TAG, "Error: Failed to advertise status");
             }
+        });*/
+
+        addLocalServiceForEachTraveller(allTravellers);
+    }
+
+    private void addLocalServiceForEachTraveller(HashMap<Integer, TravellerInfo> travellers){
+
+        Integer firstKey = travellers.keySet().iterator().next();
+
+        Collection<TravellerInfo> singleInfo = new ArrayList<>();
+
+        TravellerInfo info = travellers.remove(firstKey);
+
+        singleInfo.add(info);
+
+        Map<String, String> serializedRecord = P2pSerializerDeserializer.serializeToMap(singleInfo);
+
+        WifiP2pDnsSdServiceInfo service = WifiP2pDnsSdServiceInfo.newInstance(
+                SERVICE_INSTANCE, SERVICE_TYPE, serializedRecord);
+
+        wifiP2pManager.addLocalService(wifiP2pChannel, service, new WifiP2pManager.ActionListener() {
+
+            @Override
+            public void onSuccess() {
+                Log.d(TAG, "Started advertising status of travellers");
+
+                if(travellers.size() == 0) {
+
+                    registerListenersForFellowTravellers();
+
+                    mServiceBroadcastingRunnable.run();
+
+                    // service broadcasting started
+                    serviceBroadcastingHandler
+                            .postDelayed(mServiceBroadcastingRunnable,
+                                    getRandomServiceBroadcastingInterval());
+                }
+                else {
+                    addLocalServiceForEachTraveller(travellers);
+                }
+            }
+
+            @Override
+            public void onFailure(int error) {
+                Log.e(TAG, "Error: Failed to advertise status");
+            }
         });
+
+
     }
 
     private void setCurrentStatusOfAppUser(TravellerStatus status){
