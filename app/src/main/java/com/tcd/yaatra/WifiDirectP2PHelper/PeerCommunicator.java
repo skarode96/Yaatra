@@ -91,7 +91,7 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
         currentUserTravellerInfo =
                 new TravellerInfo(appUserId, appUserName, 20, Gender.NOT_SPECIFIED
                         , 0.0d, 0.0d, 0.0d, 0.0d
-                        , TravellerStatus.None, now, 0.0d
+                        , TravellerStatus.None, "testMode", now, 0.0d
                         , NetworkUtils.getWiFiIPAddress(peerToPeerActivity)
                         , 12345, now, appUserName);
     }
@@ -99,13 +99,15 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
     private void updateTraveller(UserInfo response, Bundle savedInstanceState){
 
         LocalDateTime now = LocalDateTime.now();
-        double destLatitude = savedInstanceState.getDouble("destLatitude");
-        double destLongitude = savedInstanceState.getDouble("destLongitude");
-        String modeOfTravel =  savedInstanceState.getString("modeOfTravel");
+        double sourceLatitude = savedInstanceState.getDouble("sourceLatitude");
+        double sourceLongitude = savedInstanceState.getDouble("sourceLongitude");
+        double destinationLatitude = savedInstanceState.getDouble("destinationLatitude");
+        double destinationLongitude = savedInstanceState.getDouble("destinationLongitude");
+        String modeOfTravel =  savedInstanceState.getString("peerModeOfTravel");
         currentUserTravellerInfo =
                 new TravellerInfo(response.getId(), response.getUsername(), response.getAge(), Gender.valueOfIdName(response.getGender())
-                        , 0.0d, 0.0d, destLatitude, destLongitude
-                        , TravellerStatus.None, now, response.getRating()
+                        , sourceLatitude, sourceLongitude, destinationLatitude, destinationLongitude
+                        , TravellerStatus.None, modeOfTravel, now, response.getRating()
                         , NetworkUtils.getWiFiIPAddress(peerToPeerActivity)
                         , 12345, now, response.getUsername());
     }
