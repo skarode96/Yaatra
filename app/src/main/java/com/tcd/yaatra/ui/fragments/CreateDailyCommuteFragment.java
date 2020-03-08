@@ -2,11 +2,9 @@ package com.tcd.yaatra.ui.fragments;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.app.DatePickerDialog;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputType;
@@ -17,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tcd.yaatra.R;
@@ -26,16 +23,10 @@ import com.tcd.yaatra.repository.models.Gender;
 import com.tcd.yaatra.repository.models.JourneyFrequency;
 import com.tcd.yaatra.repository.models.TransportPreference;
 import com.tcd.yaatra.services.api.yaatra.models.CreateDailyCommuteRequestBody;
-import com.tcd.yaatra.ui.activities.LoginActivity;
-import com.tcd.yaatra.ui.activities.MapBoxInputFragment;
-import com.tcd.yaatra.ui.activities.RegisterActivity;
 import com.tcd.yaatra.ui.viewmodels.CreateDailyCommuteFragmentViewModel;
-import com.tcd.yaatra.ui.viewmodels.RegisterActivityViewModel;
 import com.tcd.yaatra.utils.SharedPreferenceUtils;
 
-import java.text.DateFormat;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import javax.inject.Inject;
