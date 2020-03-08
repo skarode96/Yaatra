@@ -1,12 +1,15 @@
 package com.tcd.yaatra.ui.activities;
 
+import com.mapbox.geojson.Feature;
+import com.mapbox.mapboxsdk.style.layers.LineLayer;
+import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.tcd.yaatra.R;
-import com.tcd.yaatra.ui.fragments.SettingsFragment;
 import com.tcd.yaatra.ui.viewmodels.RouteInfoViewModel;
 import com.tcd.yaatra.databinding.ActivityRouteinfoBinding;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,8 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-
-
+import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.api.directions.v5.DirectionsCriteria;
@@ -46,14 +48,22 @@ import com.mapbox.services.android.navigation.v5.routeprogress.RouteProgress;
 import com.mapbox.services.android.navigation.ui.v5.listeners.RouteListener;
 import com.mapbox.services.android.navigation.ui.v5.NavigationView;
 
+import java.nio.BufferUnderflowException;
 import java.util.List;
+import java.util.ArrayList;
 import androidx.annotation.NonNull;
 import javax.inject.Inject;
-
+import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconIgnorePlacement;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconOffset;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconSize;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineColor;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineWidth;
 public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements OnMapReadyCallback, PermissionsListener, MapboxMap.OnMapClickListener, OnNavigationReadyCallback, NavigationListener, RouteListener, ProgressChangeListener{
 
     private MapView mapView;
@@ -70,10 +80,13 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
     private NavigationView navigationView;
     private boolean dropoffDialogShown;
     private Location lastKnownLocation;
-
+    private static final String ICON_GEOJSON_SOURCE_ID = "icon-source-id";
+    private Point origin;
+    private static final String TEAL_COLOR = "#23D2BE";
+    private static final float POLYLINE_WIDTH = 5;
+    private List<Point> stops = new ArrayList<>();
     @Inject
     RouteInfoViewModel RouteInfoViewModel;
-    //SharedPreferences loginPreferences;
 
     @Override
     int getLayoutResourceId() { return R.layout.activity_routeinfo; }
@@ -97,6 +110,7 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
         mapView = layoutDataBinding.mapView;
         startButton = layoutDataBinding.startButton;
         endTrip = layoutDataBinding.endNavigation;
+        mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
     }
@@ -121,16 +135,69 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
 
     @Override
     public void onMapReady(MapboxMap mapboxMap) {
-        map = mapboxMap;
+        this.map = mapboxMap;
 //        map.setMinZoomPreference(15);
 //        map.setStyle(Style.MAPBOX_STREETS);
+        Bundle bundle = getIntent().getExtras();
         mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
             @Override
             public void onStyleLoaded(@NonNull Style style) {
+                if(bundle.getBoolean("multiDestination")) {
+                    initMarkerIconSymbolLayer(style);
+                    initOptimizedRouteLineLayer(style);
+                }
                 enableLocation(style);
             }
         });
 
+    }
+
+    private void initMarkerIconSymbolLayer(@NonNull Style loadedMapStyle) {
+        // Add the marker image to map
+        loadedMapStyle.addImage("icon-image", BitmapFactory.decodeResource(
+                this.getResources(), R.drawable.marker_travel));
+
+        // Add the source to the map
+        Bundle bundle = getIntent().getExtras();
+        ArrayList<LatLng> locations  = bundle.getParcelableArrayList("destLocations");
+        addFirstStopToStopsList(locations.get(0));
+        loadedMapStyle.addSource(new GeoJsonSource(ICON_GEOJSON_SOURCE_ID,
+                Feature.fromGeometry(Point.fromLngLat(origin.longitude(), origin.latitude()))));
+
+        loadedMapStyle.addLayer(new SymbolLayer("icon-layer-id", ICON_GEOJSON_SOURCE_ID).withProperties(
+                iconImage("icon-image"),
+                iconSize(1f),
+                iconAllowOverlap(true),
+                iconIgnorePlacement(true),
+                iconOffset(new Float[] {0f, -7f})
+        ));
+    }
+
+    private void initOptimizedRouteLineLayer(@NonNull Style loadedMapStyle) {
+        loadedMapStyle.addSource(new GeoJsonSource("optimized-route-source-id"));
+        loadedMapStyle.addLayerBelow(new LineLayer("optimized-route-layer-id", "optimized-route-source-id")
+                .withProperties(
+                        lineColor(Color.parseColor(TEAL_COLOR)),
+                        lineWidth(POLYLINE_WIDTH)
+                ), "icon-layer-id");
+    }
+
+    private void addDestinationMarker(@NonNull Style style, LatLng point) {
+        List<Feature> destinationMarkerList = new ArrayList<>();
+        for (Point singlePoint : stops) {
+            destinationMarkerList.add(Feature.fromGeometry(
+                    Point.fromLngLat(singlePoint.longitude(), singlePoint.latitude())));
+        }
+        destinationMarkerList.add(Feature.fromGeometry(Point.fromLngLat(point.getLongitude(), point.getLatitude())));
+        GeoJsonSource iconSource = style.getSourceAs(ICON_GEOJSON_SOURCE_ID);
+        if (iconSource != null) {
+            iconSource.setGeoJson(FeatureCollection.fromFeatures(destinationMarkerList));
+        }
+    }
+
+    private void addFirstStopToStopsList(LatLng startPoint) {
+        origin = Point.fromLngLat(startPoint.getLongitude(), startPoint.getLatitude());
+        stops.add(origin);
     }
     @SuppressLint("WrongConstant")
     private void enableLocation(Style loadedMapStyle){
@@ -158,14 +225,30 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
         double latitude = bundle.getDouble("destLatitude");
         double longitude = bundle.getDouble("destLongitude");
         String modeOfTravel =  bundle.getString("modeOfTravel");
-            destinationPosition = Point.fromLngLat(longitude,latitude);
-        originPosition = Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),locationComponent.getLastKnownLocation().getLatitude());
-        getRoute(originPosition, destinationPosition, modeOfTravel);
+        Boolean multiDestination = bundle.getBoolean("multiDestination");
+        if(multiDestination){
+            ArrayList<LatLng> locations  = bundle.getParcelableArrayList("destLocations");
+            Style style = map.getStyle();
+            for(int i = 1; i< locations.size(); i++)
+            {
+                addDestinationMarker(style, locations.get(i));
+                addPointToStopsList(locations.get(i));
+            }
+            getOptimizedRoute(modeOfTravel);
+        }
+        else {
 
+            destinationPosition = Point.fromLngLat(longitude, latitude);
+            originPosition = Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(), locationComponent.getLastKnownLocation().getLatitude());
+            getRoute(originPosition, destinationPosition, modeOfTravel);
+        }
         startButton.setEnabled(true);
         startButton.setBackgroundResource(R.color.mapbox_blue);
     }
 
+    private void addPointToStopsList(LatLng point) {
+        stops.add(Point.fromLngLat(point.getLongitude(), point.getLatitude()));
+    }
     private void getRoute(Point origin, Point destination, String modeOfTravel){
         NavigationRoute.builder(this)
                 .accessToken(Mapbox.getAccessToken())
@@ -201,6 +284,49 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
                     }
                 });
     }
+
+    private void getOptimizedRoute(String modeOfTravel){
+
+        NavigationRoute.Builder builder = NavigationRoute.builder(this)
+                .accessToken(Mapbox.getAccessToken())
+                .origin(origin)
+                .destination(stops.get(stops.size()-1))
+                .profile(modeOfTravel);
+
+        for(int i = 1; i < stops.size() -1 ; i++)
+        {
+            builder.addWaypoint(stops.get(i));
+        }
+
+        builder.build().getRoute(new Callback<DirectionsResponse>() {
+                    @Override
+                    public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
+                        if(response.body() == null){
+                            Log.e(TAG,"No routes found, check right user and access token");
+                            return;
+                        } else if(response.body().routes().size()==0){
+                            Log.e(TAG,"No routes found");
+                            return;
+                        }
+
+                        DirectionsRoute currentRoute = response.body().routes().get(0);
+                        currentGivenRoute = currentRoute;
+
+                        if(navigationMapRoute != null){
+                            navigationMapRoute.removeRoute();
+                        } else {
+                            navigationMapRoute = new NavigationMapRoute(null,mapView,map);
+                        }
+                        navigationMapRoute.addRoute(currentRoute);
+                    }
+
+                    @Override
+                    public void onFailure(Call<DirectionsResponse> call, Throwable t) {
+                        Log.e(TAG,"Error:"+t.getMessage());
+                    }
+                });
+    }
+
 
     @Override
     public void onExplanationNeeded(List<String> permissionsToExplain) {
