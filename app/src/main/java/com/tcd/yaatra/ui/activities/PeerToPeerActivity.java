@@ -181,7 +181,7 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
 
         //rohan+chetan: Mocking multi destination start
         ArrayList<LatLng> locations = new ArrayList<>();
-        Boolean multidestination = false;
+        Boolean multidestination = true;
         LatLng point1 = new LatLng(53.34684951262867,-6.259117126464844);
         LatLng point2 = new LatLng(53.34587597399326,-6.255190372467041);
         LatLng point3 = new LatLng(53.345145805428125,-6.254847049713134);
