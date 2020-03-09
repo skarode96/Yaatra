@@ -3,6 +3,7 @@ package com.tcd.yaatra.ui.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.RadioButton;
 import android.widget.Toast;
@@ -175,9 +176,20 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
                         break;
 
                     case FAILURE:
-                        layoutDataBinding.progressBarOverlay.setVisibility(View.GONE);
-                        Toast.makeText(this, "Registration Failed", Toast.LENGTH_SHORT).show();
-                        break;
+                        Log.e("TAG", "onFailure: "+registerResponse.getState().toString());
+                        if(registerResponse.getData().getMessage().equals("Incorrect data: Either Email exists or Username exists or Password did not match"))
+                        {
+                            Toast.makeText(this, "Registration Failed because of email match or username match or password", Toast.LENGTH_SHORT).show();
+                            Intent myIntent2 = new Intent(RegisterActivity.this, RegisterActivity.class);
+                            startActivity(myIntent2);
+                            finish();
+                            break;
+                        }
+                        else {
+                            layoutDataBinding.progressBarOverlay.setVisibility(View.GONE);
+                            Toast.makeText(this, "Registration Failed", Toast.LENGTH_SHORT).show();
+                            break;
+                        }
                 }
             });
 
