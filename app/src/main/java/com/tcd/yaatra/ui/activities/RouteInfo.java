@@ -225,8 +225,8 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
     public void showRoute() {
 
         Bundle bundle = getIntent().getExtras();
-        double latitude = bundle.getDouble("destLatitude");
-        double longitude = bundle.getDouble("destLongitude");
+        double latitude = bundle.getDouble("destinationLatitude");
+        double longitude = bundle.getDouble("destinationLongitude");
         String modeOfTravel =  bundle.getString("peerModeOfTravel");
         Boolean multiDestination = bundle.getBoolean("multiDestination");
         if(multiDestination){
