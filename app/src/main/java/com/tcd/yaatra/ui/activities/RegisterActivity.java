@@ -126,7 +126,7 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
             registerObject.setConfirmPassword(layoutDataBinding.userCPassword.getText().toString());
             registerObject.setConfirmPassword(layoutDataBinding.userCPassword.getText().toString());
 
-            int phoneNumber = Integer.parseInt(layoutDataBinding.phoneNum.getText().toString());
+            long phoneNumber = Long.parseLong(layoutDataBinding.phoneNum.getText().toString());
             String country = layoutDataBinding.country.getText().toString();
             registerObject.setCountry(country);
             registerObject.setPhoneNumber(phoneNumber);
@@ -176,7 +176,7 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
 
                     case FAILURE:
                         layoutDataBinding.progressBarOverlay.setVisibility(View.GONE);
-                        Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Registration Failed", Toast.LENGTH_SHORT).show();
                         break;
                 }
             });
