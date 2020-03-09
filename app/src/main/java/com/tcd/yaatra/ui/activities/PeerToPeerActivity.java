@@ -58,6 +58,7 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
         layoutDataBinding.peerRecyclerView.setLayoutManager(layoutManager);
         refreshRecyclerView();
         layoutDataBinding.startNavigation.setOnClickListener(view -> handleStartNavigationClick());
+        layoutDataBinding.goToStart.setOnClickListener(view -> handleGoToStartClick());
     }
 
 
@@ -67,6 +68,7 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
         super.onCreate(savedInstanceState);
         this.bundle = getIntent().getExtras();
         FellowTravellersCache.getCacheInstance().clear();
+        layoutDataBinding.goToStart.hide();
         enableWiFi();
         initializePeerCommunicator();
         checkIfLocationPermissionGranted();
@@ -157,22 +159,8 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
 
     public void startDiscovery(){
         if(isLocationPermissionGranted){
-            startLoadingAnimation();
             communicator.advertiseStatusAndDiscoverFellowTravellers(TravellerStatus.SeekingFellowTraveller);
         }
-    }
-
-    private void startLoadingAnimation(){
-        TashieLoader tashie = new TashieLoader(
-                this, 5,
-                30, 10,
-                ContextCompat.getColor(this, R.color.colorAccent));
-
-        tashie.setAnimDuration(500);
-        tashie.setAnimDelay(100);
-        tashie.setInterpolator(new LinearInterpolator());
-
-        layoutDataBinding.loader.addView(tashie);
     }
 
     private void handleStartNavigationClick(){
@@ -194,11 +182,22 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
         startActivity(mapIntent);
     }
 
+    private void handleGoToStartClick(){
+        communicator.advertiseStatusAndDiscoverFellowTravellers(TravellerStatus.TravellingToStartPoint);
+    }
+
     public void showFellowTravellers(HashMap<Integer, TravellerInfo> peerTravellers, TravellerInfo ownTravellerInfo){
         this.travellerInfos.clear();
         ArrayList<TravellerInfo> peerTravellerArrayList = new ArrayList<>(peerTravellers.values());
         MapUtils.filterFellowTravellers(ownTravellerInfo, peerTravellerArrayList).forEach(travellerInfo -> this.travellerInfos.add(travellerInfo));
         refreshRecyclerView();
+
+        if(travellerInfos.size()>0){
+            layoutDataBinding.goToStart.show();
+        }
+        else{
+            layoutDataBinding.goToStart.hide();
+        }
     }
 
     private void refreshRecyclerView() {
