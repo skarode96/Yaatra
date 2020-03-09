@@ -218,6 +218,10 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
     }
 
     private void setCurrentStatusOfAppUser(TravellerStatus status){
+        if(currentUserTravellerInfo.getStatus()!=status){
+            currentUserTravellerInfo.setStatusUpdateTime(LocalDateTime.now());
+        }
+
         currentUserTravellerInfo.setStatus(status);
     }
 

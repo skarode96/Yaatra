@@ -26,26 +26,42 @@
             android:layout_height="match_parent" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/goToStart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/peer_recycler_view"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="end|bottom"
+            android:layout_marginBottom="120dp"
+            android:layout_marginEnd="10dp"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:paddingTop="200dp"
+            android:src="@drawable/ic_people_green_24dp"
+            android:tooltipText=" Enter Destination"
+            android:visibility="invisible" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/startNavigation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/peer_recycler_view"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_gravity="end|bottom"
             android:layout_marginBottom="37dp"
-            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
             android:background="@android:color/transparent"
             android:gravity="center"
             android:paddingTop="200dp"
             android:src="@drawable/ic_btn_navigation"
             android:tooltipText=" Enter Destination"
-            android:visibility="visible" />
+            android:visibility="invisible" />
 
         <GridLayout
             android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:layout_alignBottom="@id/peer_recycler_view"
-            android:layout_marginBottom="15dp"
+            android:layout_marginBottom="6dp"
             android:layout_centerHorizontal="true"
             android:columnCount="2"
             android:rowCount="1">
@@ -55,27 +71,26 @@
                 android:layout_width="wrap_content"
                 android:layout_column="0"
                 android:layout_gravity="top"
-                android:layout_marginRight="10dp"
-                android:text="Searching"
+                android:layout_marginEnd="10dp"
+                android:text="@string/searching_label"
                 android:textColor="#8018C0B0"
-                android:textSize="24sp"
+                android:textSize="18sp"
                 android:textStyle="bold">
 
             </androidx.appcompat.widget.AppCompatTextView>
 
-            <com.agrawalsuneet.dotsloader.loaders.TashieLoader
+            <com.agrawalsuneet.dotsloader.loaders.AllianceLoader
                 android:id="@+id/loader"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_column="1"
-                android:layout_marginTop="12dp"
-                app:tashieloader_animDelay="200"
-                app:tashieloader_animDur="1000"
-                app:tashieloader_dotsColor="#8018C0B0"
-                app:tashieloader_dotsDist="5dp"
-                app:tashieloader_dotsRadius="6dp"
-                app:tashieloader_interpolator="@android:anim/accelerate_interpolator"
-                app:tashieloader_noOfDots="5" />
+                app:alliance_dotsRadius="4dp"
+                app:alliance_distanceMultiplier="3"
+                app:alliance_drawOnlyStroke="true"
+                app:alliance_strokeWidth="2dp"
+                app:alliance_firstDotsColor="@color/darkGreen"
+                app:alliance_secondDotsColor="@color/red"
+                app:alliance_thirdDotsColor="@color/blue"/>
 
         </GridLayout>
 
