@@ -8,17 +8,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ui.activities.PeerToPeerActivity">
-        <ListView
-            android:id="@+id/listNearbyDevices"
-            android:layout_width="411dp"
-            android:layout_height="206dp"
-            android:layout_marginTop="52dp"
-            android:background="#00FFFFFF"
-            android:scrollbarAlwaysDrawVerticalTrack="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/peer_recycler_view"

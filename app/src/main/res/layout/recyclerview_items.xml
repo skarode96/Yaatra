@@ -76,14 +76,14 @@
                             android:layout_height="wrap_content"
                             android:textAlignment="center"
                             android:textStyle="bold"
-                            tools:text="Test" />
+                            tools:text="Source Name" />
                         <TextView
                             android:id="@+id/peer_destination_name"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textAlignment="center"
                             android:textStyle="bold"
-                            tools:text="Test" />
+                            tools:text="Destination" />
 
                         <TextView
                             android:id="@+id/peer_mode_of_travel"
@@ -91,7 +91,14 @@
                             android:layout_height="wrap_content"
                             android:textAlignment="center"
                             android:textStyle="bold"
-                            tools:text="Test" />
+                            tools:text="Mode Of Travel" />
+                        <TextView
+                            android:id="@+id/peer_status"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:textStyle="bold"
+                            tools:text="Status" />
 
                     </LinearLayout>
 

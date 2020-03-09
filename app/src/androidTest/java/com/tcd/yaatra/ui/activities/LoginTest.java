@@ -3,6 +3,9 @@ package com.tcd.yaatra.ui.activities;
 import android.view.View;
 import android.widget.EditText;
 
+import androidx.lifecycle.LiveData;
+import androidx.test.rule.ActivityTestRule;
+
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.repository.UserInfoRepository;
 import com.tcd.yaatra.repository.models.AsyncData;
@@ -24,30 +27,13 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import androidx.annotation.NonNull;
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
-import androidx.test.espresso.intent.rule.IntentsTestRule;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.rule.ActivityTestRule;
-
-import java.util.Collections;
-
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Checks.checkNotNull;
-import static androidx.test.espresso.intent.matcher.ComponentNameMatchers.hasShortClassName;
-import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.intent.Intents.intended;
-import static androidx.test.espresso.intent.matcher.IntentMatchers.toPackage;
-import static org.hamcrest.core.AllOf.allOf;
 import static org.mockito.Mockito.verify;
 
 
