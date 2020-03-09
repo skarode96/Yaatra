@@ -31,6 +31,7 @@ public class PeerListAdapter extends RecyclerView.Adapter<PeerListAdapter.ViewHo
         public TextView peerSourceName;
         public TextView peerDestinationName;
         public TextView peerModeOfTravel;
+        public TextView peerStatus;
         public ImageView profileIcon;
 
         public ViewHolder(View v){
@@ -41,6 +42,7 @@ public class PeerListAdapter extends RecyclerView.Adapter<PeerListAdapter.ViewHo
             peerDestinationName = (TextView)v.findViewById(R.id.peer_destination_name);
             peerModeOfTravel = (TextView)v.findViewById(R.id.peer_mode_of_travel);
             profileIcon = (ImageView) v.findViewById(R.id.profile_icon);
+            peerStatus = (TextView) v.findViewById(R.id.peer_status);
 
         }
     }
@@ -58,6 +60,7 @@ public class PeerListAdapter extends RecyclerView.Adapter<PeerListAdapter.ViewHo
         Gender gender = travellerInfos.get(position).getGender();
         holder.peerUsername.setText(travellerInfos.get(position).getUserName());
         holder.peerSourceName.setText(travellerInfos.get(position).getSourceName());
+        holder.peerStatus.setText(travellerInfos.get(position).getStatus().toString());
         holder.peerDestinationName.setText(travellerInfos.get(position).getDestinationName());
         holder.peerModeOfTravel.setText(travellerInfos.get(position).getModeOfTravel());
         holder.profileIcon.setImageResource(gender == Gender.MALE ? R.drawable.guy : R.drawable.girl);
