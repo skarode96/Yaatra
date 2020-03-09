@@ -5,12 +5,14 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.view.animation.LinearInterpolator;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.agrawalsuneet.dotsloader.loaders.TashieLoader;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.WifiDirectP2PHelper.PeerCommunicator;
@@ -68,7 +70,6 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
         enableWiFi();
         initializePeerCommunicator();
         checkIfLocationPermissionGranted();
-
     }
 
     private void enableWiFi(){
@@ -154,11 +155,26 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
 
     //endregion
 
-    public void handleDiscoverButtonClick(){
+    public void startDiscovery(){
         if(isLocationPermissionGranted){
+            startLoadingAnimation();
             communicator.advertiseStatusAndDiscoverFellowTravellers(TravellerStatus.SeekingFellowTraveller);
         }
     }
+
+    private void startLoadingAnimation(){
+        TashieLoader tashie = new TashieLoader(
+                this, 5,
+                30, 10,
+                ContextCompat.getColor(this, R.color.colorAccent));
+
+        tashie.setAnimDuration(500);
+        tashie.setAnimDelay(100);
+        tashie.setInterpolator(new LinearInterpolator());
+
+        layoutDataBinding.loader.addView(tashie);
+    }
+
     private void handleStartNavigationClick(){
         Intent mapIntent = new Intent(PeerToPeerActivity.this, RouteInfo.class);
         Bundle bundle = getIntent().getExtras();
@@ -177,6 +193,7 @@ public class PeerToPeerActivity extends BaseActivity<ActivityPeerToPeerBinding> 
         mapIntent.putExtras(bundle);
         startActivity(mapIntent);
     }
+
     public void showFellowTravellers(HashMap<Integer, TravellerInfo> peerTravellers, TravellerInfo ownTravellerInfo){
         this.travellerInfos.clear();
         ArrayList<TravellerInfo> peerTravellerArrayList = new ArrayList<>(peerTravellers.values());

@@ -41,6 +41,44 @@
             android:tooltipText=" Enter Destination"
             android:visibility="visible" />
 
+        <GridLayout
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_alignBottom="@id/peer_recycler_view"
+            android:layout_marginBottom="15dp"
+            android:layout_centerHorizontal="true"
+            android:columnCount="2"
+            android:rowCount="1">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvSearching"
+                android:layout_width="wrap_content"
+                android:layout_column="0"
+                android:layout_gravity="top"
+                android:layout_marginRight="10dp"
+                android:text="Searching"
+                android:textColor="#8018C0B0"
+                android:textSize="24sp"
+                android:textStyle="bold">
+
+            </androidx.appcompat.widget.AppCompatTextView>
+
+            <com.agrawalsuneet.dotsloader.loaders.TashieLoader
+                android:id="@+id/loader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="1"
+                android:layout_marginTop="12dp"
+                app:tashieloader_animDelay="200"
+                app:tashieloader_animDur="1000"
+                app:tashieloader_dotsColor="#8018C0B0"
+                app:tashieloader_dotsDist="5dp"
+                app:tashieloader_dotsRadius="6dp"
+                app:tashieloader_interpolator="@android:anim/accelerate_interpolator"
+                app:tashieloader_noOfDots="5" />
+
+        </GridLayout>
+
     </RelativeLayout>
 
 </layout>

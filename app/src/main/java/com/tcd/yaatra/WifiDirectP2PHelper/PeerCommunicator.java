@@ -66,7 +66,7 @@ public class PeerCommunicator implements WifiP2pManager.ConnectionInfoListener {
 
         userInfoRepository.getUserProfile(SharedPreferenceUtils.getUserName()).observe(activity,response -> {
             updateTraveller(response, savedInstanceState);
-            activity.handleDiscoverButtonClick();
+            activity.startDiscovery();
         });
         peerToPeerActivity = activity;
 
