@@ -14,11 +14,11 @@ import androidx.annotation.Nullable;
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.databinding.ActivityLoginBinding;
 import com.tcd.yaatra.repository.Executor;
-import com.tcd.yaatra.repository.JourneySharingDatabase;
 import com.tcd.yaatra.repository.UserInfoRepository;
 import com.tcd.yaatra.ui.viewmodels.LoginActivityViewModel;
+import com.tcd.yaatra.utils.Constants;
 import com.tcd.yaatra.utils.SharedPreferenceUtils;
-
+import org.jetbrains.annotations.TestOnly;
 import javax.inject.Inject;
 
 public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
@@ -30,6 +30,8 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
     @Inject
     UserInfoRepository userInfoRepository;
 
+    //private Observer<AsyncData<LoginResponse>> apiObserver;
+    //private LoginActivity activity;
 
     @Override
     int getLayoutResourceId() {
@@ -48,21 +50,23 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.loginPreferences = SharedPreferenceUtils.createLoginSharedPreference();
+
+        //createLiveDataObserver();
     }
 
     private void handleOnLoginButtonClick() {
 
         if(TextUtils.isEmpty(layoutDataBinding.username.getText().toString()))
         {
-            layoutDataBinding.username.setError("Username is required");
-            layoutDataBinding.username.setHint("Please enter username");
+            layoutDataBinding.username.setError(Constants.USER_NAME_IS_REQUIRED);
+            layoutDataBinding.username.setHint(Constants.PLEASE_ENTER_USER_NAME);
             layoutDataBinding.username.requestFocus();
         }
 
         else if(TextUtils.isEmpty(layoutDataBinding.password.getText().toString()))
         {
-            layoutDataBinding.password.setError("Password is required");
-            layoutDataBinding.password.setHint("Please enter password");
+            layoutDataBinding.password.setError(Constants.PASSWORD_IS_REQUIRED);
+            layoutDataBinding.password.setHint(Constants.PLEASE_ENTER_PASSWORD);
             layoutDataBinding.password.requestFocus();
         }
 
@@ -70,12 +74,12 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
             String username = layoutDataBinding.username.getText().toString();
             String password = layoutDataBinding.password.getText().toString();
 
-        loginActivityViewModel.authenticateUser(username, password)
-                .observe(this, loginResponse -> {
-                    switch (loginResponse.getState()) {
-                        case LOADING:
-                            layoutDataBinding.progressBarOverlay.setVisibility(View.VISIBLE);
-                            break;
+            loginActivityViewModel.authenticateUser(username, password)
+                    .observe(this, loginResponse -> {
+                        switch (loginResponse.getState()) {
+                            case LOADING:
+                                layoutDataBinding.progressBarOverlay.setVisibility(View.VISIBLE);
+                                break;
 
                         case SUCCESS:
                             layoutDataBinding.progressBarOverlay.setVisibility(View.GONE);
@@ -132,4 +136,58 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
         startActivity(intent);
     }
 
+    @TestOnly
+    public void setLoginActivityViewModel(LoginActivityViewModel viewModel){
+        this.loginActivityViewModel = viewModel;
+    }
+
+    @TestOnly
+    public void setUserInfoRepository(UserInfoRepository repository){
+        this.userInfoRepository = repository;
+    }
+
+    /*@TestOnly
+    public void setApiObserver(Observer<AsyncData<LoginResponse>> observer){
+        this.apiObserver = observer;
+    }*/
+
+    /*private void createLiveDataObserver(){
+        apiObserver = new Observer<AsyncData<LoginResponse>>() {
+            @Override
+            public void onChanged(AsyncData<LoginResponse> loginResponse) {
+
+                switch (loginResponse.getState()) {
+                    case LOADING:
+                        layoutDataBinding.progressBarOverlay.setVisibility(View.VISIBLE);
+                        break;
+
+                    case SUCCESS:
+                        layoutDataBinding.progressBarOverlay.setVisibility(View.GONE);
+                        Intent myIntent = new Intent(LoginActivity.this, MenuContainerActivity.class);
+                        SharedPreferenceUtils.setAuthToken(loginResponse.getData().getAuthToken());
+                        SharedPreferenceUtils.setUserName(loginResponse.getData().getUserInfo().getUsername());
+                        SharedPreferenceUtils.setUserId(String.valueOf(loginResponse.getData().getUserInfo().getId()));
+
+                        userInfoRepository.getUserProfile(loginResponse.getData().getUserInfo().getUsername()).observe(activity, response -> {
+                            if(response==null) {
+                                Executor.IOThread(() -> userInfoRepository.insertUser(loginResponse.getData().getUserInfo()));
+                            }
+                            else {
+                                Executor.IOThread(() -> userInfoRepository.updateUser(loginResponse.getData().getUserInfo()));
+                            }
+                        });
+
+                        startActivity(myIntent);
+                        finish();
+                        break;
+
+                    case FAILURE:
+                        layoutDataBinding.progressBarOverlay.setVisibility(View.GONE);
+                        Toast.makeText(activity, loginResponse.getData().getMessage(), Toast.LENGTH_SHORT).show();
+                        break;
+                }
+
+            }
+        };
+    }*/
 }
