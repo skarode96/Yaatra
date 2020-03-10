@@ -32,6 +32,8 @@ public class WiFiP2pFacade implements WifiP2pManager.ConnectionInfoListener {
     private static final String TAG = "WiFiP2pFacade";
     private static final String SERVICE_INSTANCE = "com.tcd.yaatra.WifiDirectService";
     private static final String SERVICE_TYPE = "tcp";
+    private static final int MIN_BROADCAST_INTERVAL = 4111;
+    private static final int MAX_BROADCAST_INTERVAL = 8111;
 
     PeerListener peerListener;
     BaseActivity parentActivity;
@@ -243,7 +245,7 @@ public class WiFiP2pFacade implements WifiP2pManager.ConnectionInfoListener {
     }
 
     private int getRandomServiceBroadcastingInterval() {
-        return (new Random()).nextInt((8111 - 4111) + 1) + 4111;
+        return (new Random()).nextInt((MAX_BROADCAST_INTERVAL - MIN_BROADCAST_INTERVAL) + 1) + MIN_BROADCAST_INTERVAL;
     }
 
     @Override
