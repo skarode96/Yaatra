@@ -72,7 +72,7 @@ public class EncryptionUtils {
 
     public static String decrypt(String encryptedText) {
 
-        try {
+        /*try {
 
             byte[] decodedBytes = Base64.getDecoder().decode(encryptedText);
 
@@ -87,7 +87,7 @@ public class EncryptionUtils {
             cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(key, "AES"), new GCMParameterSpec(128, iv));
             byte[] plainTextBytes = cipher.doFinal(cipherText);
 
-            //return new String(plainTextBytes);
+            return new String(plainTextBytes);
         } catch (NoSuchAlgorithmException e) {
             Log.e(TAG, "Failed to decrypt text", e);
         } catch (BadPaddingException e) {
@@ -100,7 +100,7 @@ public class EncryptionUtils {
             Log.e(TAG, "Failed to decrypt text", e);
         } catch (InvalidAlgorithmParameterException e) {
             Log.e(TAG, "Failed to decrypt text", e);
-        }
+        }*/
 
         return encryptedText;
     }
