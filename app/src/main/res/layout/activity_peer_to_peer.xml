@@ -58,41 +58,64 @@
             android:visibility="invisible" />
 
         <GridLayout
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
+            android:id="@+id/gridLoader"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
             android:layout_alignBottom="@id/peer_recycler_view"
-            android:layout_marginBottom="6dp"
-            android:layout_centerHorizontal="true"
+            android:background="#1A3BD3E6"
             android:columnCount="2"
             android:rowCount="1">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvSearching"
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
                 android:layout_column="0"
-                android:layout_gravity="top"
-                android:layout_marginEnd="10dp"
+                android:layout_marginEnd="5dp"
+                android:layout_gravity="right|center_vertical"
                 android:text="@string/searching_label"
-                android:textColor="#8018C0B0"
-                android:textSize="18sp"
+                android:textColor="#014C45"
+                android:textSize="22sp"
                 android:textStyle="bold">
 
             </androidx.appcompat.widget.AppCompatTextView>
 
             <com.agrawalsuneet.dotsloader.loaders.AllianceLoader
                 android:id="@+id/loader"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
                 android:layout_column="1"
-                app:alliance_dotsRadius="4dp"
+                android:layout_gravity="left|center_vertical"
+                android:layout_marginStart="5dp"
                 app:alliance_distanceMultiplier="3"
+                app:alliance_dotsRadius="4dp"
                 app:alliance_drawOnlyStroke="true"
-                app:alliance_strokeWidth="2dp"
                 app:alliance_firstDotsColor="@color/darkGreen"
                 app:alliance_secondDotsColor="@color/red"
-                app:alliance_thirdDotsColor="@color/blue"/>
+                app:alliance_strokeWidth="2dp"
+                app:alliance_thirdDotsColor="@color/blue" />
 
         </GridLayout>
+
+        <FrameLayout
+            android:id="@+id/initializeProgressBar"
+            android:animateLayoutChanges="true"
+            android:visibility="gone"
+            android:alpha="0.4"
+            android:background="#000000"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ProgressBar
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                android:layout_gravity="center"
+                android:indeterminateTint="#003989"/>
+        </FrameLayout>
 
     </RelativeLayout>
 

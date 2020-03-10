@@ -7,8 +7,10 @@ import com.tcd.yaatra.utils.EncryptionUtils;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class P2pSerializerDeserializer {
@@ -17,11 +19,11 @@ public class P2pSerializerDeserializer {
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ISO_DATE_TIME;
 
-    public static Map<String, String> serializeToMap(Collection<TravellerInfo> allTravellers){
+    public static List<Map<String, String>> serializeToMap(Collection<TravellerInfo> allTravellers) {
 
-        Map<String, String> serializedTravellerInfo = new HashMap<>();
+        List<Map<String, String>> serializedTravellerRecords = new ArrayList<>();
 
-        allTravellers.forEach(traveller->{
+        allTravellers.forEach(traveller -> {
 
             String value = traveller.getUserName() + VALUE_SEPARATOR +
                     traveller.getAge() + VALUE_SEPARATOR +
@@ -43,15 +45,19 @@ public class P2pSerializerDeserializer {
 
             String encryptedValue = EncryptionUtils.encrypt(value);
 
-            serializedTravellerInfo.put(traveller.getUserId().toString(), encryptedValue);
+            HashMap<String, String> map = new HashMap<>();
+            map.put(traveller.getUserId().toString(), encryptedValue);
+
+            serializedTravellerRecords.add(map);
         });
-        return serializedTravellerInfo;
+
+        return serializedTravellerRecords;
     }
 
-    public static HashMap<Integer, TravellerInfo> deserializeFromMap(Map<String, String> serializedTravellerInfo){
+    public static HashMap<Integer, TravellerInfo> deserializeFromMap(Map<String, String> serializedTravellerInfo) {
         HashMap<Integer, TravellerInfo> allTravellers = new HashMap<Integer, TravellerInfo>();
 
-        serializedTravellerInfo.forEach((userId, encryptedValue)->{
+        serializedTravellerInfo.forEach((userId, encryptedValue) -> {
 
             String serializedInfo = EncryptionUtils.decrypt(encryptedValue);
 
@@ -59,17 +65,17 @@ public class P2pSerializerDeserializer {
 
             TravellerInfo info =
                     new TravellerInfo(Integer.parseInt(userId), fieldValues[0], Integer.parseInt(fieldValues[1])
-                    , Gender.valueOf(fieldValues[2])
-                    , Double.parseDouble(fieldValues[3]), Double.parseDouble(fieldValues[4])
-                    , Double.parseDouble(fieldValues[5]), Double.parseDouble(fieldValues[6])
-                    , TravellerStatus.valueOf(fieldValues[7]),
+                            , Gender.valueOf(fieldValues[2])
+                            , Double.parseDouble(fieldValues[3]), Double.parseDouble(fieldValues[4])
+                            , Double.parseDouble(fieldValues[5]), Double.parseDouble(fieldValues[6])
+                            , TravellerStatus.valueOf(fieldValues[7]),
                             fieldValues[8], fieldValues[9], fieldValues[10]
-                    , LocalDateTime.parse(fieldValues[11], DATE_TIME_FORMATTER)
-                    , Double.parseDouble(fieldValues[12])
-                    , fieldValues[13]
-                    , Integer.parseInt(fieldValues[14])
-                    , LocalDateTime.parse(fieldValues[15], DATE_TIME_FORMATTER)
-                    , fieldValues[16]);
+                            , LocalDateTime.parse(fieldValues[11], DATE_TIME_FORMATTER)
+                            , Double.parseDouble(fieldValues[12])
+                            , fieldValues[13]
+                            , Integer.parseInt(fieldValues[14])
+                            , LocalDateTime.parse(fieldValues[15], DATE_TIME_FORMATTER)
+                            , fieldValues[16]);
 
             allTravellers.put(Integer.parseInt(userId), info);
         });

@@ -11,7 +11,7 @@ import static org.junit.Assert.*;
 public class FellowTravellersCacheTest {
 
     @Test
-    public void addOrUpdate_NewFellowTraveller_AddsToCacheWithInfoProviderAsSelf(){
+    public void addOrUpdate_NewFellowTraveller_AddsToCacheWithInfoProviderAsSelf() {
 
         FellowTravellersCache.getCacheInstance().clear();
 
@@ -35,7 +35,7 @@ public class FellowTravellersCacheTest {
     }
 
     @Test
-    public void addOrUpdate_InfoExistsInCache_UpdateReceived_UpdateCache(){
+    public void addOrUpdate_InfoExistsInCache_UpdateReceived_UpdateCache() {
 
         String appUserName = "TestUser";
         Integer fellowTravellerUserId = 2;
@@ -69,7 +69,7 @@ public class FellowTravellersCacheTest {
     }
 
     @Test
-    public void addOrUpdate_InfoExistsInCache_SameInfoReceived_DoNotUpdateCache(){
+    public void addOrUpdate_InfoExistsInCache_SameInfoReceived_DoNotUpdateCache() {
 
         String appUserName = "TestUser";
         Integer fellowTravellerUserId = 2;
@@ -103,7 +103,7 @@ public class FellowTravellersCacheTest {
     }
 
     @Test
-    public void clear_RemovesAllEntriesFromCache(){
+    public void clear_RemovesAllEntriesFromCache() {
 
         FellowTravellersCache.getCacheInstance().clear();
 
@@ -140,10 +140,11 @@ public class FellowTravellersCacheTest {
         return cachedTraveller;
     }
 
-    private TravellerInfo getDummyTraveller(Integer userId, String userName){
+    private TravellerInfo getDummyTraveller(Integer userId, String userName) {
         return new TravellerInfo(userId, userName, 20, Gender.MALE, 0.0d
                 , 0.0d, 0.0d, 0.0d
-                , TravellerStatus.SeekingFellowTraveller, LocalDateTime.now(), 0.0d
+                , TravellerStatus.SeekingFellowTraveller, "testSource", "testDest", "testMode"
+                , LocalDateTime.now(), 0.0d
                 , "1.2.3.4", 12345, LocalDateTime.now(), userName);
     }
 }

@@ -14,9 +14,9 @@ public abstract class BaseActivity<DataBindingClass extends ViewDataBinding> ext
 
     protected DataBindingClass layoutDataBinding;
 
-    abstract int getLayoutResourceId();
+    protected abstract int getLayoutResourceId();
 
-    public void initEventHandlers(){}
+    protected void initEventHandlers(){}
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {

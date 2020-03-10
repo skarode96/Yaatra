@@ -22,12 +22,12 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
     RegisterActivityViewModel registerActivityViewModel;
 
     @Override
-    int getLayoutResourceId() {
+    protected int getLayoutResourceId() {
         return R.layout.activity_register;
     }
 
     @Override
-    public void initEventHandlers() {
+    protected void initEventHandlers() {
         super.initEventHandlers();
         layoutDataBinding.btnRegister.setOnClickListener(view -> handleOnRegisterButtonClick());
     }

@@ -16,10 +16,10 @@ public class MapUtilsTest {
     String travellerUserName = "Traveller";
     String userName = "TestUser";
 
-    TravellerInfo ti1 = new TravellerInfo(1, travellerUserName, 20, Gender.MALE, 0.0, 0.0, 0.0d, 0.0 , TravellerStatus.SeekingFellowTraveller, LocalDateTime.now(), 0.0, "1.2.3.4", 12345, LocalDateTime.now(), userName);
-    TravellerInfo ti2 = new TravellerInfo(1, travellerUserName, 20, Gender.MALE, 0.0, 0.0, 0.0d, 0.0 , TravellerStatus.SeekingFellowTraveller, LocalDateTime.now(), 0.0, "1.2.3.4", 12345, LocalDateTime.now(), userName);
-    TravellerInfo ti3 = new TravellerInfo(1, travellerUserName, 20, Gender.MALE, 0.0, 0.0, 0.0d, 0.0 , TravellerStatus.SeekingFellowTraveller, LocalDateTime.now(), 0.0, "1.2.3.4", 12345, LocalDateTime.now(), userName);
-    TravellerInfo tiu = new TravellerInfo(1, travellerUserName, 20, Gender.MALE, 0.0, 0.0, 0.0d, 0.0 , TravellerStatus.SeekingFellowTraveller, LocalDateTime.now(), 0.0, "1.2.3.4", 12345, LocalDateTime.now(), userName);
+    TravellerInfo ti1 = getTraveller();
+    TravellerInfo ti2 = getTraveller();
+    TravellerInfo ti3 = getTraveller();
+    TravellerInfo tiu = getTraveller();
     ArrayList<TravellerInfo> tl = new ArrayList<TravellerInfo>();
 
     MapUtils maputils = new MapUtils();
@@ -40,5 +40,15 @@ public class MapUtilsTest {
         ArrayList<TravellerInfo> ul = new ArrayList<>();
         ul = maputils.filterFellowTravellers(tiu, tl);
         assertEquals(2,ul.size());
+    }
+
+    private TravellerInfo getTraveller(){
+        TravellerInfo traveller = new TravellerInfo(1, userName, 20, Gender.MALE, 0.0d
+                , 0.0d, 0.0d, 0.0d
+                , TravellerStatus.SeekingFellowTraveller, "testSource", "testDest", "testMode"
+                , LocalDateTime.now(), 0.0d
+                , "1.2.3.4", 12345, LocalDateTime.now(), userName);
+
+        return traveller;
     }
 }
