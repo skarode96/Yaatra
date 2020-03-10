@@ -31,7 +31,7 @@ public class MenuContainerActivity extends BaseActivity<ActivityMenuBinding> imp
     UserInfoRepository userInfoRepository;
 
     @Override
-    int getLayoutResourceId() {
+    protected int getLayoutResourceId() {
         return R.layout.activity_menu;
     }
 

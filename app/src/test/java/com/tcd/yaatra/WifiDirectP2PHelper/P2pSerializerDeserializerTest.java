@@ -12,6 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static junit.framework.TestCase.assertEquals;
@@ -24,40 +25,40 @@ public class P2pSerializerDeserializerTest {
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ISO_DATE_TIME;
 
     @Test
-    public void serializeToMap_SerializesTravellersInfoInMapOfStrings(){
+    public void serializeToMap_SerializesTravellersInfoInMapOfStrings() {
 
         TravellerInfo dummyTraveller = getDummyTravellerInfo();
 
         Collection<TravellerInfo> travellers = new ArrayList<>();
         travellers.add(dummyTraveller);
 
-        Map<String, String> serializedEncryptedTravellerInfo = P2pSerializerDeserializer.serializeToMap(travellers);
+        List<Map<String, String>> serializedEncryptedTravellerInfo = P2pSerializerDeserializer.serializeToMap(travellers);
 
         assertNotNull(serializedEncryptedTravellerInfo);
         assertEquals(1, serializedEncryptedTravellerInfo.size());
 
-        Integer userIdKey = Integer.parseInt(serializedEncryptedTravellerInfo.keySet().iterator().next());
+        Integer userIdKey = Integer.parseInt(serializedEncryptedTravellerInfo.get(0).keySet().iterator().next());
 
         String expectedTravellerInfo = getSerializedTravellerInfo(dummyTraveller);
 
         assertEquals(dummyTraveller.getUserId(), userIdKey);
-        assertEquals(expectedTravellerInfo, EncryptionUtils.decrypt(serializedEncryptedTravellerInfo.get(dummyTraveller.getUserId().toString())));
+        assertEquals(expectedTravellerInfo, EncryptionUtils.decrypt(serializedEncryptedTravellerInfo.get(0).get(dummyTraveller.getUserId().toString())));
     }
 
     @Test
-    public void deserializeFromMap_DeserializesTextOfTravellersInfo(){
+    public void deserializeFromMap_DeserializesTextOfTravellersInfo() {
 
         TravellerInfo dummyTraveller = getDummyTravellerInfo();
 
         Collection<TravellerInfo> travellers = new ArrayList<>();
         travellers.add(dummyTraveller);
 
-        Map<String, String> serializedEncryptedTravellerInfo = P2pSerializerDeserializer.serializeToMap(travellers);
+        List<Map<String, String>> serializedEncryptedTravellerInfo = P2pSerializerDeserializer.serializeToMap(travellers);
 
         assertNotNull(serializedEncryptedTravellerInfo);
         assertEquals(1, serializedEncryptedTravellerInfo.size());
 
-        HashMap<Integer, TravellerInfo> deserializedTravellerInfoMap = P2pSerializerDeserializer.deserializeFromMap(serializedEncryptedTravellerInfo);
+        HashMap<Integer, TravellerInfo> deserializedTravellerInfoMap = P2pSerializerDeserializer.deserializeFromMap(serializedEncryptedTravellerInfo.get(0));
 
         assertNotNull(deserializedTravellerInfoMap);
         assertEquals(1, deserializedTravellerInfoMap.size());
@@ -68,7 +69,7 @@ public class P2pSerializerDeserializerTest {
         assertTravellerEquals(dummyTraveller, deserializedTravellerInfo);
     }
 
-    private void assertTravellerEquals(TravellerInfo expectedInfo, TravellerInfo actualInfo){
+    private void assertTravellerEquals(TravellerInfo expectedInfo, TravellerInfo actualInfo) {
         assertEquals(expectedInfo.getUserName(), actualInfo.getUserName());
         assertEquals(expectedInfo.getAge(), actualInfo.getAge());
         assertEquals(expectedInfo.getGender(), actualInfo.getGender());
@@ -85,17 +86,18 @@ public class P2pSerializerDeserializerTest {
         assertEquals(expectedInfo.getInfoProvider(), actualInfo.getInfoProvider());
     }
 
-    private TravellerInfo getDummyTravellerInfo(){
+    private TravellerInfo getDummyTravellerInfo() {
         String travellerUserName = "Traveller";
         String userName = "TestUser";
         return new TravellerInfo(1, travellerUserName, 20, Gender.MALE, 0.0d
                 , 0.0d, 0.0d, 0.0d
-                , TravellerStatus.SeekingFellowTraveller, LocalDateTime.now(), 0.0d
+                , TravellerStatus.SeekingFellowTraveller, "test", "test", "mode"
+                , LocalDateTime.now(), 0.0d
                 , "1.2.3.4", 12345, LocalDateTime.now(), userName);
     }
 
-    private String getSerializedTravellerInfo(TravellerInfo traveller){
-        return  traveller.getUserName() + VALUE_SEPARATOR +
+    private String getSerializedTravellerInfo(TravellerInfo traveller) {
+        return traveller.getUserName() + VALUE_SEPARATOR +
                 traveller.getAge() + VALUE_SEPARATOR +
                 traveller.getGender() + VALUE_SEPARATOR +
                 traveller.getSourceLatitude() + VALUE_SEPARATOR +
@@ -103,6 +105,9 @@ public class P2pSerializerDeserializerTest {
                 traveller.getDestinationLatitude() + VALUE_SEPARATOR +
                 traveller.getDestinationLongitude() + VALUE_SEPARATOR +
                 traveller.getStatus() + VALUE_SEPARATOR +
+                traveller.getSourceName() + VALUE_SEPARATOR +
+                traveller.getDestinationName() + VALUE_SEPARATOR +
+                traveller.getModeOfTravel() + VALUE_SEPARATOR +
                 traveller.getRequestStartTime().format(DATE_TIME_FORMATTER) + VALUE_SEPARATOR +
                 traveller.getUserRating() + VALUE_SEPARATOR +
                 traveller.getIpAddress() + VALUE_SEPARATOR +

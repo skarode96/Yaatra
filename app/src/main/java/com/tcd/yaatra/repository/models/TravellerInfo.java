@@ -43,10 +43,10 @@ public class TravellerInfo {
     public TravellerInfo(Integer userId, String userName, int age, Gender gender
             , Double sourceLatitude, Double sourceLongitude
             , Double destinationLatitude, Double destinationLongitude
-            , TravellerStatus status,String sourceName, String destinationName, String modeOfTravel,  LocalDateTime requestStartTime
+            , TravellerStatus status, String sourceName, String destinationName, String modeOfTravel, LocalDateTime requestStartTime
             , Double userRating, String ipAddress, int port
             , LocalDateTime statusUpdateTime
-            , String infoProvider){
+            , String infoProvider) {
 
         setUserId(userId);
         setUserName(userName);
@@ -68,17 +68,14 @@ public class TravellerInfo {
         setInfoProvider(infoProvider);
     }
 
-    public TravellerInfo(Integer userId, String userName, Gender gender, Double sourceLatitude, Double sourceLongitude, Double destinationLatitude, Double destinationLongitude, String sourceName, String destinationName, String modeOfTravel) {
-        this.userId = userId;
-        this.userName = userName;
-        this.gender = gender;
-        this.sourceLatitude = sourceLatitude;
-        this.sourceLongitude = sourceLongitude;
-        this.destinationLatitude= destinationLatitude;
-        this.destinationLongitude = destinationLongitude;
-        this.modeOfTravel = modeOfTravel;
-        this.sourceName = sourceName;
-        this.destinationName = destinationName;
+    public TravellerInfo clone() {
+        TravellerInfo clonedInfo = new TravellerInfo(getUserId(), getUserName(), getAge(), getGender()
+                , getSourceLatitude(), getSourceLongitude()
+                , getDestinationLatitude(), getDestinationLongitude(), getStatus(), getSourceName()
+                , getDestinationName(), getModeOfTravel(), getRequestStartTime()
+                , getUserRating(), getIpAddress(), getPortNumber(), getStatusUpdateTime(), getInfoProvider());
+
+        return clonedInfo;
     }
 
     //region Getters & Setters

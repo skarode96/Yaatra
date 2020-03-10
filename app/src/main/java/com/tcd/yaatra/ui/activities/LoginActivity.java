@@ -34,12 +34,12 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
     //private LoginActivity activity;
 
     @Override
-    int getLayoutResourceId() {
+    protected int getLayoutResourceId() {
         return R.layout.activity_login;
     }
 
     @Override
-    public void initEventHandlers() {
+    protected void initEventHandlers() {
         super.initEventHandlers();
         layoutDataBinding.login.setOnClickListener(view -> handleOnLoginButtonClick());
         layoutDataBinding.showHide.setOnClickListener(view -> handleOnShowHideClick());

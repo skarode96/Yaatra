@@ -92,10 +92,10 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
     RouteInfoViewModel RouteInfoViewModel;
 
     @Override
-    int getLayoutResourceId() { return R.layout.activity_routeinfo; }
+    protected int getLayoutResourceId() { return R.layout.activity_routeinfo; }
 
     @Override
-    public void initEventHandlers() {
+    protected void initEventHandlers() {
         super.initEventHandlers();
         layoutDataBinding.startButton.setOnClickListener(view -> handleOnStartButtonClick());
         layoutDataBinding.endNavigation.setOnClickListener(view -> handleOnendNavigationClick());

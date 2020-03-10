@@ -11,7 +11,7 @@ import com.tcd.yaatra.utils.SharedPreferenceUtils;
 public class LaunchActivity extends BaseActivity<ActivityLaunchBinding> {
 
     @Override
-    int getLayoutResourceId() {
+    protected int getLayoutResourceId() {
         return R.layout.activity_launch;
     }
 

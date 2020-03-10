@@ -18,12 +18,12 @@ public class UserRatingActivity extends BaseActivity<ActivityUserRatingBinding> 
     private String[] user = {"Chetan", "Rohan", "Kavya"};
 
     @Override
-    int getLayoutResourceId() {
+    protected int getLayoutResourceId() {
         return R.layout.activity_user_rating;
     }
 
     @Override
-    public void initEventHandlers() {
+    protected void initEventHandlers() {
         super.initEventHandlers();
     }
 

@@ -3,6 +3,7 @@ package com.tcd.yaatra.utils;
 import com.tcd.yaatra.repository.models.Gender;
 import com.tcd.yaatra.repository.models.TravellerInfo;
 import com.tcd.yaatra.repository.models.TravellerStatus;
+
 import org.junit.Test;
 
 import java.time.LocalDateTime;
@@ -17,7 +18,7 @@ public class EncryptionUtilsTest {
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ISO_DATE_TIME;
 
     @Test
-    public void encrypt_EncryptsInputString(){
+    public void encrypt_EncryptsInputString() {
 
         String originalText = getSerializedTravellerInfo();
         String encryptedText = EncryptionUtils.encrypt(originalText);
@@ -25,7 +26,7 @@ public class EncryptionUtilsTest {
     }
 
     @Test
-    public void decrypt_DecryptsEncryptedText(){
+    public void decrypt_DecryptsEncryptedText() {
 
         String originalText = getSerializedTravellerInfo();
         String encryptedText = EncryptionUtils.encrypt(originalText);
@@ -36,21 +37,25 @@ public class EncryptionUtilsTest {
         assertEquals(originalText, decryptedText);
     }
 
-    private String getSerializedTravellerInfo(){
+    private String getSerializedTravellerInfo() {
         Integer userId = 1;
         String userName = "TestUser";
         TravellerInfo traveller = new TravellerInfo(userId, userName, 20, Gender.MALE, 0.0d
                 , 0.0d, 0.0d, 0.0d
-                , TravellerStatus.SeekingFellowTraveller, LocalDateTime.now(), 0.0d
+                , TravellerStatus.SeekingFellowTraveller, "testSource", "testDest", "testMode"
+                , LocalDateTime.now(), 0.0d
                 , "1.2.3.4", 12345, LocalDateTime.now(), userName);
 
-        return  traveller.getAge() + VALUE_SEPARATOR +
+        return traveller.getAge() + VALUE_SEPARATOR +
                 traveller.getGender() + VALUE_SEPARATOR +
                 traveller.getSourceLatitude() + VALUE_SEPARATOR +
                 traveller.getSourceLongitude() + VALUE_SEPARATOR +
                 traveller.getDestinationLatitude() + VALUE_SEPARATOR +
                 traveller.getDestinationLongitude() + VALUE_SEPARATOR +
                 traveller.getStatus() + VALUE_SEPARATOR +
+                traveller.getSourceName() + VALUE_SEPARATOR +
+                traveller.getDestinationName() + VALUE_SEPARATOR +
+                traveller.getModeOfTravel() + VALUE_SEPARATOR +
                 traveller.getRequestStartTime().format(DATE_TIME_FORMATTER) + VALUE_SEPARATOR +
                 traveller.getUserRating() + VALUE_SEPARATOR +
                 traveller.getIpAddress() + VALUE_SEPARATOR +
