@@ -1,11 +1,12 @@
 package com.tcd.yaatra.repository.models;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class TravellerInfo {
+public class TravellerInfo implements Serializable {
 
     private Integer userId;
     private String userName = "";

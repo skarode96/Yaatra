@@ -239,6 +239,7 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
         locations.add(point3);
         locations.add(point4);
         bundle.putParcelableArrayList("destLocations", locations);
+        bundle.putSerializable("UserList", travellerInfos);
         bundle.putBoolean("multiDestination", multidestination);
         //rohan+chetan: Mocking multi destination end
         mapIntent.putExtras(bundle);
