@@ -48,6 +48,9 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
     @Inject
     PeerCommunicator peerCommunicator;
 
+    @Inject
+    TravellerInfo ownTravellerInfo;
+
     private ArrayList<TravellerInfo> travellerInfos = new ArrayList<>();
     private Bundle bundle;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
@@ -56,7 +59,6 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
     private static final String TAG = "PeerToPeerFragment";
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
-    private TravellerInfo ownTravellerInfo;
     WifiManager wifiManager;
     private Handler backgroundTaskHandler;
     PeerToPeerFragment fragmentContext;
@@ -117,7 +119,7 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
 
         userInfoRepository.getUserProfile(SharedPreferenceUtils.getUserName()).observe(this.getActivity(), userInfo -> {
 
-            createOwnTravellerInfo(userInfo);
+            insertOwnTravellerInfo(userInfo);
         });
 
         backgroundInitializer.run();
@@ -150,23 +152,19 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
         }
     };
 
-    private void createOwnTravellerInfo(UserInfo userInfo) {
+    private void insertOwnTravellerInfo(UserInfo userInfo) {
 
         LocalDateTime now = LocalDateTime.now();
-        double sourceLatitude = this.bundle.getDouble("sourceLatitude");
-        double sourceLongitude = this.bundle.getDouble("sourceLongitude");
-        double destinationLatitude = this.bundle.getDouble("destinationLatitude");
-        double destinationLongitude = this.bundle.getDouble("destinationLongitude");
-        String sourceName = this.bundle.getString("sourceName").substring(0, 10);
-        String destinationName = this.bundle.getString("destinationName").substring(0, 10);
-        String modeOfTravel = this.bundle.getString("peerModeOfTravel");
 
-        ownTravellerInfo =
-                new TravellerInfo(userInfo.getId(), userInfo.getUsername(), userInfo.getAge(), Gender.valueOfIdName(userInfo.getGender())
-                        , sourceLatitude, sourceLongitude, destinationLatitude, destinationLongitude
-                        , TravellerStatus.None, sourceName, destinationName, modeOfTravel, now, userInfo.getRating()
-                        , NetworkUtils.getWiFiIPAddress(this.getActivity())
-                        , 12345, now, userInfo.getUsername());
+        ownTravellerInfo.setUserId(userInfo.getId());
+        ownTravellerInfo.setUserName(userInfo.getUsername());
+        ownTravellerInfo.setAge(userInfo.getAge());
+        ownTravellerInfo.setGender(Gender.valueOfIdName(userInfo.getGender()));
+        ownTravellerInfo.setUserRating(userInfo.getRating());
+        ownTravellerInfo.setIpAddress(NetworkUtils.getWiFiIPAddress(this.getActivity()));
+        ownTravellerInfo.setRequestStartTime(now);
+        ownTravellerInfo.setStatusUpdateTime(now);
+        ownTravellerInfo.setInfoProvider(userInfo.getUsername());
 
         isUserInfoFetched = true;
     }
@@ -275,7 +273,15 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
 
     private void test(){
 
-        TravellerInfo info = ownTravellerInfo.clone();
+        TravellerInfo info = new TravellerInfo();
+        info.setStatusUpdateTime(ownTravellerInfo.getStatusUpdateTime());
+        info.setStatus(ownTravellerInfo.getStatus());
+        info.setModeOfTravel(ownTravellerInfo.getModeOfTravel());
+        info.setRequestStartTime(ownTravellerInfo.getRequestStartTime());
+        info.setSourceLatitude(ownTravellerInfo.getSourceLatitude());
+        info.setSourceLongitude(ownTravellerInfo.getSourceLongitude());
+        info.setDestinationLatitude(ownTravellerInfo.getDestinationLatitude());
+        info.setDestinationLongitude(ownTravellerInfo.getDestinationLongitude());
 
         HashMap<Integer, TravellerInfo> fellowTravellers = new HashMap<>();
 

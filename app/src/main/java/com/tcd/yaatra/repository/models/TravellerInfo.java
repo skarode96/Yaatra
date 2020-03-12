@@ -1,7 +1,10 @@
 package com.tcd.yaatra.repository.models;
 
 import java.time.LocalDateTime;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
+@Singleton
 public class TravellerInfo {
 
     private Integer userId;
@@ -40,43 +43,8 @@ public class TravellerInfo {
     private LocalDateTime statusUpdateTime = LocalDateTime.now();
     private String infoProvider = "";
 
-    public TravellerInfo(Integer userId, String userName, int age, Gender gender
-            , Double sourceLatitude, Double sourceLongitude
-            , Double destinationLatitude, Double destinationLongitude
-            , TravellerStatus status, String sourceName, String destinationName, String modeOfTravel, LocalDateTime requestStartTime
-            , Double userRating, String ipAddress, int port
-            , LocalDateTime statusUpdateTime
-            , String infoProvider) {
-
-        setUserId(userId);
-        setUserName(userName);
-        setAge(age);
-        setGender(gender);
-        setSourceLatitude(sourceLatitude);
-        setSourceLongitude(sourceLongitude);
-        setDestinationLatitude(destinationLatitude);
-        setDestinationLongitude(destinationLongitude);
-        setModeOfTravel(modeOfTravel);
-        setStatus(status);
-        setSourceName(sourceName);
-        setDestinationName(destinationName);
-        setRequestStartTime(requestStartTime);
-        setUserRating(userRating);
-        setIpAddress(ipAddress);
-        setPortNumber(port);
-        setStatusUpdateTime(statusUpdateTime);
-        setInfoProvider(infoProvider);
-    }
-
-    public TravellerInfo clone() {
-        TravellerInfo clonedInfo = new TravellerInfo(getUserId(), getUserName(), getAge(), getGender()
-                , getSourceLatitude(), getSourceLongitude()
-                , getDestinationLatitude(), getDestinationLongitude(), getStatus(), getSourceName()
-                , getDestinationName(), getModeOfTravel(), getRequestStartTime()
-                , getUserRating(), getIpAddress(), getPortNumber(), getStatusUpdateTime(), getInfoProvider());
-
-        return clonedInfo;
-    }
+    @Inject
+    public TravellerInfo(){}
 
     //region Getters & Setters
 
