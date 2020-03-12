@@ -6,28 +6,37 @@ import com.tcd.yaatra.utils.SharedPreferenceUtils;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
+@Singleton
 public class PeerCommunicator implements PeerListener {
 
     //region Private Variables
 
     private FellowTravellersSubscriberActivity parentActivity;
     private TravellerInfo ownTravellerInfo;
+    private boolean isInitialized = false;
 
     //endregion
 
-    public PeerCommunicator(FellowTravellersSubscriberActivity activity, TravellerInfo ownTravellerInfo) {
+    @Inject
+    public PeerCommunicator(){}
+
+    public void initialize(FellowTravellersSubscriberActivity activity, TravellerInfo travellerInfo) {
 
         parentActivity = activity;
-        this.ownTravellerInfo = ownTravellerInfo;
+        ownTravellerInfo = travellerInfo;
 
         WiFiP2pFacade.getInstance().initialize(parentActivity, this);
+
+        isInitialized = true;
     }
 
     public void advertiseStatusAndDiscoverFellowTravellers() {
 
-        if (ownTravellerInfo == null) {
-            return;
+        if (!isInitialized || ownTravellerInfo == null){
+            throw new IllegalStateException("Peer communicator is not initialized.");
         }
 
         HashMap<Integer, TravellerInfo> allTravellers = FellowTravellersCache.getCacheInstance().getFellowTravellers(SharedPreferenceUtils.getUserName());
@@ -58,12 +67,16 @@ public class PeerCommunicator implements PeerListener {
         }
     }
 
-    public void updateOwnTraveller(TravellerInfo ownTravellerInfo) {
-        this.ownTravellerInfo = ownTravellerInfo;
+    public void updateOwnTraveller(TravellerInfo travellerInfo) {
+        ownTravellerInfo = travellerInfo;
     }
 
     public void cleanup() {
-        WiFiP2pFacade.getInstance().cleanup(true);
-        ownTravellerInfo = null;
+        if(isInitialized) {
+            WiFiP2pFacade.getInstance().cleanup(true);
+            ownTravellerInfo = null;
+
+            isInitialized = false;
+        }
     }
 }

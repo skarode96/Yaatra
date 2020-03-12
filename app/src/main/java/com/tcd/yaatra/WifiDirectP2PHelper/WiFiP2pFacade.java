@@ -18,8 +18,8 @@ import static android.content.Context.WIFI_P2P_SERVICE;
 /*********************************************************************************************************/
 /*This class is responsible to connect to WiFiP2pManager service and broadcast payload to other listeners*/
 /*This class is agnostic of the application functionality.*/
-/*It creates P2p services for each incoming record and publishes the same*/
-/*Also it listens to peer services with same service instance type*/
+/*It creates separate P2p service for each incoming record and publishes the same*/
+/*Also it listens to the peer services with same service instance type*/
 /*Once a record is received from peer devices, it forwards the response to its parent*/
 /*********************************************************************************************************/
 public class WiFiP2pFacade implements WifiP2pManager.ConnectionInfoListener {
@@ -70,6 +70,10 @@ public class WiFiP2pFacade implements WifiP2pManager.ConnectionInfoListener {
     }
 
     public void broadcastInformationAndListenToPeers(List<Map<String, String>> recordsToBroadcast) {
+
+        if(peerListener == null || parentActivity == null){
+            throw new IllegalStateException("WiFiP2pFacade is not initialized.");
+        }
 
         cleanup(false);
 

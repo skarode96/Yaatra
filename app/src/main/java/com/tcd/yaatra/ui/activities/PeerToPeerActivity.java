@@ -38,7 +38,10 @@ public class PeerToPeerActivity extends FellowTravellersSubscriberActivity {
 
     @Inject
     UserInfoRepository userInfoRepository;
-    PeerCommunicator communicator;
+
+    @Inject
+    PeerCommunicator peerCommunicator;
+
     private ArrayList<TravellerInfo> travellerInfos = new ArrayList<>();
     private Bundle bundle;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
@@ -120,7 +123,7 @@ public class PeerToPeerActivity extends FellowTravellersSubscriberActivity {
 
                     layoutDataBinding.initializeProgressBar.setVisibility(View.GONE);
 
-                    communicator = new PeerCommunicator(activityContext, ownTravellerInfo);
+                    peerCommunicator.initialize(activityContext, ownTravellerInfo);
 
                     broadcastTravellers(TravellerStatus.SeekingFellowTraveller);
 
@@ -195,11 +198,6 @@ public class PeerToPeerActivity extends FellowTravellersSubscriberActivity {
     protected void onPause() {
 
         refreshRecyclerView();
-
-        if (communicator != null) {
-            communicator.cleanup();
-            communicator = null;
-        }
         super.onPause();
     }
 
@@ -212,11 +210,6 @@ public class PeerToPeerActivity extends FellowTravellersSubscriberActivity {
     protected void onDestroy() {
 
         refreshRecyclerView();
-
-        if (communicator != null) {
-            communicator.cleanup();
-            communicator = null;
-        }
         super.onDestroy();
     }
 
@@ -225,10 +218,10 @@ public class PeerToPeerActivity extends FellowTravellersSubscriberActivity {
     public void broadcastTravellers(TravellerStatus ownStatus) {
 
         setCurrentStatusOfAppUser(ownStatus);
-        communicator.updateOwnTraveller(ownTravellerInfo);
+        peerCommunicator.updateOwnTraveller(ownTravellerInfo);
 
         if (isLocationPermissionGranted) {
-            communicator.advertiseStatusAndDiscoverFellowTravellers();
+            peerCommunicator.advertiseStatusAndDiscoverFellowTravellers();
         }
     }
 
