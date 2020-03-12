@@ -46,6 +46,7 @@ import com.mapbox.mapboxsdk.offline.OfflineTilePyramidRegionDefinition;
 import com.mapbox.mapboxsdk.plugins.locationlayer.modes.CameraMode;
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.databinding.FragmentMapBinding;
+import com.tcd.yaatra.repository.models.TravellerInfo;
 import com.tcd.yaatra.ui.fragments.BaseFragment;
 import com.tcd.yaatra.ui.viewmodels.MapActivityViewModel;
 import com.tcd.yaatra.utils.MyReceiver;
@@ -228,8 +229,8 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
     }
 
     private void handleOnNavigateClick() throws UnsupportedEncodingException {
-        //Intent mapIntent = new Intent(getActivity(), RouteInfo.class);
-        Intent mapIntent = new Intent(getActivity(), PeerToPeerActivity.class);
+        Intent mapIntent = new Intent(getActivity(), RouteInfo.class);
+        //Intent mapIntent = new Intent(getActivity(), PeerToPeerActivity.class);
         Bundle bundle = new Bundle();
         String modeOfTravel;
         Geocoder coder = new Geocoder(getActivity());
@@ -246,6 +247,17 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
         bundle.putDouble("sourceLongitude",locationComponent.getLastKnownLocation().getLongitude());
         bundle.putDouble("destinationLatitude",destination.latitude());
         bundle.putDouble("destinationLongitude", destination.longitude());
+        TravellerInfo temp = new TravellerInfo("Chetan");
+        ArrayList<TravellerInfo> rateing = new ArrayList<>();
+        rateing.add(temp);
+        TravellerInfo temp1 = new TravellerInfo("Rohan");
+        rateing.add(temp1);
+        TravellerInfo temp2 = new TravellerInfo("Sameer");
+        rateing.add(temp2);
+        Boolean multidestination = false;
+
+        bundle.putParcelableArrayList("UserList", rateing);
+        bundle.putBoolean("multiDestination", multidestination);
 
         if(layoutDataBinding.bicycle.isChecked()) {
             modeOfTravel = DirectionsCriteria.PROFILE_CYCLING;

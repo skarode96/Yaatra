@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -233,6 +234,7 @@ public class PeerToPeerActivity extends FellowTravellersSubscriberActivity {
         locations.add(point3);
         locations.add(point4);
         bundle.putParcelableArrayList("destLocations", locations);
+        bundle.putParcelableArrayList("UserList", travellerInfos);
         bundle.putBoolean("multiDestination", multidestination);
         //rohan+chetan: Mocking multi destination end
         mapIntent.putExtras(bundle);

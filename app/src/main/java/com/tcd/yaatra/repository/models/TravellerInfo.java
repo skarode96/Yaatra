@@ -1,8 +1,13 @@
 package com.tcd.yaatra.repository.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
 import java.time.LocalDateTime;
 
-public class TravellerInfo {
+public class TravellerInfo implements Parcelable {
 
     private Integer userId;
     private String userName = "";
@@ -39,6 +44,34 @@ public class TravellerInfo {
     private int portNumber;
     private LocalDateTime statusUpdateTime = LocalDateTime.now();
     private String infoProvider = "";
+
+    public TravellerInfo(String userName) {
+        this.userName = userName;
+    }
+
+    protected TravellerInfo (Parcel in) {
+        setUserName(in.readString());
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(userName);
+    }
+
+    public static final Parcelable.Creator<TravellerInfo> CREATOR = new Parcelable.Creator<TravellerInfo>() {
+        public TravellerInfo createFromParcel(@NonNull Parcel in) {
+            return new TravellerInfo(in);
+        }
+
+        public TravellerInfo[] newArray(int size) {
+            return new TravellerInfo[size];
+        }
+    };
 
     public TravellerInfo(Integer userId, String userName, int age, Gender gender
             , Double sourceLatitude, Double sourceLongitude
@@ -206,5 +239,7 @@ public class TravellerInfo {
     public void setModeOfTravel(String modeOfTravel) {
         this.modeOfTravel = modeOfTravel;
     }
+
+
     //endregion
 }

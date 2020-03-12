@@ -49,6 +49,7 @@ import com.mapbox.services.android.navigation.v5.routeprogress.ProgressChangeLis
 import com.mapbox.services.android.navigation.v5.routeprogress.RouteProgress;
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.databinding.ActivityRouteinfoBinding;
+import com.tcd.yaatra.repository.models.TravellerInfo;
 import com.tcd.yaatra.ui.viewmodels.RouteInfoViewModel;
 
 import java.util.ArrayList;
@@ -88,6 +89,8 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
     private static final String TEAL_COLOR = "#23D2BE";
     private static final float POLYLINE_WIDTH = 5;
     private List<Point> stops = new ArrayList<>();
+    private ArrayList<TravellerInfo> users = new ArrayList<>();
+
     @Inject
     RouteInfoViewModel RouteInfoViewModel;
 
@@ -103,6 +106,9 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
 
     private void handleOnendNavigationClick() {
         Intent userrate = new Intent(this, UserRatingActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList("UserList", users);
+        userrate.putExtras(bundle);
         startActivity(userrate);
     }
 
@@ -229,6 +235,7 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
         double longitude = bundle.getDouble("destinationLongitude");
         String modeOfTravel =  bundle.getString("peerModeOfTravel");
         Boolean multiDestination = bundle.getBoolean("multiDestination");
+        users = bundle.getParcelableArrayList("UserList");
         if(multiDestination){
             ArrayList<LatLng> locations  = bundle.getParcelableArrayList("destLocations");
             Style style = map.getStyle();
