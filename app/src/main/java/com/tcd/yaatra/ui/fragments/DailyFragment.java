@@ -20,6 +20,7 @@ import com.tcd.yaatra.R;
 import com.tcd.yaatra.databinding.FragmentDailyBinding;
 import com.tcd.yaatra.services.api.yaatra.models.JourneyDetails;
 import com.tcd.yaatra.ui.activities.DailyCommuteMapFragment;
+import com.tcd.yaatra.ui.activities.MenuContainerActivity;
 import com.tcd.yaatra.ui.adapters.DailyTripAdapter;
 import com.tcd.yaatra.ui.viewmodels.DailyCommuteActivityViewModel;
 
@@ -40,7 +41,7 @@ public class DailyFragment extends BaseFragment<FragmentDailyBinding> {
     DailyCommuteActivityViewModel dailyCommuteActivityViewModel;
 
     @Override
-    public int getFragmentResourceId() {
+    protected int getFragmentResourceId() {
         return R.layout.fragment_daily;
     }
 
@@ -96,7 +97,7 @@ public class DailyFragment extends BaseFragment<FragmentDailyBinding> {
                     break;
             }
         });
-
+        ((MenuContainerActivity)getActivity()).layoutDataBinding.toolbar.setTitle("Yaatra Daily Commute");
         return view;
     }
 

@@ -7,15 +7,65 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.activities.PeerToPeerActivity">
+        tools:context=".ui.fragments.PeerToPeerFragment">
+
+        <GridLayout
+            android:id="@+id/gridLoader"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_alignParentTop="@id/peer_recycler_view"
+            android:columnCount="2"
+            android:rowCount="1">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvSearching"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_column="0"
+                android:layout_marginEnd="5dp"
+                android:layout_gravity="right|center_vertical"
+                android:text="@string/searching_label"
+                android:textColor="#014C45"
+                android:textSize="18sp"
+                android:textStyle="bold">
+
+            </androidx.appcompat.widget.AppCompatTextView>
+
+            <com.agrawalsuneet.dotsloader.loaders.AllianceLoader
+                android:id="@+id/loader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_column="1"
+                android:layout_gravity="left|center_vertical"
+                android:layout_marginStart="5dp"
+                app:alliance_distanceMultiplier="3"
+                app:alliance_dotsRadius="3dp"
+                app:alliance_drawOnlyStroke="true"
+                app:alliance_firstDotsColor="@color/darkGreen"
+                app:alliance_secondDotsColor="@color/red"
+                app:alliance_strokeWidth="2dp"
+                app:alliance_thirdDotsColor="@color/blue" />
+
+        </GridLayout>
+
+        <TextView
+            android:id="@+id/tvInstructions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="User Instructions"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="50dp"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/peer_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:layout_marginTop="80dp"/>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/goToStart"
+            android:id="@+id/fabGoToStart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/peer_recycler_view"
@@ -44,49 +94,7 @@
             android:paddingTop="200dp"
             android:src="@drawable/ic_btn_navigation"
             android:tooltipText=" Enter Destination"
-            android:visibility="invisible" />
-
-        <GridLayout
-            android:id="@+id/gridLoader"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_alignBottom="@id/peer_recycler_view"
-            android:background="#1A3BD3E6"
-            android:columnCount="2"
-            android:rowCount="1">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvSearching"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_column="0"
-                android:layout_marginEnd="5dp"
-                android:layout_gravity="right|center_vertical"
-                android:text="@string/searching_label"
-                android:textColor="#014C45"
-                android:textSize="22sp"
-                android:textStyle="bold">
-
-            </androidx.appcompat.widget.AppCompatTextView>
-
-            <com.agrawalsuneet.dotsloader.loaders.AllianceLoader
-                android:id="@+id/loader"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_column="1"
-                android:layout_gravity="left|center_vertical"
-                android:layout_marginStart="5dp"
-                app:alliance_distanceMultiplier="3"
-                app:alliance_dotsRadius="4dp"
-                app:alliance_drawOnlyStroke="true"
-                app:alliance_firstDotsColor="@color/darkGreen"
-                app:alliance_secondDotsColor="@color/red"
-                app:alliance_strokeWidth="2dp"
-                app:alliance_thirdDotsColor="@color/blue" />
-
-        </GridLayout>
+            android:visibility="visible" />
 
         <FrameLayout
             android:id="@+id/initializeProgressBar"

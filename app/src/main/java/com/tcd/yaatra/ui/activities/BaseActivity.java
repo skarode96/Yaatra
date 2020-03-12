@@ -12,7 +12,7 @@ import dagger.android.AndroidInjection;
 
 public abstract class BaseActivity<DataBindingClass extends ViewDataBinding> extends AppCompatActivity {
 
-    protected DataBindingClass layoutDataBinding;
+    public DataBindingClass layoutDataBinding;
 
     protected abstract int getLayoutResourceId();
 

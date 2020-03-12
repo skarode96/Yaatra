@@ -4,6 +4,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -15,10 +18,12 @@ import com.tcd.yaatra.R;
 import com.tcd.yaatra.WifiDirectP2PHelper.PeerCommunicator;
 import com.tcd.yaatra.databinding.ActivityMenuBinding;
 import com.tcd.yaatra.repository.UserInfoRepository;
+import com.tcd.yaatra.repository.models.Gender;
 import com.tcd.yaatra.ui.fragments.DailyFragment;
-import com.tcd.yaatra.ui.fragments.OfflineMaps;
+import com.tcd.yaatra.ui.fragments.MapFragment;
 import com.tcd.yaatra.ui.fragments.SettingsFragment;
 import com.tcd.yaatra.utils.SharedPreferenceUtils;
+import com.tcd.yaatra.ui.fragments.OfflineMaps;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -50,6 +55,17 @@ public class MenuContainerActivity extends BaseActivity<ActivityMenuBinding> imp
             layoutDataBinding.navView.setCheckedItem(R.id.ad_hoc);
             this.drawer.addDrawerListener(toggle);
         }
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        View headerView =  navigationView.inflateHeaderView(R.layout.nav_header);
+
+        //reference to views
+        ImageView imgvw = (ImageView)headerView.findViewById(R.id.headerImage);
+        TextView tv1 = (TextView)headerView.findViewById(R.id.headerUsername);
+        userInfoRepository.getUserProfile(SharedPreferenceUtils.getUserName()).observe(this,response -> {
+            tv1.setText(response.getUsername());
+            imgvw.setImageResource(response.getGender().equals(Gender.MALE) ? R.drawable.guy : R.drawable.girl);
+        });
     }
 
     @Override
