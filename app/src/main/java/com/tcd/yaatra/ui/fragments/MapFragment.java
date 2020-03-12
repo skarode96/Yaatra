@@ -45,6 +45,7 @@ import com.mapbox.mapboxsdk.offline.OfflineTilePyramidRegionDefinition;
 import com.mapbox.mapboxsdk.plugins.locationlayer.modes.CameraMode;
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.databinding.FragmentMapBinding;
+import com.tcd.yaatra.ui.activities.MenuContainerActivity;
 import com.tcd.yaatra.ui.viewmodels.MapActivityViewModel;
 import com.tcd.yaatra.utils.MyReceiver;
 
@@ -123,6 +124,8 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
         destinationArea.setOnQueryTextListener(this);
         MyReceiver= new MyReceiver();
         //broadcastIntent();
+
+        ((MenuContainerActivity)getActivity()).layoutDataBinding.toolbar.setTitle("Yaatra Ad-Hoc Commute");
         return view;
     }
 
