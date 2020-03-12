@@ -43,4 +43,5 @@
         <item>Others</item>
     </string-array>
     <string name="searching_label">Searching</string>
+    <string name="offline_map">Offline Maps</string>
 </resources>

@@ -145,6 +145,7 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
         } else{
             permissionsManager = new PermissionsManager(this);
             permissionsManager.requestLocationPermissions(getActivity());
+
         }
     }
     @Override

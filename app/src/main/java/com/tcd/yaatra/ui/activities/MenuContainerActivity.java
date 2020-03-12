@@ -16,6 +16,7 @@ import com.tcd.yaatra.WifiDirectP2PHelper.PeerCommunicator;
 import com.tcd.yaatra.databinding.ActivityMenuBinding;
 import com.tcd.yaatra.repository.UserInfoRepository;
 import com.tcd.yaatra.ui.fragments.DailyFragment;
+import com.tcd.yaatra.ui.fragments.OfflineMaps;
 import com.tcd.yaatra.ui.fragments.SettingsFragment;
 import com.tcd.yaatra.utils.SharedPreferenceUtils;
 
@@ -65,6 +66,9 @@ public class MenuContainerActivity extends BaseActivity<ActivityMenuBinding> imp
                 break;
             case R.id.settings:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SettingsFragment()).commit();
+                break;
+            case R.id.offline_map:
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new OfflineMaps()).commit();
                 break;
             case R.id.logout:
                 handleLogout();

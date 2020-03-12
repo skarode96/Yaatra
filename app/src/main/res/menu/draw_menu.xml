@@ -8,6 +8,10 @@
             android:icon="@drawable/ic_adhoc"
             android:title="@string/ad_hoc" />
         <item
+            android:id="@+id/offline_map"
+            android:icon="@drawable/ic_country"
+            android:title="@string/offline_map" />
+        <item
             android:id="@+id/daily"
             android:icon="@drawable/ic_scheduled"
             android:title="@string/daily" />

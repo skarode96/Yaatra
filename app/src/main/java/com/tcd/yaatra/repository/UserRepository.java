@@ -45,7 +45,7 @@ public class UserRepository {
 
             @Override
             public void onFailure(Call<LoginResponse> call, Throwable t) {
-                loginResponseLiveData.postValue(AsyncData.getFailureState(null));
+                loginResponseLiveData.postValue(AsyncData.getFailureState(new LoginResponse("Fatal Error", "Error")));
             }
         });
 
