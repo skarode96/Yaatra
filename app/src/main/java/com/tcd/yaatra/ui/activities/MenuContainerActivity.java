@@ -16,6 +16,7 @@ import com.tcd.yaatra.WifiDirectP2PHelper.PeerCommunicator;
 import com.tcd.yaatra.databinding.ActivityMenuBinding;
 import com.tcd.yaatra.repository.UserInfoRepository;
 import com.tcd.yaatra.ui.fragments.DailyFragment;
+import com.tcd.yaatra.ui.fragments.MapFragment;
 import com.tcd.yaatra.ui.fragments.SettingsFragment;
 import com.tcd.yaatra.utils.SharedPreferenceUtils;
 

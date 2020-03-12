@@ -40,7 +40,7 @@ public class DailyFragment extends BaseFragment<FragmentDailyBinding> {
     DailyCommuteActivityViewModel dailyCommuteActivityViewModel;
 
     @Override
-    public int getFragmentResourceId() {
+    protected int getFragmentResourceId() {
         return R.layout.fragment_daily;
     }
 

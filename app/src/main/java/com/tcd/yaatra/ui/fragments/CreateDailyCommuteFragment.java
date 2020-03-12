@@ -44,12 +44,12 @@ public class CreateDailyCommuteFragment extends BaseFragment<FragmentCreateDaily
     CreateDailyCommuteFragmentViewModel createDailyCommuteFragmentViewModel;
 
     @Override
-    public int getFragmentResourceId() {
+    protected int getFragmentResourceId() {
         return R.layout.fragment_create_daily_commute;
     }
 
     @Override
-    public void initEventHandlers() {
+    protected void initEventHandlers() {
         super.initEventHandlers();
         layoutDataBinding.buttonCreate.setOnClickListener(view -> handleOnCreateDailyButtonClick());
         layoutDataBinding.journeyStartDate.setOnFocusChangeListener((v, hasFocus) -> handleOnSelectDateClick());
