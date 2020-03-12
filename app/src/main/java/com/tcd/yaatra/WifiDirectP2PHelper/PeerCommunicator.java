@@ -16,7 +16,7 @@ public class PeerCommunicator implements PeerListener {
 
     //region Private Variables
 
-    private FellowTravellersSubscriberActivity parentActivity;
+    private FellowTravellersSubscriberFragment parentFragment;
     private TravellerInfo ownTravellerInfo;
     private boolean isInitialized = false;
 
@@ -25,12 +25,12 @@ public class PeerCommunicator implements PeerListener {
     @Inject
     public PeerCommunicator(){}
 
-    public void initialize(FellowTravellersSubscriberActivity activity, TravellerInfo travellerInfo) {
+    public void initialize(FellowTravellersSubscriberFragment fragment, TravellerInfo travellerInfo) {
 
-        parentActivity = activity;
+        parentFragment = fragment;
         ownTravellerInfo = travellerInfo;
 
-        WiFiP2pFacade.getInstance().initialize(parentActivity, this);
+        WiFiP2pFacade.getInstance().initialize(parentFragment.getActivity(), this);
 
         isInitialized = true;
     }
@@ -58,7 +58,7 @@ public class PeerCommunicator implements PeerListener {
 
         if (isCacheUpdated) {
 
-            parentActivity.processFellowTravellersInfo(FellowTravellersCache.getCacheInstance().getFellowTravellers(ownTravellerInfo.getUserName()));
+            parentFragment.processFellowTravellersInfo(FellowTravellersCache.getCacheInstance().getFellowTravellers(ownTravellerInfo.getUserName()));
 
             //Start advertising newly discovered/updated fellow travellers
             advertiseStatusAndDiscoverFellowTravellers();

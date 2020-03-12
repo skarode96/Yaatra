@@ -1,4 +1,4 @@
-package com.tcd.yaatra.ui.activities;
+package com.tcd.yaatra.ui.fragments;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,22 +8,28 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.tcd.yaatra.R;
-import com.tcd.yaatra.WifiDirectP2PHelper.FellowTravellersSubscriberActivity;
+import com.tcd.yaatra.WifiDirectP2PHelper.FellowTravellersSubscriberFragment;
 import com.tcd.yaatra.WifiDirectP2PHelper.PeerCommunicator;
+import com.tcd.yaatra.databinding.FragmentPeerToPeerBinding;
 import com.tcd.yaatra.repository.UserInfoRepository;
 import com.tcd.yaatra.repository.models.FellowTravellersCache;
 import com.tcd.yaatra.repository.models.Gender;
 import com.tcd.yaatra.repository.models.TravellerInfo;
 import com.tcd.yaatra.repository.models.TravellerStatus;
 import com.tcd.yaatra.services.api.yaatra.models.UserInfo;
+import com.tcd.yaatra.ui.activities.RouteInfo;
 import com.tcd.yaatra.ui.adapter.PeerListAdapter;
 import com.tcd.yaatra.utils.MapUtils;
 import com.tcd.yaatra.utils.NetworkUtils;
@@ -33,7 +39,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import javax.inject.Inject;
 
-public class PeerToPeerActivity extends FellowTravellersSubscriberActivity {
+public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<FragmentPeerToPeerBinding> {
 
     //region Private Variables
 
@@ -48,57 +54,61 @@ public class PeerToPeerActivity extends FellowTravellersSubscriberActivity {
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private boolean isLocationPermissionGranted = false;
     private boolean isUserInfoFetched = false;
-    private static final String TAG = "PeerToPeerActivity";
+    private static final String TAG = "PeerToPeerFragment";
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private TravellerInfo ownTravellerInfo;
     WifiManager wifiManager;
     private Handler backgroundTaskHandler;
-    PeerToPeerActivity activityContext;
+    PeerToPeerFragment fragmentContext;
+    View view;
 
     //endregion
 
     //region Initialization
 
     @Override
-    protected int getLayoutResourceId() {
-        return R.layout.activity_peer_to_peer;
+    public int getFragmentResourceId() {
+        return R.layout.fragment_peer_to_peer;
     }
 
     @Override
     protected void initEventHandlers() {
         super.initEventHandlers();
         layoutDataBinding.peerRecyclerView.setHasFixedSize(true);
-        layoutManager = new LinearLayoutManager(this);
+        layoutManager = new LinearLayoutManager(this.getActivity());
         layoutDataBinding.peerRecyclerView.setLayoutManager(layoutManager);
         refreshRecyclerView();
         layoutDataBinding.startNavigation.setOnClickListener(view -> handleStartNavigationClick());
-        layoutDataBinding.goToStart.setOnClickListener(view -> handleGoToStartClick());
+        layoutDataBinding.fabGoToStart.setOnClickListener(view -> handleGoToStartClick());
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        super.onCreate(savedInstanceState);
-        this.bundle = getIntent().getExtras();
-        activityContext = this;
+        view = super.onCreateView(inflater, container, savedInstanceState);
 
+        this.bundle = getArguments();
         initialize();
+
+        return view;
     }
 
     private void initialize() {
+        fragmentContext = this;
         backgroundTaskHandler = new Handler();
 
         layoutDataBinding.initializeProgressBar.setVisibility(View.VISIBLE);
 
         travellerInfos.clear();
         FellowTravellersCache.getCacheInstance().clear();
+        refreshRecyclerView();
 
         layoutDataBinding.startNavigation.hide();
-        layoutDataBinding.goToStart.hide();
+        layoutDataBinding.fabGoToStart.hide();
         layoutDataBinding.gridLoader.setVisibility(View.INVISIBLE);
 
-        wifiManager = (WifiManager) this.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        wifiManager = (WifiManager) this.getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
         if (!wifiManager.isWifiEnabled()) {
             wifiManager.setWifiEnabled(true);
@@ -106,7 +116,7 @@ public class PeerToPeerActivity extends FellowTravellersSubscriberActivity {
 
         askLocationPermissionIfRequired();
 
-        userInfoRepository.getUserProfile(SharedPreferenceUtils.getUserName()).observe(this, userInfo -> {
+        userInfoRepository.getUserProfile(SharedPreferenceUtils.getUserName()).observe(this.getActivity(), userInfo -> {
 
             createOwnTravellerInfo(userInfo);
         });
@@ -124,11 +134,13 @@ public class PeerToPeerActivity extends FellowTravellersSubscriberActivity {
 
                     layoutDataBinding.initializeProgressBar.setVisibility(View.GONE);
 
-                    peerCommunicator.initialize(activityContext, ownTravellerInfo);
+                    peerCommunicator.initialize(fragmentContext, ownTravellerInfo);
 
                     peerCommunicator.broadcastTravellers(TravellerStatus.SeekingFellowTraveller);
 
                     layoutDataBinding.gridLoader.setVisibility(View.VISIBLE);
+
+                    //test();
                 } else {
                     backgroundTaskHandler
                             .postDelayed(backgroundInitializer, 200);
@@ -154,19 +166,19 @@ public class PeerToPeerActivity extends FellowTravellersSubscriberActivity {
                 new TravellerInfo(userInfo.getId(), userInfo.getUsername(), userInfo.getAge(), Gender.valueOfIdName(userInfo.getGender())
                         , sourceLatitude, sourceLongitude, destinationLatitude, destinationLongitude
                         , TravellerStatus.None, sourceName, destinationName, modeOfTravel, now, userInfo.getRating()
-                        , NetworkUtils.getWiFiIPAddress(this)
+                        , NetworkUtils.getWiFiIPAddress(this.getActivity())
                         , 12345, now, userInfo.getUsername());
 
         isUserInfoFetched = true;
     }
 
     private void askLocationPermissionIfRequired() {
-        if (ContextCompat.checkSelfPermission(this,
+        if (ContextCompat.checkSelfPermission(this.getActivity(),
                 android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             isLocationPermissionGranted = false;
 
-            ActivityCompat.requestPermissions(this
+            ActivityCompat.requestPermissions(this.getActivity()
                     , new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}
                     , LOCATION_PERMISSION_REQUEST_CODE);
         } else {
@@ -185,7 +197,7 @@ public class PeerToPeerActivity extends FellowTravellersSubscriberActivity {
                     isLocationPermissionGranted = true;
                 } else {
                     isLocationPermissionGranted = false;
-                    Toast.makeText(this, "Location permission is required", Toast.LENGTH_LONG);
+                    Toast.makeText(this.getActivity(), "Location permission is required", Toast.LENGTH_LONG);
                 }
             }
         }
@@ -196,20 +208,17 @@ public class PeerToPeerActivity extends FellowTravellersSubscriberActivity {
     //region Activity Life Cycle
 
     @Override
-    protected void onPause() {
+    public void onPause() {
 
+        travellerInfos.clear();
         refreshRecyclerView();
         super.onPause();
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-    }
+    public void onDestroy() {
 
-    @Override
-    protected void onDestroy() {
-
+        travellerInfos.clear();
         refreshRecyclerView();
         super.onDestroy();
     }
@@ -219,8 +228,7 @@ public class PeerToPeerActivity extends FellowTravellersSubscriberActivity {
     //region Click Handlers
 
     private void handleStartNavigationClick() {
-        Intent mapIntent = new Intent(PeerToPeerActivity.this, RouteInfo.class);
-        Bundle bundle = getIntent().getExtras();
+        Intent mapIntent = new Intent(this.getActivity(), RouteInfo.class);
 
         //rohan+chetan: Mocking multi destination start
         ArrayList<LatLng> locations = new ArrayList<>();
@@ -256,14 +264,30 @@ public class PeerToPeerActivity extends FellowTravellersSubscriberActivity {
         refreshRecyclerView();
 
         if (travellerInfos.size() > 0) {
-            layoutDataBinding.goToStart.show();
+            layoutDataBinding.fabGoToStart.show();
         } else {
-            layoutDataBinding.goToStart.hide();
+            layoutDataBinding.fabGoToStart.hide();
         }
     }
 
     private void refreshRecyclerView() {
-        mAdapter = new PeerListAdapter(getApplicationContext(), this.travellerInfos);
+        mAdapter = new PeerListAdapter(this.getActivity().getApplicationContext(), this.travellerInfos);
         layoutDataBinding.peerRecyclerView.setAdapter(mAdapter);
+    }
+
+    private void test(){
+
+        TravellerInfo info = ownTravellerInfo.clone();
+
+        HashMap<Integer, TravellerInfo> fellowTravellers = new HashMap<>();
+
+        for(int i=2; i<9; i++){
+            info.setUserId(i);
+            info.setUserName("JP");
+            fellowTravellers.put(i, info);
+        }
+
+        processFellowTravellersInfo(fellowTravellers);
+
     }
 }

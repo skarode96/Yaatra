@@ -38,7 +38,7 @@ public class DailyCommuteDetailsFragment extends BaseFragment<FragmentDailyCommu
     DailyCommuteDetailsViewModel dailyCommuteDetailsViewModel;
 
     @Override
-    public int getFragmentResourceId() {
+    protected int getFragmentResourceId() {
         return R.layout.fragment_daily_commute_details;
     }
 

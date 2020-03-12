@@ -25,9 +25,8 @@
         <activity android:name=".ui.fragments.DailyFragment"></activity>
         <activity android:name=".ui.activities.LoginActivity"
             android:label="Yaatra Login"/>
-        <activity android:name=".ui.activities.PeerToPeerActivity"
-            android:label="Ad-Hoc Commute Locate Peers"/>
-        <activity android:name=".ui.activities.MapFragment"/>
+        <activity android:name=".ui.fragments.PeerToPeerFragment"/>
+        <activity android:name=".ui.fragments.MapFragment"/>
         <activity android:name=".ui.activities.RouteInfo"
             android:label="Route Information"/>
         <activity android:name=".ui.activities.DailyCommuteMapFragment"/>

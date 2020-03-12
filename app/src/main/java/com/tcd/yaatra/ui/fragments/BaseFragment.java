@@ -35,8 +35,8 @@ public abstract class BaseFragment<DataBindingClass extends ViewDataBinding> ext
         AndroidSupportInjection.inject(this);
     }
 
-    public abstract int getFragmentResourceId();
+    protected abstract int getFragmentResourceId();
 
-    public void initEventHandlers(){};
+    protected void initEventHandlers(){};
 
 }
