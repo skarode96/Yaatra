@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
@@ -47,8 +46,6 @@ import com.mapbox.mapboxsdk.plugins.locationlayer.modes.CameraMode;
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.databinding.FragmentMapBinding;
 import com.tcd.yaatra.repository.models.TravellerInfo;
-import com.tcd.yaatra.ui.activities.RouteInfo;
-import com.tcd.yaatra.ui.fragments.BaseFragment;
 import com.tcd.yaatra.ui.viewmodels.MapActivityViewModel;
 import com.tcd.yaatra.utils.MyReceiver;
 
@@ -92,6 +89,10 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
 
     @Inject
     MapActivityViewModel MapActivityViewModel;
+
+    @Inject
+    TravellerInfo ownTravellerInfo;
+
     //SharedPreferences loginPreferences;
 
     @Override
@@ -106,11 +107,7 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
         layoutDataBinding.listButton.setOnClickListener(view -> handleOnListButtonClick(view));
         layoutDataBinding.downloadButton.setOnClickListener(view -> handleOnDownloadClick());
         layoutDataBinding.discoverPeer.setOnClickListener(view -> {
-            try {
-                handleOnNavigateClick();
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
+            handleOnNavigateClick();
         });
     }
 
@@ -229,36 +226,29 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
 
     }
 
-    private void handleOnNavigateClick() throws UnsupportedEncodingException {
-        Intent mapIntent = new Intent(getActivity(), RouteInfo.class);
-        //Intent mapIntent = new Intent(getActivity(), PeerToPeerActivity.class);
-        Bundle bundle = new Bundle();
+    private void handleOnNavigateClick() {
+
         String modeOfTravel;
         Geocoder coder = new Geocoder(getActivity());
         List<Address> startLoc;
+
         try{
             startLoc = coder.getFromLocation(locationComponent.getLastKnownLocation().getLatitude(),locationComponent.getLastKnownLocation().getLongitude(),1);
             sourceName = startLoc.get(0).getAddressLine(0);
         }catch (Exception e){ Toast.makeText(getActivity(), "Error generating geoname", Toast.LENGTH_SHORT).show();}
 
-        bundle.putString("sourceName", sourceName);
-        bundle.putString("destinationName",destname);
-        bundle.putDouble("sourceLatitude",locationComponent.getLastKnownLocation().getLatitude());
-        bundle.putDouble("sourceLatitude",locationComponent.getLastKnownLocation().getLatitude());
-        bundle.putDouble("sourceLongitude",locationComponent.getLastKnownLocation().getLongitude());
-        bundle.putDouble("destinationLatitude",destination.latitude());
-        bundle.putDouble("destinationLongitude", destination.longitude());
-        TravellerInfo temp = new TravellerInfo("Chetan");
-        ArrayList<TravellerInfo> rateing = new ArrayList<>();
-        rateing.add(temp);
-        TravellerInfo temp1 = new TravellerInfo("Rohan");
-        rateing.add(temp1);
-        TravellerInfo temp2 = new TravellerInfo("Sameer");
-        rateing.add(temp2);
-        Boolean multidestination = false;
+        if(sourceName != null) {
+            ownTravellerInfo.setSourceName(sourceName.substring(0, 10));
+        }
 
-        bundle.putParcelableArrayList("UserList", rateing);
-        bundle.putBoolean("multiDestination", multidestination);
+        if(destname != null) {
+            ownTravellerInfo.setDestinationName(destname.substring(0, 10));
+        }
+
+        ownTravellerInfo.setSourceLatitude(locationComponent.getLastKnownLocation().getLatitude());
+        ownTravellerInfo.setSourceLongitude(locationComponent.getLastKnownLocation().getLongitude());
+        ownTravellerInfo.setDestinationLatitude(destination.latitude());
+        ownTravellerInfo.setDestinationLongitude(destination.longitude());
 
         if(layoutDataBinding.bicycle.isChecked()) {
             modeOfTravel = DirectionsCriteria.PROFILE_CYCLING;
@@ -268,9 +258,12 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
         else{
             modeOfTravel = DirectionsCriteria.PROFILE_WALKING;
         }
-        bundle.putString("peerModeOfTravel",modeOfTravel);
-        mapIntent.putExtras(bundle);
-        startActivity(mapIntent);
+
+        ownTravellerInfo.setModeOfTravel(modeOfTravel);
+
+        PeerToPeerFragment peerToPeerFragment = new PeerToPeerFragment();
+
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, peerToPeerFragment).addToBackStack("mapFrag").commit();
     }
 
     private String getRegionName(OfflineRegion offlineRegion) {

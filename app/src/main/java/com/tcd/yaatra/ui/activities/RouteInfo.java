@@ -107,7 +107,7 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
     private void handleOnendNavigationClick() {
         Intent userrate = new Intent(this, UserRatingActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putParcelableArrayList("UserList", users);
+        bundle.putSerializable("UserList", users);
         userrate.putExtras(bundle);
         startActivity(userrate);
     }
@@ -235,7 +235,7 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
         double longitude = bundle.getDouble("destinationLongitude");
         String modeOfTravel =  bundle.getString("peerModeOfTravel");
         Boolean multiDestination = bundle.getBoolean("multiDestination");
-        users = bundle.getParcelableArrayList("UserList");
+        users = (ArrayList<TravellerInfo>) bundle.getSerializable("UserList");
         if(multiDestination){
             ArrayList<LatLng> locations  = bundle.getParcelableArrayList("destLocations");
             Style style = map.getStyle();

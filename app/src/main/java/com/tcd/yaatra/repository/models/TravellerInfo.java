@@ -1,13 +1,12 @@
 package com.tcd.yaatra.repository.models;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
-import androidx.annotation.NonNull;
-
+import java.io.Serializable;
 import java.time.LocalDateTime;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
-public class TravellerInfo implements Parcelable {
+@Singleton
+public class TravellerInfo implements Serializable {
 
     private Integer userId;
     private String userName = "";
@@ -45,71 +44,8 @@ public class TravellerInfo implements Parcelable {
     private LocalDateTime statusUpdateTime = LocalDateTime.now();
     private String infoProvider = "";
 
-    public TravellerInfo(String userName) {
-        this.userName = userName;
-    }
-
-    protected TravellerInfo (Parcel in) {
-        setUserName(in.readString());
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(userName);
-    }
-
-    public static final Parcelable.Creator<TravellerInfo> CREATOR = new Parcelable.Creator<TravellerInfo>() {
-        public TravellerInfo createFromParcel(@NonNull Parcel in) {
-            return new TravellerInfo(in);
-        }
-
-        public TravellerInfo[] newArray(int size) {
-            return new TravellerInfo[size];
-        }
-    };
-
-    public TravellerInfo(Integer userId, String userName, int age, Gender gender
-            , Double sourceLatitude, Double sourceLongitude
-            , Double destinationLatitude, Double destinationLongitude
-            , TravellerStatus status, String sourceName, String destinationName, String modeOfTravel, LocalDateTime requestStartTime
-            , Double userRating, String ipAddress, int port
-            , LocalDateTime statusUpdateTime
-            , String infoProvider) {
-
-        setUserId(userId);
-        setUserName(userName);
-        setAge(age);
-        setGender(gender);
-        setSourceLatitude(sourceLatitude);
-        setSourceLongitude(sourceLongitude);
-        setDestinationLatitude(destinationLatitude);
-        setDestinationLongitude(destinationLongitude);
-        setModeOfTravel(modeOfTravel);
-        setStatus(status);
-        setSourceName(sourceName);
-        setDestinationName(destinationName);
-        setRequestStartTime(requestStartTime);
-        setUserRating(userRating);
-        setIpAddress(ipAddress);
-        setPortNumber(port);
-        setStatusUpdateTime(statusUpdateTime);
-        setInfoProvider(infoProvider);
-    }
-
-    public TravellerInfo clone() {
-        TravellerInfo clonedInfo = new TravellerInfo(getUserId(), getUserName(), getAge(), getGender()
-                , getSourceLatitude(), getSourceLongitude()
-                , getDestinationLatitude(), getDestinationLongitude(), getStatus(), getSourceName()
-                , getDestinationName(), getModeOfTravel(), getRequestStartTime()
-                , getUserRating(), getIpAddress(), getPortNumber(), getStatusUpdateTime(), getInfoProvider());
-
-        return clonedInfo;
-    }
+    @Inject
+    public TravellerInfo(){}
 
     //region Getters & Setters
 
@@ -239,7 +175,5 @@ public class TravellerInfo implements Parcelable {
     public void setModeOfTravel(String modeOfTravel) {
         this.modeOfTravel = modeOfTravel;
     }
-
-
     //endregion
 }

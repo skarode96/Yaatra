@@ -89,11 +89,28 @@ public class P2pSerializerDeserializerTest {
     private TravellerInfo getDummyTravellerInfo() {
         String travellerUserName = "Traveller";
         String userName = "TestUser";
-        return new TravellerInfo(1, travellerUserName, 20, Gender.MALE, 0.0d
-                , 0.0d, 0.0d, 0.0d
-                , TravellerStatus.SeekingFellowTraveller, "test", "test", "mode"
-                , LocalDateTime.now(), 0.0d
-                , "1.2.3.4", 12345, LocalDateTime.now(), userName);
+
+        TravellerInfo traveller = new TravellerInfo();
+        traveller.setUserId(1);
+        traveller.setUserName(travellerUserName);
+        traveller.setAge(20);
+        traveller.setGender(Gender.MALE);
+        traveller.setSourceLatitude(0.0d);
+        traveller.setSourceLongitude(0.0d);
+        traveller.setDestinationLatitude(0.0d);
+        traveller.setDestinationLongitude(0.0d);
+        traveller.setStatus(TravellerStatus.SeekingFellowTraveller);
+        traveller.setSourceName("test");
+        traveller.setDestinationName("test");
+        traveller.setModeOfTravel("test");
+        traveller.setRequestStartTime(LocalDateTime.now());
+        traveller.setUserRating(0.0d);
+        traveller.setIpAddress("1.2.3.4");
+        traveller.setPortNumber(1234);
+        traveller.setStatusUpdateTime(LocalDateTime.now());
+        traveller.setInfoProvider(userName);
+
+        return traveller;
     }
 
     private String getSerializedTravellerInfo(TravellerInfo traveller) {

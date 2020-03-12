@@ -63,21 +63,27 @@ public class P2pSerializerDeserializer {
 
             String[] fieldValues = serializedInfo.split(",", -1);
 
-            TravellerInfo info =
-                    new TravellerInfo(Integer.parseInt(userId), fieldValues[0], Integer.parseInt(fieldValues[1])
-                            , Gender.valueOf(fieldValues[2])
-                            , Double.parseDouble(fieldValues[3]), Double.parseDouble(fieldValues[4])
-                            , Double.parseDouble(fieldValues[5]), Double.parseDouble(fieldValues[6])
-                            , TravellerStatus.valueOf(fieldValues[7]),
-                            fieldValues[8], fieldValues[9], fieldValues[10]
-                            , LocalDateTime.parse(fieldValues[11], DATE_TIME_FORMATTER)
-                            , Double.parseDouble(fieldValues[12])
-                            , fieldValues[13]
-                            , Integer.parseInt(fieldValues[14])
-                            , LocalDateTime.parse(fieldValues[15], DATE_TIME_FORMATTER)
-                            , fieldValues[16]);
+            TravellerInfo traveller = new TravellerInfo();
+            traveller.setUserId(Integer.parseInt(userId));
+            traveller.setUserName(fieldValues[0]);
+            traveller.setAge(Integer.parseInt(fieldValues[1]));
+            traveller.setGender(Gender.valueOf(fieldValues[2]));
+            traveller.setSourceLatitude(Double.parseDouble(fieldValues[3]));
+            traveller.setSourceLongitude(Double.parseDouble(fieldValues[4]));
+            traveller.setDestinationLatitude(Double.parseDouble(fieldValues[5]));
+            traveller.setDestinationLongitude(Double.parseDouble(fieldValues[6]));
+            traveller.setStatus(TravellerStatus.valueOf(fieldValues[7]));
+            traveller.setSourceName(fieldValues[8]);
+            traveller.setDestinationName(fieldValues[9]);
+            traveller.setModeOfTravel(fieldValues[10]);
+            traveller.setRequestStartTime(LocalDateTime.parse(fieldValues[11], DATE_TIME_FORMATTER));
+            traveller.setUserRating(Double.parseDouble(fieldValues[12]));
+            traveller.setIpAddress(fieldValues[13]);
+            traveller.setPortNumber(Integer.parseInt(fieldValues[14]));
+            traveller.setStatusUpdateTime(LocalDateTime.parse(fieldValues[15], DATE_TIME_FORMATTER));
+            traveller.setInfoProvider(fieldValues[16]);
 
-            allTravellers.put(Integer.parseInt(userId), info);
+            allTravellers.put(Integer.parseInt(userId), traveller);
         });
 
         return allTravellers;

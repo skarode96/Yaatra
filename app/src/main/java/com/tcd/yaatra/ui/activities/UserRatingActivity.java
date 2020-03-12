@@ -1,7 +1,6 @@
 package com.tcd.yaatra.ui.activities;
 
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -42,7 +41,7 @@ public class UserRatingActivity extends BaseActivity<ActivityUserRatingBinding> 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle bundle = getIntent().getExtras();
-        user = bundle.getParcelableArrayList("UserList");
+        user = (ArrayList<TravellerInfo>)bundle.getSerializable("UserList");
         recyclerView = (RecyclerView) layoutDataBinding.userList;
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(UserRatingActivity.this);
