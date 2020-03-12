@@ -3,7 +3,6 @@ package com.tcd.yaatra.di.modules;
 import com.tcd.yaatra.ui.activities.LaunchActivity;
 import com.tcd.yaatra.ui.activities.LoginActivity;
 import com.tcd.yaatra.ui.activities.MenuContainerActivity;
-import com.tcd.yaatra.ui.activities.PeerToPeerActivity;
 import com.tcd.yaatra.ui.activities.RegisterActivity;
 import com.tcd.yaatra.ui.activities.RouteInfo;
 import com.tcd.yaatra.ui.activities.UserRatingActivity;
@@ -19,9 +18,6 @@ public interface ActivityModule {
 
     @ContributesAndroidInjector
     LaunchActivity contributeLaunchActivity();
-
-    @ContributesAndroidInjector
-    PeerToPeerActivity contributePeerToPeerActivity();
 
     @ContributesAndroidInjector
     MenuContainerActivity contributeMenuContainerActivity();

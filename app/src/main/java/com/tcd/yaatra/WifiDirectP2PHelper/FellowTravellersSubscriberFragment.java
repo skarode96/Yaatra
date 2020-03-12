@@ -1,11 +1,12 @@
 package com.tcd.yaatra.WifiDirectP2PHelper;
 
-import com.tcd.yaatra.databinding.ActivityPeerToPeerBinding;
+import androidx.databinding.ViewDataBinding;
 import com.tcd.yaatra.repository.models.TravellerInfo;
-import com.tcd.yaatra.ui.activities.BaseActivity;
+import com.tcd.yaatra.ui.fragments.BaseFragment;
+
 import java.util.HashMap;
 
-public abstract class FellowTravellersSubscriberActivity extends BaseActivity<ActivityPeerToPeerBinding> {
+public abstract class FellowTravellersSubscriberFragment<DataBindingClass extends ViewDataBinding> extends BaseFragment<DataBindingClass> {
 
     protected abstract void processFellowTravellersInfo(HashMap<Integer, TravellerInfo> fellowTravellers);
 

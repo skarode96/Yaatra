@@ -1,10 +1,9 @@
-package com.tcd.yaatra.ui.activities;
+package com.tcd.yaatra.ui.fragments;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
@@ -46,7 +45,6 @@ import com.mapbox.mapboxsdk.offline.OfflineTilePyramidRegionDefinition;
 import com.mapbox.mapboxsdk.plugins.locationlayer.modes.CameraMode;
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.databinding.FragmentMapBinding;
-import com.tcd.yaatra.ui.fragments.BaseFragment;
 import com.tcd.yaatra.ui.viewmodels.MapActivityViewModel;
 import com.tcd.yaatra.utils.MyReceiver;
 
@@ -93,12 +91,12 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
     //SharedPreferences loginPreferences;
 
     @Override
-    public int getFragmentResourceId() {
+    protected int getFragmentResourceId() {
         return R.layout.fragment_map;
     }
 
     @Override
-    public void initEventHandlers() {
+    protected void initEventHandlers() {
         super.initEventHandlers();
         layoutDataBinding.searchDest.setOnQueryTextListener(this);
         layoutDataBinding.listButton.setOnClickListener(view -> handleOnListButtonClick(view));
@@ -229,7 +227,7 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
 
     private void handleOnNavigateClick() throws UnsupportedEncodingException {
         //Intent mapIntent = new Intent(getActivity(), RouteInfo.class);
-        Intent mapIntent = new Intent(getActivity(), PeerToPeerActivity.class);
+        //Intent mapIntent = new Intent(getActivity(), PeerToPeerFragment.class);
         Bundle bundle = new Bundle();
         String modeOfTravel;
         Geocoder coder = new Geocoder(getActivity());
@@ -256,8 +254,13 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
             modeOfTravel = DirectionsCriteria.PROFILE_WALKING;
         }
         bundle.putString("peerModeOfTravel",modeOfTravel);
-        mapIntent.putExtras(bundle);
-        startActivity(mapIntent);
+        //mapIntent.putExtras(bundle);
+        //startActivity(mapIntent);
+
+        PeerToPeerFragment peerToPeerFragment = new PeerToPeerFragment();
+        peerToPeerFragment.setArguments(bundle);
+
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, peerToPeerFragment).addToBackStack("tag").commit();
     }
 
     private String getRegionName(OfflineRegion offlineRegion) {

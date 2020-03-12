@@ -28,7 +28,7 @@ public class SettingsFragment extends BaseFragment<FragmentSettingsBinding> {
     UserInfoRepository userInfoRepository;
 
     @Override
-    public int getFragmentResourceId() {
+    protected int getFragmentResourceId() {
         return R.layout.fragment_settings;
     }
 

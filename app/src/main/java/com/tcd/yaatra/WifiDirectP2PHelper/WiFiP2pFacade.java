@@ -1,5 +1,6 @@
 package com.tcd.yaatra.WifiDirectP2PHelper;
 
+import android.app.Activity;
 import android.content.IntentFilter;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pInfo;
@@ -8,7 +9,6 @@ import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
 import android.os.Handler;
 import android.util.Log;
-import com.tcd.yaatra.ui.activities.BaseActivity;
 import com.tcd.yaatra.utils.NetworkUtils;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +36,7 @@ public class WiFiP2pFacade implements WifiP2pManager.ConnectionInfoListener {
     private static final int MAX_BROADCAST_INTERVAL = 8111;
 
     PeerListener peerListener;
-    BaseActivity parentActivity;
+    Activity parentActivity;
 
     private boolean isRunning;
     private boolean isReceiverRegistered;
@@ -54,7 +54,7 @@ public class WiFiP2pFacade implements WifiP2pManager.ConnectionInfoListener {
 
     //endregion
 
-    public void initialize(BaseActivity activity, PeerListener listener) {
+    public void initialize(Activity activity, PeerListener listener) {
 
         peerListener = listener;
         this.parentActivity = activity;
