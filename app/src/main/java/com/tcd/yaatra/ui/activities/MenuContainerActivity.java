@@ -12,6 +12,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.navigation.NavigationView;
 import com.tcd.yaatra.R;
+import com.tcd.yaatra.WifiDirectP2PHelper.PeerCommunicator;
 import com.tcd.yaatra.databinding.ActivityMenuBinding;
 import com.tcd.yaatra.repository.UserInfoRepository;
 import com.tcd.yaatra.ui.fragments.DailyFragment;
@@ -29,6 +30,9 @@ public class MenuContainerActivity extends BaseActivity<ActivityMenuBinding> imp
 
     @Inject
     UserInfoRepository userInfoRepository;
+
+    @Inject
+    PeerCommunicator peerCommunicator;
 
     @Override
     protected int getLayoutResourceId() {
@@ -49,6 +53,8 @@ public class MenuContainerActivity extends BaseActivity<ActivityMenuBinding> imp
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+
+        peerCommunicator.cleanup();
         switch (menuItem.getItemId()) {
 
             case R.id.ad_hoc:
@@ -96,5 +102,17 @@ public class MenuContainerActivity extends BaseActivity<ActivityMenuBinding> imp
         this.drawer.addDrawerListener(toggle);
         toggle.syncState();
         return toggle;
+    }
+
+    @Override
+    protected void onPause(){
+        peerCommunicator.cleanup();
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy(){
+        peerCommunicator.cleanup();
+        super.onDestroy();
     }
 }
