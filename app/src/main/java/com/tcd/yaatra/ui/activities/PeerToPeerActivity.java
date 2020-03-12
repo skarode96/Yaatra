@@ -125,7 +125,7 @@ public class PeerToPeerActivity extends FellowTravellersSubscriberActivity {
 
                     peerCommunicator.initialize(activityContext, ownTravellerInfo);
 
-                    broadcastTravellers(TravellerStatus.SeekingFellowTraveller);
+                    peerCommunicator.broadcastTravellers(TravellerStatus.SeekingFellowTraveller);
 
                     layoutDataBinding.gridLoader.setVisibility(View.VISIBLE);
                 } else {
@@ -215,24 +215,6 @@ public class PeerToPeerActivity extends FellowTravellersSubscriberActivity {
 
     //endregion
 
-    public void broadcastTravellers(TravellerStatus ownStatus) {
-
-        setCurrentStatusOfAppUser(ownStatus);
-        peerCommunicator.updateOwnTraveller(ownTravellerInfo);
-
-        if (isLocationPermissionGranted) {
-            peerCommunicator.advertiseStatusAndDiscoverFellowTravellers();
-        }
-    }
-
-    private void setCurrentStatusOfAppUser(TravellerStatus status) {
-        if (ownTravellerInfo.getStatus() != status) {
-            ownTravellerInfo.setStatusUpdateTime(LocalDateTime.now());
-        }
-
-        ownTravellerInfo.setStatus(status);
-    }
-
     //region Click Handlers
 
     private void handleStartNavigationClick() {
@@ -258,7 +240,7 @@ public class PeerToPeerActivity extends FellowTravellersSubscriberActivity {
     }
 
     private void handleGoToStartClick() {
-        broadcastTravellers(TravellerStatus.TravellingToStartPoint);
+        peerCommunicator.broadcastTravellers(TravellerStatus.TravellingToStartPoint);
     }
 
     //endregion

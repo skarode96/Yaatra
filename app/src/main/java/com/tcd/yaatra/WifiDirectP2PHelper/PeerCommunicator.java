@@ -2,7 +2,9 @@ package com.tcd.yaatra.WifiDirectP2PHelper;
 
 import com.tcd.yaatra.repository.models.FellowTravellersCache;
 import com.tcd.yaatra.repository.models.TravellerInfo;
+import com.tcd.yaatra.repository.models.TravellerStatus;
 import com.tcd.yaatra.utils.SharedPreferenceUtils;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,18 +35,14 @@ public class PeerCommunicator implements PeerListener {
         isInitialized = true;
     }
 
-    public void advertiseStatusAndDiscoverFellowTravellers() {
+    public void broadcastTravellers(TravellerStatus ownStatus) {
 
         if (!isInitialized || ownTravellerInfo == null){
             throw new IllegalStateException("Peer communicator is not initialized.");
         }
 
-        HashMap<Integer, TravellerInfo> allTravellers = FellowTravellersCache.getCacheInstance().getFellowTravellers(SharedPreferenceUtils.getUserName());
-        allTravellers.put(ownTravellerInfo.getUserId(), ownTravellerInfo);
-
-        List<Map<String, String>> recordsToBroadcast = P2pSerializerDeserializer.serializeToMap(allTravellers.values());
-
-        WiFiP2pFacade.getInstance().broadcastInformationAndListenToPeers(recordsToBroadcast);
+        setCurrentStatusOfAppUser(ownStatus);
+        advertiseStatusAndDiscoverFellowTravellers();
     }
 
     @Override
@@ -67,8 +65,22 @@ public class PeerCommunicator implements PeerListener {
         }
     }
 
-    public void updateOwnTraveller(TravellerInfo travellerInfo) {
-        ownTravellerInfo = travellerInfo;
+    private void advertiseStatusAndDiscoverFellowTravellers() {
+
+        HashMap<Integer, TravellerInfo> allTravellers = FellowTravellersCache.getCacheInstance().getFellowTravellers(SharedPreferenceUtils.getUserName());
+        allTravellers.put(ownTravellerInfo.getUserId(), ownTravellerInfo);
+
+        List<Map<String, String>> recordsToBroadcast = P2pSerializerDeserializer.serializeToMap(allTravellers.values());
+
+        WiFiP2pFacade.getInstance().broadcastInformationAndListenToPeers(recordsToBroadcast);
+    }
+
+    private void setCurrentStatusOfAppUser(TravellerStatus status) {
+        if (ownTravellerInfo.getStatus() != status) {
+            ownTravellerInfo.setStatusUpdateTime(LocalDateTime.now());
+        }
+
+        ownTravellerInfo.setStatus(status);
     }
 
     public void cleanup() {
