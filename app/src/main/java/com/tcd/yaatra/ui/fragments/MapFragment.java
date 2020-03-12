@@ -1,4 +1,4 @@
-package com.tcd.yaatra.ui.activities;
+package com.tcd.yaatra.ui.fragments;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -47,6 +47,7 @@ import com.mapbox.mapboxsdk.plugins.locationlayer.modes.CameraMode;
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.databinding.FragmentMapBinding;
 import com.tcd.yaatra.repository.models.TravellerInfo;
+import com.tcd.yaatra.ui.activities.RouteInfo;
 import com.tcd.yaatra.ui.fragments.BaseFragment;
 import com.tcd.yaatra.ui.viewmodels.MapActivityViewModel;
 import com.tcd.yaatra.utils.MyReceiver;
@@ -94,12 +95,12 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
     //SharedPreferences loginPreferences;
 
     @Override
-    public int getFragmentResourceId() {
+    protected int getFragmentResourceId() {
         return R.layout.fragment_map;
     }
 
     @Override
-    public void initEventHandlers() {
+    protected void initEventHandlers() {
         super.initEventHandlers();
         layoutDataBinding.searchDest.setOnQueryTextListener(this);
         layoutDataBinding.listButton.setOnClickListener(view -> handleOnListButtonClick(view));
