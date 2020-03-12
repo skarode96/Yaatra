@@ -14,6 +14,7 @@ import com.tcd.yaatra.R;
 import com.tcd.yaatra.databinding.FragmentSettingsBinding;
 import com.tcd.yaatra.repository.UserInfoRepository;
 import com.tcd.yaatra.repository.models.Gender;
+import com.tcd.yaatra.ui.activities.MenuContainerActivity;
 import com.tcd.yaatra.ui.fragments.BaseFragment;
 import com.tcd.yaatra.utils.SharedPreferenceUtils;
 import com.tcd.yaatra.repository.models.TransportPreference;
@@ -106,6 +107,8 @@ public class SettingsFragment extends BaseFragment<FragmentSettingsBinding> {
             }
 
         });
+
+        ((MenuContainerActivity)getActivity()).layoutDataBinding.toolbar.setTitle("Yaatra Settings");
         return view;
     }
 

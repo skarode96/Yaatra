@@ -15,7 +15,7 @@ import dagger.android.support.AndroidSupportInjection;
 
 public abstract class BaseFragment<DataBindingClass extends ViewDataBinding> extends Fragment {
 
-    protected DataBindingClass layoutDataBinding;
+    public DataBindingClass layoutDataBinding;
 
     @Nullable
     @Override
