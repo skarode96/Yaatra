@@ -17,6 +17,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.gson.Gson;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.WifiDirectP2PHelper.FellowTravellersSubscriberFragment;
@@ -28,7 +29,6 @@ import com.tcd.yaatra.repository.models.Gender;
 import com.tcd.yaatra.repository.models.TravellerInfo;
 import com.tcd.yaatra.repository.models.TravellerStatus;
 import com.tcd.yaatra.services.api.yaatra.models.UserInfo;
-import com.tcd.yaatra.ui.activities.RouteInfo;
 import com.tcd.yaatra.ui.adapter.PeerListAdapter;
 import com.tcd.yaatra.utils.MapUtils;
 import com.tcd.yaatra.utils.NetworkUtils;
@@ -55,7 +55,6 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
     FellowTravellersCache fellowTravellersCache;
 
     private ArrayList<TravellerInfo> travellerInfos = new ArrayList<>();
-    private Bundle bundle;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private boolean isLocationPermissionGranted = false;
     private boolean isUserInfoFetched = false;
@@ -90,8 +89,6 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         view = super.onCreateView(inflater, container, savedInstanceState);
-
-        this.bundle = getArguments();
         initialize();
 
         return view;
@@ -225,7 +222,7 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
 
         fellowTravellersCache.stopNewInsert();
 
-        Intent mapIntent = new Intent(this.getActivity(), RouteInfo.class);
+        Intent mapIntent = new Intent(this.getActivity(), RouteInfoFragment.class);
 
         //rohan+chetan: Mocking multi destination start
         ArrayList<LatLng> locations = new ArrayList<>();
@@ -238,12 +235,20 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
         locations.add(point2);
         locations.add(point3);
         locations.add(point4);
+
+        Bundle bundle = new Bundle();
         bundle.putParcelableArrayList("destLocations", locations);
-        bundle.putSerializable("UserList", travellerInfos);
+
+        Gson gson = new Gson();
+        bundle.putString("UserList", gson.toJson(travellerInfos));
         bundle.putBoolean("multiDestination", multidestination);
         //rohan+chetan: Mocking multi destination end
-        mapIntent.putExtras(bundle);
-        startActivity(mapIntent);
+        /*mapIntent.putExtras(bundle);
+        startActivity(mapIntent);*/
+
+        RouteInfoFragment routeInfoFragment = new RouteInfoFragment();
+        routeInfoFragment.setArguments(bundle);
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, routeInfoFragment).addToBackStack("peerFrag").commit();
     }
 
     private void handleGoToStartClick() {
