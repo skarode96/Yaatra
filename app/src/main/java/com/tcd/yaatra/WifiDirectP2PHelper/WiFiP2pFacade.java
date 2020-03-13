@@ -165,6 +165,10 @@ public class WiFiP2pFacade implements WifiP2pManager.ConnectionInfoListener {
         @Override
         public void run() {
 
+            if(!isRunning){
+                return;
+            }
+
             wifiP2pManager.stopPeerDiscovery(wifiP2pChannel, new WifiP2pManager.ActionListener() {
                 @Override
                 public void onSuccess() {

@@ -109,6 +109,8 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
 
         askLocationPermissionIfRequired();
 
+        isUserInfoFetched = false;
+
         userInfoRepository.getUserProfile(SharedPreferenceUtils.getUserName()).observe(this.getActivity(), userInfo -> {
 
             insertOwnTravellerInfo(userInfo);

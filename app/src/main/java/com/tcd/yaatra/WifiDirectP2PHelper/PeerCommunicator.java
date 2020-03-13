@@ -3,7 +3,6 @@ package com.tcd.yaatra.WifiDirectP2PHelper;
 import com.tcd.yaatra.repository.models.FellowTravellersCache;
 import com.tcd.yaatra.repository.models.TravellerInfo;
 import com.tcd.yaatra.repository.models.TravellerStatus;
-import com.tcd.yaatra.utils.SharedPreferenceUtils;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -89,7 +88,6 @@ public class PeerCommunicator implements PeerListener {
     public void cleanup() {
         if(isInitialized) {
             WiFiP2pFacade.getInstance().cleanup(true);
-            ownTravellerInfo = null;
 
             isInitialized = false;
         }
