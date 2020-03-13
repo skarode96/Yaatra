@@ -82,7 +82,6 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
         layoutManager = new LinearLayoutManager(this.getActivity());
         layoutDataBinding.peerRecyclerView.setLayoutManager(layoutManager);
         layoutDataBinding.startNavigation.setOnClickListener(view -> handleStartNavigationClick());
-        layoutDataBinding.fabGoToStart.setOnClickListener(view -> handleGoToStartClick());
     }
 
     @Override
@@ -100,7 +99,6 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
 
         layoutDataBinding.initializeProgressBar.setVisibility(View.VISIBLE);
         layoutDataBinding.startNavigation.hide();
-        layoutDataBinding.fabGoToStart.hide();
         layoutDataBinding.gridLoader.setVisibility(View.INVISIBLE);
 
         wifiManager = (WifiManager) this.getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
@@ -220,6 +218,8 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
 
     private void handleStartNavigationClick() {
 
+        peerCommunicator.broadcastTravellers(TravellerStatus.TravellingToStartPoint);
+
         fellowTravellersCache.stopNewInsert();
 
         Intent mapIntent = new Intent(this.getActivity(), RouteInfoFragment.class);
@@ -251,10 +251,6 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, routeInfoFragment).addToBackStack("peerFrag").commit();
     }
 
-    private void handleGoToStartClick() {
-        peerCommunicator.broadcastTravellers(TravellerStatus.TravellingToStartPoint);
-    }
-
     //endregion
 
     @Override
@@ -266,9 +262,9 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
         refreshRecyclerView();
 
         if (travellerInfos.size() > 0) {
-            layoutDataBinding.fabGoToStart.show();
+            layoutDataBinding.startNavigation.show();
         } else {
-            layoutDataBinding.fabGoToStart.hide();
+            layoutDataBinding.startNavigation.hide();
         }
     }
 
