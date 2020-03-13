@@ -1,6 +1,7 @@
 package com.tcd.yaatra.repository.models;
 
 import org.jetbrains.annotations.NotNull;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
@@ -10,34 +11,43 @@ import static org.junit.Assert.*;
 
 public class FellowTravellersCacheTest {
 
+    FellowTravellersCache testObjectFellowTravellersCache;
+    TravellerInfo ownTraveller;
+
+    @Before
+    public void setup(){
+        testObjectFellowTravellersCache = new FellowTravellersCache();
+
+        ownTraveller = getDummyTraveller(1,"TestUser");
+        testObjectFellowTravellersCache.setOwnTravellerInfo(ownTraveller);
+    }
+
     @Test
     public void addOrUpdate_NewFellowTraveller_AddsToCacheWithInfoProviderAsSelf() {
 
-        FellowTravellersCache.getCacheInstance().clear();
+        testObjectFellowTravellersCache.reset();
 
-        String appUserName = "TestUser";
-        assertTrue(FellowTravellersCache.getCacheInstance().getFellowTravellers(appUserName).isEmpty());
+        assertTrue(testObjectFellowTravellersCache.getFellowTravellers().isEmpty());
 
         Integer fellowTravellerUserId = 2;
         String fellowTravellerUserName = "FellowTraveller";
 
         HashMap<Integer, TravellerInfo> fellowTravellers = new HashMap<>();
         fellowTravellers.put(fellowTravellerUserId, getDummyTraveller(fellowTravellerUserId, fellowTravellerUserName));
-        FellowTravellersCache.getCacheInstance().addOrUpdate(fellowTravellers);
+        testObjectFellowTravellersCache.addOrUpdate(fellowTravellers);
 
-        HashMap<Integer, TravellerInfo> cacheEntry = FellowTravellersCache.getCacheInstance().getFellowTravellers(appUserName);
+        HashMap<Integer, TravellerInfo> cacheEntry = testObjectFellowTravellersCache.getFellowTravellers();
         assertEquals(1, cacheEntry.size());
         assertTrue(cacheEntry.containsKey(fellowTravellerUserId));
 
         TravellerInfo cachedTraveller = cacheEntry.get(fellowTravellerUserId);
 
-        assertEquals(appUserName, cachedTraveller.getInfoProvider());
+        assertEquals(ownTraveller.getUserName(), cachedTraveller.getInfoProvider());
     }
 
     @Test
     public void addOrUpdate_InfoExistsInCache_UpdateReceived_UpdateCache() {
 
-        String appUserName = "TestUser";
         Integer fellowTravellerUserId = 2;
         String fellowTravellerUserName = "FellowTraveller";
         LocalDateTime statusUpdateTime1 = LocalDateTime.now();
@@ -49,21 +59,21 @@ public class FellowTravellersCacheTest {
         dummyTravellerSecondInfo.setStatusUpdateTime(statusUpdateTime2);
 
         //Clear cache and verify its empty
-        FellowTravellersCache.getCacheInstance().clear();
-        assertTrue(FellowTravellersCache.getCacheInstance().getFellowTravellers(appUserName).isEmpty());
+        testObjectFellowTravellersCache.reset();
+        assertTrue(testObjectFellowTravellersCache.getFellowTravellers().isEmpty());
 
         //Send new information to cache
         fellowTravellers.put(fellowTravellerUserId, dummyTravellerFirstInfo);
-        FellowTravellersCache.getCacheInstance().addOrUpdate(fellowTravellers);
+        testObjectFellowTravellersCache.addOrUpdate(fellowTravellers);
 
         //Get info from cache and verify properties
-        VerifyCachedTravellerProperties(appUserName, fellowTravellerUserId, fellowTravellerUserName, statusUpdateTime1);
+        VerifyCachedTravellerProperties(ownTraveller.getUserName(), fellowTravellerUserId, fellowTravellerUserName, statusUpdateTime1);
 
         //Send updated information to cache
         fellowTravellers.replace(fellowTravellerUserId, dummyTravellerSecondInfo);
-        boolean isCacheUpdated = FellowTravellersCache.getCacheInstance().addOrUpdate(fellowTravellers);
+        boolean isCacheUpdated = testObjectFellowTravellersCache.addOrUpdate(fellowTravellers);
 
-        VerifyCachedTravellerProperties(appUserName, fellowTravellerUserId, fellowTravellerUserName, statusUpdateTime2);
+        VerifyCachedTravellerProperties(ownTraveller.getUserName(), fellowTravellerUserId, fellowTravellerUserName, statusUpdateTime2);
 
         assertTrue(isCacheUpdated);
     }
@@ -71,7 +81,6 @@ public class FellowTravellersCacheTest {
     @Test
     public void addOrUpdate_InfoExistsInCache_SameInfoReceived_DoNotUpdateCache() {
 
-        String appUserName = "TestUser";
         Integer fellowTravellerUserId = 2;
         String fellowTravellerUserName = "FellowTraveller";
         LocalDateTime statusUpdateTime1 = LocalDateTime.now();
@@ -83,44 +92,43 @@ public class FellowTravellersCacheTest {
         dummyTravellerSecondInfo.setStatusUpdateTime(statusUpdateTime2);
 
         //Clear cache and verify its empty
-        FellowTravellersCache.getCacheInstance().clear();
-        assertTrue(FellowTravellersCache.getCacheInstance().getFellowTravellers(appUserName).isEmpty());
+        testObjectFellowTravellersCache.reset();
+        assertTrue(testObjectFellowTravellersCache.getFellowTravellers().isEmpty());
 
         //Send new information to cache
         fellowTravellers.put(fellowTravellerUserId, dummyTravellerFirstInfo);
-        FellowTravellersCache.getCacheInstance().addOrUpdate(fellowTravellers);
+        testObjectFellowTravellersCache.addOrUpdate(fellowTravellers);
 
         //Get info from cache and verify properties
-        VerifyCachedTravellerProperties(appUserName, fellowTravellerUserId, fellowTravellerUserName, statusUpdateTime1);
+        VerifyCachedTravellerProperties(ownTraveller.getUserName(), fellowTravellerUserId, fellowTravellerUserName, statusUpdateTime1);
 
         //Send same information to cache again
         fellowTravellers.replace(fellowTravellerUserId, dummyTravellerSecondInfo);
-        boolean isCacheUpdated = FellowTravellersCache.getCacheInstance().addOrUpdate(fellowTravellers);
+        boolean isCacheUpdated = testObjectFellowTravellersCache.addOrUpdate(fellowTravellers);
 
-        VerifyCachedTravellerProperties(appUserName, fellowTravellerUserId, fellowTravellerUserName, statusUpdateTime2);
+        VerifyCachedTravellerProperties(ownTraveller.getUserName(), fellowTravellerUserId, fellowTravellerUserName, statusUpdateTime2);
 
         assertFalse(isCacheUpdated);
     }
 
     @Test
-    public void clear_RemovesAllEntriesFromCache() {
+    public void reset_RemovesAllEntriesFromCache() {
 
-        FellowTravellersCache.getCacheInstance().clear();
+        testObjectFellowTravellersCache.reset();
 
         Integer fellowTravellerUserId = 1;
         String fellowTravellerUserName = "FellowTraveller";
-        String appUserName = "appUser";
 
         HashMap<Integer, TravellerInfo> fellowTravellers = new HashMap<>();
         fellowTravellers.put(fellowTravellerUserId, getDummyTraveller(fellowTravellerUserId, fellowTravellerUserName));
-        FellowTravellersCache.getCacheInstance().addOrUpdate(fellowTravellers);
+        testObjectFellowTravellersCache.addOrUpdate(fellowTravellers);
 
-        HashMap<Integer, TravellerInfo> cacheEntry = FellowTravellersCache.getCacheInstance().getFellowTravellers(appUserName);
+        HashMap<Integer, TravellerInfo> cacheEntry = testObjectFellowTravellersCache.getFellowTravellers();
         assertEquals(1, cacheEntry.size());
 
-        FellowTravellersCache.getCacheInstance().clear();
+        testObjectFellowTravellersCache.reset();
 
-        cacheEntry = FellowTravellersCache.getCacheInstance().getFellowTravellers(appUserName);
+        cacheEntry = testObjectFellowTravellersCache.getFellowTravellers();
         assertEquals(0, cacheEntry.size());
     }
 
@@ -128,7 +136,7 @@ public class FellowTravellersCacheTest {
     private TravellerInfo VerifyCachedTravellerProperties(String appUserName
             , Integer fellowTravellerUserId, String fellowTravellerUserName
             , LocalDateTime statusUpdateTime) {
-        HashMap<Integer, TravellerInfo> cacheEntry = FellowTravellersCache.getCacheInstance().getFellowTravellers(appUserName);
+        HashMap<Integer, TravellerInfo> cacheEntry = testObjectFellowTravellersCache.getFellowTravellers();
         assertEquals(1, cacheEntry.size());
         assertTrue(cacheEntry.containsKey(fellowTravellerUserId));
 

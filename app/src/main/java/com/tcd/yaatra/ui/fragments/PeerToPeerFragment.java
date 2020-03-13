@@ -51,6 +51,9 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
     @Inject
     TravellerInfo ownTravellerInfo;
 
+    @Inject
+    FellowTravellersCache fellowTravellersCache;
+
     private ArrayList<TravellerInfo> travellerInfos = new ArrayList<>();
     private Bundle bundle;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
@@ -79,7 +82,6 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
         layoutDataBinding.peerRecyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this.getActivity());
         layoutDataBinding.peerRecyclerView.setLayoutManager(layoutManager);
-        refreshRecyclerView();
         layoutDataBinding.startNavigation.setOnClickListener(view -> handleStartNavigationClick());
         layoutDataBinding.fabGoToStart.setOnClickListener(view -> handleGoToStartClick());
     }
@@ -100,11 +102,6 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
         backgroundTaskHandler = new Handler();
 
         layoutDataBinding.initializeProgressBar.setVisibility(View.VISIBLE);
-
-        travellerInfos.clear();
-        FellowTravellersCache.getCacheInstance().clear();
-        refreshRecyclerView();
-
         layoutDataBinding.startNavigation.hide();
         layoutDataBinding.fabGoToStart.hide();
         layoutDataBinding.gridLoader.setVisibility(View.INVISIBLE);
@@ -135,18 +132,16 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
 
                     layoutDataBinding.initializeProgressBar.setVisibility(View.GONE);
 
-                    peerCommunicator.initialize(fragmentContext, ownTravellerInfo);
+                    peerCommunicator.initialize(fragmentContext);
 
                     peerCommunicator.broadcastTravellers(TravellerStatus.SeekingFellowTraveller);
 
                     layoutDataBinding.gridLoader.setVisibility(View.VISIBLE);
-
-                    //test();
                 } else {
                     backgroundTaskHandler
                             .postDelayed(backgroundInitializer, 200);
                 }
-            }catch (Exception ex){
+            } catch (Exception ex) {
                 Log.e(TAG, "Error: " + ex.getMessage(), ex);
             }
         }
@@ -165,6 +160,8 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
         ownTravellerInfo.setRequestStartTime(now);
         ownTravellerInfo.setStatusUpdateTime(now);
         ownTravellerInfo.setInfoProvider(userInfo.getUsername());
+
+        processFellowTravellersInfo(fellowTravellersCache.getFellowTravellers());
 
         isUserInfoFetched = true;
     }
@@ -225,6 +222,9 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
     //region Click Handlers
 
     private void handleStartNavigationClick() {
+
+        fellowTravellersCache.stopNewInsert();
+
         Intent mapIntent = new Intent(this.getActivity(), RouteInfo.class);
 
         //rohan+chetan: Mocking multi destination start
@@ -270,29 +270,5 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
     private void refreshRecyclerView() {
         mAdapter = new PeerListAdapter(this.getActivity().getApplicationContext(), this.travellerInfos);
         layoutDataBinding.peerRecyclerView.setAdapter(mAdapter);
-    }
-
-    private void test(){
-
-        TravellerInfo info = new TravellerInfo();
-        info.setStatusUpdateTime(ownTravellerInfo.getStatusUpdateTime());
-        info.setStatus(ownTravellerInfo.getStatus());
-        info.setModeOfTravel(ownTravellerInfo.getModeOfTravel());
-        info.setRequestStartTime(ownTravellerInfo.getRequestStartTime());
-        info.setSourceLatitude(ownTravellerInfo.getSourceLatitude());
-        info.setSourceLongitude(ownTravellerInfo.getSourceLongitude());
-        info.setDestinationLatitude(ownTravellerInfo.getDestinationLatitude());
-        info.setDestinationLongitude(ownTravellerInfo.getDestinationLongitude());
-
-        HashMap<Integer, TravellerInfo> fellowTravellers = new HashMap<>();
-
-        for(int i=2; i<9; i++){
-            info.setUserId(i);
-            info.setUserName("JP");
-            fellowTravellers.put(i, info);
-        }
-
-        processFellowTravellersInfo(fellowTravellers);
-
     }
 }

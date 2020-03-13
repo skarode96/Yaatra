@@ -17,19 +17,22 @@ public class PeerCommunicator implements PeerListener {
     //region Private Variables
 
     private FellowTravellersSubscriberFragment parentFragment;
-    private TravellerInfo ownTravellerInfo;
     private boolean isInitialized = false;
+
+    @Inject
+    FellowTravellersCache fellowTravellersCache;
+
+    @Inject
+    TravellerInfo ownTravellerInfo;
 
     //endregion
 
     @Inject
     public PeerCommunicator(){}
 
-    public void initialize(FellowTravellersSubscriberFragment fragment, TravellerInfo travellerInfo) {
+    public void initialize(FellowTravellersSubscriberFragment fragment) {
 
         parentFragment = fragment;
-        ownTravellerInfo = travellerInfo;
-
         WiFiP2pFacade.getInstance().initialize(parentFragment.getActivity(), this);
 
         isInitialized = true;
@@ -54,11 +57,11 @@ public class PeerCommunicator implements PeerListener {
         HashMap<Integer, TravellerInfo> onlyPeerTravellers = new HashMap<>(fellowTravellers);
         onlyPeerTravellers.remove(ownTravellerInfo.getUserId());
 
-        boolean isCacheUpdated = FellowTravellersCache.getCacheInstance().addOrUpdate(onlyPeerTravellers);
+        boolean isCacheUpdated = fellowTravellersCache.addOrUpdate(onlyPeerTravellers);
 
         if (isCacheUpdated) {
 
-            parentFragment.processFellowTravellersInfo(FellowTravellersCache.getCacheInstance().getFellowTravellers(ownTravellerInfo.getUserName()));
+            parentFragment.processFellowTravellersInfo(fellowTravellersCache.getFellowTravellers());
 
             //Start advertising newly discovered/updated fellow travellers
             advertiseStatusAndDiscoverFellowTravellers();
@@ -67,7 +70,7 @@ public class PeerCommunicator implements PeerListener {
 
     private void advertiseStatusAndDiscoverFellowTravellers() {
 
-        HashMap<Integer, TravellerInfo> allTravellers = FellowTravellersCache.getCacheInstance().getFellowTravellers(SharedPreferenceUtils.getUserName());
+        HashMap<Integer, TravellerInfo> allTravellers = fellowTravellersCache.getFellowTravellers();
         allTravellers.put(ownTravellerInfo.getUserId(), ownTravellerInfo);
 
         List<Map<String, String>> recordsToBroadcast = P2pSerializerDeserializer.serializeToMap(allTravellers.values());

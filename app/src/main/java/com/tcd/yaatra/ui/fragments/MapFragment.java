@@ -45,6 +45,7 @@ import com.mapbox.mapboxsdk.offline.OfflineTilePyramidRegionDefinition;
 import com.mapbox.mapboxsdk.plugins.locationlayer.modes.CameraMode;
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.databinding.FragmentMapBinding;
+import com.tcd.yaatra.repository.models.FellowTravellersCache;
 import com.tcd.yaatra.ui.activities.MenuContainerActivity;
 import com.tcd.yaatra.repository.models.TravellerInfo;
 import com.tcd.yaatra.ui.viewmodels.MapActivityViewModel;
@@ -93,6 +94,9 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
 
     @Inject
     TravellerInfo ownTravellerInfo;
+
+    @Inject
+    FellowTravellersCache fellowTravellersCache;
 
     //SharedPreferences loginPreferences;
 
@@ -264,8 +268,8 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
 
         ownTravellerInfo.setModeOfTravel(modeOfTravel);
 
+        fellowTravellersCache.reset();
         PeerToPeerFragment peerToPeerFragment = new PeerToPeerFragment();
-
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, peerToPeerFragment).addToBackStack("mapFrag").commit();
     }
 
