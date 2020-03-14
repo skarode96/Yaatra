@@ -24,7 +24,7 @@
                 android:layout_columnWeight="1"
                 android:layout_column="0"
                 android:layout_marginEnd="5dp"
-                android:layout_gravity="right|center_vertical"
+                android:layout_gravity="end|center_vertical"
                 android:text="@string/searching_label"
                 android:textColor="#014C45"
                 android:textSize="18sp"
@@ -38,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
                 android:layout_column="1"
-                android:layout_gravity="left|center_vertical"
+                android:layout_gravity="start|center_vertical"
                 android:layout_marginStart="5dp"
                 app:alliance_distanceMultiplier="3"
                 app:alliance_dotsRadius="3dp"
@@ -54,15 +54,27 @@
             android:id="@+id/tvInstructions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="User Instructions"
+            android:layout_marginTop="50dp"
+            android:fontFamily="sans-serif-black"
             android:gravity="center_horizontal"
-            android:layout_marginTop="50dp"/>
+            android:textColor="#222222"
+            android:textSize="30sp" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/peer_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="80dp"/>
+            android:layout_marginTop="100dp"/>
+
+        <ImageView
+            android:id="@+id/ivSoloTravel"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/solo_travel"
+            android:layout_marginTop="100dp"
+            android:visibility="gone"
+            android:scaleType="fitXY"
+            android:contentDescription="@string/imagesolotravel"/>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/startNavigation"

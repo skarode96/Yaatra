@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,6 +37,7 @@ import com.tcd.yaatra.utils.SharedPreferenceUtils;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
 public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<FragmentPeerToPeerBinding> {
@@ -56,6 +58,13 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
 
     private ArrayList<TravellerInfo> travellerInfos = new ArrayList<>();
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    private static final String COUNTDOWN_FORMAT = "%02d:%02d";
+    private static final int SCAN_DURATION_IN_MILLISECONDS = 60000;
+    private static final int COUNTDOWN_INTERVAL_IN_MILLISECONDS  = 1000;
+    private static final String MEET_AT = "Let's Meet Others!";
+    private static final String WAIT_FOR_OTHERS = "Please wait for others!";
+    private static final String LISTENING_TO_FELLOW_TRAVELLERS = "Listening to Fellow Travellers";
+    private static final String ENJOY_YOUR_OWN_COMPANY = "Enjoy your own company!! :)";
     private boolean isLocationPermissionGranted = false;
     private boolean isUserInfoFetched = false;
     private static final String TAG = "PeerToPeerFragment";
@@ -134,6 +143,13 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
                     peerCommunicator.broadcastTravellers(TravellerStatus.SeekingFellowTraveller);
 
                     layoutDataBinding.gridLoader.setVisibility(View.VISIBLE);
+
+                    if(travellerInfos.size()>0){
+                        instructUser();
+                    }
+                    else {
+                        startCountdown();
+                    }
                 } else {
                     backgroundTaskHandler
                             .postDelayed(backgroundInitializer, 200);
@@ -161,6 +177,47 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
         processFellowTravellersInfo(fellowTravellersCache.getFellowTravellers());
 
         isUserInfoFetched = true;
+    }
+
+    private void startCountdown() {
+        new CountDownTimer(SCAN_DURATION_IN_MILLISECONDS, COUNTDOWN_INTERVAL_IN_MILLISECONDS) {
+
+            public void onTick(long millisUntilFinished) {
+                String formattedTimerText = String.format(COUNTDOWN_FORMAT,
+                        TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)%60,
+                        TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) % 60);
+
+                layoutDataBinding.tvInstructions.setText(formattedTimerText);
+            }
+
+            public void onFinish() {
+
+                fellowTravellersCache.stopNewInsert();
+
+                instructUser();
+            }
+        }.start();
+    }
+
+    private void instructUser() {
+        if(travellerInfos.size() > 0 && amIGroupOwner()){
+            layoutDataBinding.tvInstructions.setText(WAIT_FOR_OTHERS);
+            layoutDataBinding.tvSearching.setText(LISTENING_TO_FELLOW_TRAVELLERS);
+        }
+        else if(travellerInfos.size() > 0){
+            layoutDataBinding.tvInstructions.setText(MEET_AT);
+
+            if (travellerInfos.size() > 0) {
+                layoutDataBinding.startNavigation.show();
+            } else {
+                layoutDataBinding.startNavigation.hide();
+            }
+            layoutDataBinding.tvSearching.setText(LISTENING_TO_FELLOW_TRAVELLERS);
+        }
+        else {
+            layoutDataBinding.tvInstructions.setText(ENJOY_YOUR_OWN_COMPANY);
+            layoutDataBinding.ivSoloTravel.setVisibility(View.VISIBLE);
+        }
     }
 
     private void askLocationPermissionIfRequired() {
@@ -222,8 +279,6 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
 
         peerCommunicator.broadcastTravellers(TravellerStatus.TravellingToStartPoint);
 
-        fellowTravellersCache.stopNewInsert();
-
         Intent mapIntent = new Intent(this.getActivity(), RouteInfoFragment.class);
 
         //rohan+chetan: Mocking multi destination start
@@ -262,16 +317,15 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
         ArrayList<TravellerInfo> peerTravellerArrayList = new ArrayList<>(fellowTravellers.values());
         MapUtils.filterFellowTravellers(ownTravellerInfo, peerTravellerArrayList).forEach(travellerInfo -> this.travellerInfos.add(travellerInfo));
         refreshRecyclerView();
-
-        if (travellerInfos.size() > 0) {
-            layoutDataBinding.startNavigation.show();
-        } else {
-            layoutDataBinding.startNavigation.hide();
-        }
     }
 
     private void refreshRecyclerView() {
         mAdapter = new PeerListAdapter(this.getActivity().getApplicationContext(), this.travellerInfos);
         layoutDataBinding.peerRecyclerView.setAdapter(mAdapter);
+    }
+
+    private boolean amIGroupOwner(){
+        //TODO Logic to decide group owner
+        return false;
     }
 }
