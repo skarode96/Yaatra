@@ -2,7 +2,8 @@
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -66,15 +67,24 @@
             android:layout_height="match_parent"
             android:layout_marginTop="100dp"/>
 
-        <ImageView
-            android:id="@+id/ivSoloTravel"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cvSoloTravel"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:srcCompat="@drawable/solo_travel"
+            card_view:cardBackgroundColor="@color/white"
             android:layout_marginTop="100dp"
-            android:visibility="gone"
-            android:scaleType="fitXY"
-            android:contentDescription="@string/imagesolotravel"/>
+            card_view:cardCornerRadius="15dp"
+            card_view:cardElevation="10dp"
+            card_view:cardUseCompatPadding="true"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:srcCompat="@drawable/solo_travel"
+                android:scaleType="fitXY"
+                android:contentDescription="@string/imagesolotravel"/>
+        </androidx.cardview.widget.CardView>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/startNavigation"
