@@ -1,4 +1,4 @@
-package com.tcd.yaatra.ui.activities;
+package com.tcd.yaatra.ui.fragments;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -9,12 +9,16 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.PersistableBundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
+import com.google.gson.Gson;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.api.directions.v5.models.DirectionsResponse;
@@ -48,8 +52,9 @@ import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
 import com.mapbox.services.android.navigation.v5.routeprogress.ProgressChangeListener;
 import com.mapbox.services.android.navigation.v5.routeprogress.RouteProgress;
 import com.tcd.yaatra.R;
-import com.tcd.yaatra.databinding.ActivityRouteinfoBinding;
+import com.tcd.yaatra.databinding.FragmentRouteInfoBinding;
 import com.tcd.yaatra.repository.models.TravellerInfo;
+import com.tcd.yaatra.ui.activities.UserRatingActivity;
 import com.tcd.yaatra.ui.viewmodels.RouteInfoViewModel;
 
 import java.util.ArrayList;
@@ -68,7 +73,7 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconOffset;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconSize;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineColor;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineWidth;
-public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements OnMapReadyCallback, PermissionsListener, MapboxMap.OnMapClickListener, OnNavigationReadyCallback, NavigationListener, RouteListener, ProgressChangeListener{
+public class RouteInfoFragment extends BaseFragment<FragmentRouteInfoBinding> implements OnMapReadyCallback, PermissionsListener, MapboxMap.OnMapClickListener, OnNavigationReadyCallback, NavigationListener, RouteListener, ProgressChangeListener{
 
     private MapView mapView;
     private MapboxMap map;
@@ -89,13 +94,19 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
     private static final String TEAL_COLOR = "#23D2BE";
     private static final float POLYLINE_WIDTH = 5;
     private List<Point> stops = new ArrayList<>();
-    private ArrayList<TravellerInfo> users = new ArrayList<>();
+    private TravellerInfo[] users;
+    View view;
 
     @Inject
     RouteInfoViewModel RouteInfoViewModel;
 
+    @Inject
+    TravellerInfo ownTravellerInfo;
+
     @Override
-    protected int getLayoutResourceId() { return R.layout.activity_routeinfo; }
+    public int getFragmentResourceId() {
+        return R.layout.fragment_route_info;
+    }
 
     @Override
     protected void initEventHandlers() {
@@ -105,23 +116,26 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
     }
 
     private void handleOnendNavigationClick() {
-        Intent userrate = new Intent(this, UserRatingActivity.class);
+        Intent userrate = new Intent(this.getActivity(), UserRatingActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putSerializable("UserList", users);
+        Gson gson = new Gson();
+        bundle.putString("UserList", gson.toJson(users));
         userrate.putExtras(bundle);
         startActivity(userrate);
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        Mapbox.getInstance(this,getString(R.string.access_token));
-        super.onCreate(savedInstanceState);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Mapbox.getInstance(this.getActivity(),getString(R.string.access_token));
+        view = super.onCreateView(inflater, container, savedInstanceState);
         mapView = layoutDataBinding.mapView;
         startButton = layoutDataBinding.startButton;
         endTrip = layoutDataBinding.endNavigation;
-        mapView = findViewById(R.id.mapView);
+        mapView = layoutDataBinding.mapView;
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
+
+        return view;
     }
 
     private void handleOnStartButtonClick() {
@@ -131,7 +145,7 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
                 .shouldSimulateRoute(true)
                 .build();
 
-        NavigationLauncher.startNavigation(RouteInfo.this,options);
+        NavigationLauncher.startNavigation(this.getActivity(),options);
         startButton.setVisibility(View.GONE);
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -147,11 +161,11 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
         this.map = mapboxMap;
 //        map.setMinZoomPreference(15);
 //        map.setStyle(Style.MAPBOX_STREETS);
-        Bundle bundle = getIntent().getExtras();
+
         mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
             @Override
             public void onStyleLoaded(@NonNull Style style) {
-                if(bundle.getBoolean("multiDestination")) {
+                if(getArguments().getBoolean("multiDestination")) {
                     initMarkerIconSymbolLayer(style);
                     initOptimizedRouteLineLayer(style);
                 }
@@ -167,8 +181,8 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
                 this.getResources(), R.drawable.marker_travel));
 
         // Add the source to the map
-        Bundle bundle = getIntent().getExtras();
-        ArrayList<LatLng> locations  = bundle.getParcelableArrayList("destLocations");
+
+        ArrayList<LatLng> locations  = getArguments().getParcelableArrayList("destLocations");
         addFirstStopToStopsList(locations.get(0));
         loadedMapStyle.addSource(new GeoJsonSource(ICON_GEOJSON_SOURCE_ID,
                 Feature.fromGeometry(Point.fromLngLat(origin.longitude(), origin.latitude()))));
@@ -211,16 +225,16 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
     @SuppressLint("WrongConstant")
     private void enableLocation(Style loadedMapStyle){
 
-        if(PermissionsManager.areLocationPermissionsGranted(this)){
-            LocationComponentOptions locationComponentOptions = LocationComponentOptions.builder(this).build();
+        if(PermissionsManager.areLocationPermissionsGranted(this.getActivity())){
+            LocationComponentOptions locationComponentOptions = LocationComponentOptions.builder(this.getActivity()).build();
             locationComponent = map.getLocationComponent();
-            locationComponent.activateLocationComponent(LocationComponentActivationOptions.builder(this, map.getStyle()).build());
+            locationComponent.activateLocationComponent(LocationComponentActivationOptions.builder(this.getActivity(), map.getStyle()).build());
             locationComponent.setLocationComponentEnabled(true);
             locationComponent.setCameraMode(CameraMode.TRACKING);
             showRoute();
         } else{
             permissionsManager = new PermissionsManager(this);
-            permissionsManager.requestLocationPermissions(this);
+            permissionsManager.requestLocationPermissions(this.getActivity());
         }
     }
 
@@ -230,12 +244,13 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
 
     public void showRoute() {
 
-        Bundle bundle = getIntent().getExtras();
-        double latitude = bundle.getDouble("destinationLatitude");
-        double longitude = bundle.getDouble("destinationLongitude");
-        String modeOfTravel =  bundle.getString("peerModeOfTravel");
+        Bundle bundle = getArguments();
+        double latitude = ownTravellerInfo.getDestinationLatitude();
+        double longitude = ownTravellerInfo.getDestinationLongitude();
+        String modeOfTravel =  ownTravellerInfo.getModeOfTravel();
         Boolean multiDestination = bundle.getBoolean("multiDestination");
-        users = (ArrayList<TravellerInfo>) bundle.getSerializable("UserList");
+        Gson gson = new Gson();
+        users = gson.fromJson(bundle.getString("UserList"), TravellerInfo[].class);
         if(multiDestination){
             ArrayList<LatLng> locations  = bundle.getParcelableArrayList("destLocations");
             Style style = map.getStyle();
@@ -260,7 +275,7 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
         stops.add(Point.fromLngLat(point.getLongitude(), point.getLatitude()));
     }
     private void getRoute(Point origin, Point destination, String modeOfTravel){
-        NavigationRoute.builder(this)
+        NavigationRoute.builder(this.getActivity())
                 .accessToken(Mapbox.getAccessToken())
                 .origin(origin)
                 .destination(destination)
@@ -297,7 +312,7 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
 
     private void getOptimizedRoute(String modeOfTravel){
 
-        NavigationRoute.Builder builder = NavigationRoute.builder(this)
+        NavigationRoute.Builder builder = NavigationRoute.builder(this.getActivity())
                 .accessToken(Mapbox.getAccessToken())
                 .origin(origin)
                 .destination(stops.get(stops.size()-1))
@@ -340,7 +355,7 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
 
     @Override
     public void onExplanationNeeded(List<String> permissionsToExplain) {
-        Toast.makeText(this,"Location needed to route",Toast.LENGTH_SHORT).show();
+        Toast.makeText(this.getActivity(),"Location needed to route",Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -350,8 +365,8 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
         }
         else
         {
-            Toast.makeText(this,"Permissions not granted",Toast.LENGTH_SHORT).show();
-            finish();
+            Toast.makeText(this.getActivity(),"Permissions not granted",Toast.LENGTH_SHORT).show();
+            //finish();
         }
     }
 
@@ -361,34 +376,34 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
     }
 
     @Override
-    protected void onStart() {
+    public void onStart() {
         super.onStart();
         mapView.onStart();
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         mapView.onResume();
     }
 
     @Override
-    protected void onPause() {
+    public void onPause() {
         super.onPause();
         mapView.onPause();
     }
 
     @Override
-    protected void onStop() {
+    public void onStop() {
         super.onStop();
         mapView.onStop();
     }
 
-    @Override
+    /*@Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
         super.onSaveInstanceState(outState, outPersistentState);
         mapView.onSaveInstanceState(outState);
-    }
+    }*/
 
     @Override
     public void onLowMemory() {
@@ -397,7 +412,7 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
         mapView.onDestroy();
     }
@@ -417,14 +432,14 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
     @Override
     public void onCancelNavigation() {
         // Navigation canceled, finish the activity
-        Toast.makeText(this,"End of trip!",Toast.LENGTH_SHORT).show();
+        Toast.makeText(this.getActivity(),"End of trip!",Toast.LENGTH_SHORT).show();
 
     }
 
     @Override
     public void onNavigationFinished() {
         // Intentionally empty
-        Toast.makeText(this,"End of trip!",Toast.LENGTH_SHORT).show();
+        Toast.makeText(this.getActivity(),"End of trip!",Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -455,7 +470,7 @@ public class RouteInfo extends BaseActivity<ActivityRouteinfoBinding> implements
     @Override
     public void onArrival() {
         if (destinationPosition != null) {
-            Toast.makeText(this, "You have arrived!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this.getActivity(), "You have arrived!", Toast.LENGTH_SHORT).show();
         }
     }
 

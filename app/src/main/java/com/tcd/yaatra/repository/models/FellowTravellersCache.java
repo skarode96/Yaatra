@@ -1,29 +1,29 @@
 package com.tcd.yaatra.repository.models;
 
+import org.jetbrains.annotations.TestOnly;
 import java.util.HashMap;
 import java.util.Iterator;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
+@Singleton
 public class FellowTravellersCache {
 
-    //region Singleton implementation
+    private boolean isNewInsertStopped = false;
 
-    private static final FellowTravellersCache _cacheInstance = new FellowTravellersCache();
+    @Inject
+    TravellerInfo ownTravellerInfo;
 
-    private FellowTravellersCache(){}
-
-    public static FellowTravellersCache getCacheInstance(){
-        return _cacheInstance;
-    }
-
-    //endregion
+    @Inject
+    public FellowTravellersCache(){}
 
     private final HashMap<Integer, TravellerInfo> fellowTravellers = new HashMap<>();
 
-    public HashMap<Integer, TravellerInfo> getFellowTravellers(String infoProviderUserName){
+    public HashMap<Integer, TravellerInfo> getFellowTravellers(){
         HashMap<Integer, TravellerInfo> clonedFellowTravellers = new HashMap<>(fellowTravellers);
 
         clonedFellowTravellers.forEach((key, info)->{
-            info.setInfoProvider(infoProviderUserName);
+            info.setInfoProvider(ownTravellerInfo.getUserName());
         });
 
         return clonedFellowTravellers;
@@ -44,8 +44,13 @@ public class FellowTravellersCache {
         return isCacheUpdated;
     }
 
-    public void clear(){
+    public void stopNewInsert(){
+        isNewInsertStopped = true;
+    }
+
+    public void reset(){
         fellowTravellers.clear();
+        isNewInsertStopped = false;
     }
 
     private boolean addOrUpdateCache(Integer userIdKey, TravellerInfo receivedInfo) {
@@ -60,7 +65,8 @@ public class FellowTravellersCache {
             isCacheUpdated = copyChangesIfAny(receivedInfo, existingCachedInfo);
         }
         //Fellow traveller not present in cache - save the information
-        else {
+        //Only if new information is to be recorded.
+        else if(!isNewInsertStopped) {
             fellowTravellers.put(userIdKey, receivedInfo);
             isCacheUpdated = true;
         }
@@ -80,5 +86,10 @@ public class FellowTravellersCache {
         }
 
         return false;
+    }
+
+    @TestOnly
+    void setOwnTravellerInfo(TravellerInfo info){
+        ownTravellerInfo = info;
     }
 }

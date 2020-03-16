@@ -3,7 +3,6 @@ package com.tcd.yaatra.WifiDirectP2PHelper;
 import com.tcd.yaatra.repository.models.FellowTravellersCache;
 import com.tcd.yaatra.repository.models.TravellerInfo;
 import com.tcd.yaatra.repository.models.TravellerStatus;
-import com.tcd.yaatra.utils.SharedPreferenceUtils;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -17,19 +16,22 @@ public class PeerCommunicator implements PeerListener {
     //region Private Variables
 
     private FellowTravellersSubscriberFragment parentFragment;
-    private TravellerInfo ownTravellerInfo;
     private boolean isInitialized = false;
+
+    @Inject
+    FellowTravellersCache fellowTravellersCache;
+
+    @Inject
+    TravellerInfo ownTravellerInfo;
 
     //endregion
 
     @Inject
     public PeerCommunicator(){}
 
-    public void initialize(FellowTravellersSubscriberFragment fragment, TravellerInfo travellerInfo) {
+    public void initialize(FellowTravellersSubscriberFragment fragment) {
 
         parentFragment = fragment;
-        ownTravellerInfo = travellerInfo;
-
         WiFiP2pFacade.getInstance().initialize(parentFragment.getActivity(), this);
 
         isInitialized = true;
@@ -54,11 +56,11 @@ public class PeerCommunicator implements PeerListener {
         HashMap<Integer, TravellerInfo> onlyPeerTravellers = new HashMap<>(fellowTravellers);
         onlyPeerTravellers.remove(ownTravellerInfo.getUserId());
 
-        boolean isCacheUpdated = FellowTravellersCache.getCacheInstance().addOrUpdate(onlyPeerTravellers);
+        boolean isCacheUpdated = fellowTravellersCache.addOrUpdate(onlyPeerTravellers);
 
         if (isCacheUpdated) {
 
-            parentFragment.processFellowTravellersInfo(FellowTravellersCache.getCacheInstance().getFellowTravellers(ownTravellerInfo.getUserName()));
+            parentFragment.processFellowTravellersInfo(fellowTravellersCache.getFellowTravellers());
 
             //Start advertising newly discovered/updated fellow travellers
             advertiseStatusAndDiscoverFellowTravellers();
@@ -67,7 +69,7 @@ public class PeerCommunicator implements PeerListener {
 
     private void advertiseStatusAndDiscoverFellowTravellers() {
 
-        HashMap<Integer, TravellerInfo> allTravellers = FellowTravellersCache.getCacheInstance().getFellowTravellers(SharedPreferenceUtils.getUserName());
+        HashMap<Integer, TravellerInfo> allTravellers = fellowTravellersCache.getFellowTravellers();
         allTravellers.put(ownTravellerInfo.getUserId(), ownTravellerInfo);
 
         List<Map<String, String>> recordsToBroadcast = P2pSerializerDeserializer.serializeToMap(allTravellers.values());
@@ -86,7 +88,6 @@ public class PeerCommunicator implements PeerListener {
     public void cleanup() {
         if(isInitialized) {
             WiFiP2pFacade.getInstance().cleanup(true);
-            ownTravellerInfo = null;
 
             isInitialized = false;
         }
