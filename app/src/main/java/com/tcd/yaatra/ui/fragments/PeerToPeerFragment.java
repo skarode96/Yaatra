@@ -62,7 +62,7 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
     private static final int SCAN_DURATION_IN_MILLISECONDS = 60000;
     private static final int COUNTDOWN_INTERVAL_IN_MILLISECONDS  = 1000;
     private static final String MEET_AT = "Let's Meet Others!";
-    private static final String WAIT_FOR_OTHERS = "Please wait for others!";
+    private static final String WAIT_FOR_OTHERS = "You are the leader. Please wait for others!";
     private static final String LISTENING_TO_FELLOW_TRAVELLERS = "Listening to Fellow Travellers";
     private static final String ENJOY_YOUR_OWN_COMPANY = "Enjoy your own company!! :)";
     private boolean isLocationPermissionGranted = false;
@@ -142,14 +142,15 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
 
                     peerCommunicator.broadcastTravellers(TravellerStatus.SeekingFellowTraveller);
 
-                    layoutDataBinding.gridLoader.setVisibility(View.VISIBLE);
-
                     if(travellerInfos.size()>0){
                         instructUser();
                     }
                     else {
+                        layoutDataBinding.tvSearching.setText(getResources().getString(R.string.searching_label));
                         startCountdown();
                     }
+
+                    layoutDataBinding.gridLoader.setVisibility(View.VISIBLE);
                 } else {
                     backgroundTaskHandler
                             .postDelayed(backgroundInitializer, 200);
@@ -201,6 +202,7 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
 
     private void instructUser() {
         if(travellerInfos.size() > 0 && amIGroupOwner()){
+            layoutDataBinding.tvInstructions.setTextSize(20);
             layoutDataBinding.tvInstructions.setText(WAIT_FOR_OTHERS);
             layoutDataBinding.tvSearching.setText(LISTENING_TO_FELLOW_TRAVELLERS);
         }
@@ -325,7 +327,16 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
     }
 
     private boolean amIGroupOwner(){
-        //TODO Logic to decide group owner
-        return false;
+
+        final LocalDateTime[] leastFellowTravellerRequestStartTime = {LocalDateTime.MAX};
+
+        travellerInfos.forEach((info)->{
+
+            if(info.getRequestStartTime().isBefore(leastFellowTravellerRequestStartTime[0])){
+                leastFellowTravellerRequestStartTime[0] = info.getRequestStartTime();
+            }
+        });
+
+        return ownTravellerInfo.getRequestStartTime().isBefore(leastFellowTravellerRequestStartTime[0]);
     }
 }

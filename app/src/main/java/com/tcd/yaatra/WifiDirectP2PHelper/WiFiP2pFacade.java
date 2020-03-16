@@ -165,40 +165,39 @@ public class WiFiP2pFacade implements WifiP2pManager.ConnectionInfoListener {
         @Override
         public void run() {
 
-            if(!isRunning){
-                return;
+            if(wifiP2pManager != null) {
+
+                wifiP2pManager.stopPeerDiscovery(wifiP2pChannel, new WifiP2pManager.ActionListener() {
+                    @Override
+                    public void onSuccess() {
+                        Log.d(TAG, "Stopped peer discovery");
+
+                        wifiP2pManager.discoverPeers(wifiP2pChannel, new WifiP2pManager.ActionListener() {
+                            @Override
+                            public void onSuccess() {
+
+                                Log.d(TAG, "Started peer discovery");
+
+                                addServiceRequestAndDiscoverServices();
+                            }
+
+                            @Override
+                            public void onFailure(int error) {
+
+                                Log.d(TAG, "Failed to start peer discovery, error: " + error);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onFailure(int reason) {
+                        Log.d(TAG, "Failed to stop peer discovery, reason: " + reason);
+                    }
+                });
+
+                serviceBroadcastingHandler
+                        .postDelayed(mServiceBroadcastingRunnable, getRandomServiceBroadcastingInterval());
             }
-
-            wifiP2pManager.stopPeerDiscovery(wifiP2pChannel, new WifiP2pManager.ActionListener() {
-                @Override
-                public void onSuccess() {
-                    Log.d(TAG, "Stopped peer discovery");
-
-                    wifiP2pManager.discoverPeers(wifiP2pChannel, new WifiP2pManager.ActionListener() {
-                        @Override
-                        public void onSuccess() {
-
-                            Log.d(TAG, "Started peer discovery");
-
-                            addServiceRequestAndDiscoverServices();
-                        }
-
-                        @Override
-                        public void onFailure(int error) {
-
-                            Log.d(TAG, "Failed to start peer discovery, error: " + error);
-                        }
-                    });
-                }
-
-                @Override
-                public void onFailure(int reason) {
-                    Log.d(TAG, "Failed to stop peer discovery, reason: " + reason);
-                }
-            });
-
-            serviceBroadcastingHandler
-                    .postDelayed(mServiceBroadcastingRunnable, getRandomServiceBroadcastingInterval());
         }
     };
 
@@ -276,7 +275,7 @@ public class WiFiP2pFacade implements WifiP2pManager.ConnectionInfoListener {
     public void cleanup(boolean isDestroy) {
 
         if (isRunning) {
-            serviceBroadcastingHandler.removeCallbacksAndMessages(null);
+            serviceBroadcastingHandler.removeCallbacksAndMessages(mServiceBroadcastingRunnable);
             serviceBroadcastingHandler = new Handler();
         }
 
