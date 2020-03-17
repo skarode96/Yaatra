@@ -48,6 +48,11 @@ public class MenuContainerActivity extends BaseActivity<ActivityMenuBinding> imp
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         ActionBarDrawerToggle toggle = initActionBarDrawer();
         //if (savedInstanceState == null) {
         getSupportFragmentManager().beginTransaction().replace(layoutDataBinding.fragmentContainer.getId(), new MapFragment()).commit();
@@ -65,11 +70,6 @@ public class MenuContainerActivity extends BaseActivity<ActivityMenuBinding> imp
             tv1.setText(response.getUsername());
             imgvw.setImageResource(response.getGender().equals(Gender.MALE) ? R.drawable.guy : R.drawable.girl);
         });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 
     @Override
