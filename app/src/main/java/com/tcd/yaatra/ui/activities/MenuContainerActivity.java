@@ -49,11 +49,11 @@ public class MenuContainerActivity extends BaseActivity<ActivityMenuBinding> imp
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+        //To solve double time rendering issue of drawer image and username
+//    @Override
+//    protected void onResume() {
+        //super.onResume();
         ActionBarDrawerToggle toggle = initActionBarDrawer();
         //if (savedInstanceState == null) {
         getSupportFragmentManager().beginTransaction().replace(layoutDataBinding.fragmentContainer.getId(), new MapFragment()).commit();
@@ -65,14 +65,19 @@ public class MenuContainerActivity extends BaseActivity<ActivityMenuBinding> imp
         View headerView = navigationView.inflateHeaderView(R.layout.nav_header);
 
         //reference to views
-        ImageView imgvw = (ImageView) headerView.findViewById(R.id.headerImage);
-        TextView tv1 = (TextView) headerView.findViewById(R.id.headerUsername);
-        userInfoRepository.getUserProfile(SharedPreferenceUtils.getUserName()).observe(this, response -> {
-            tv1.setText(response.getUsername());
-            imgvw.setImageResource(response.getGender().equals(Gender.MALE) ? R.drawable.guy : R.drawable.girl);
-        });
-    }
+        ImageView profileImage = (ImageView) headerView.findViewById(R.id.profile_image);
+        TextView userName = (TextView) headerView.findViewById(R.id.profile_username);
+        if(SharedPreferenceUtils.getUserName() != null) {
+            userInfoRepository.getUserProfile(SharedPreferenceUtils.getUserName()).observe(this, response -> {
+                if(response != null) {
+                    userName.setText(response.getUsername());
+                    profileImage.setImageResource(response.getGender().equals(Gender.MALE) ? R.drawable.guy : R.drawable.girl);
+                }
+            });
+        }
+//    }
 
+    }
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
 

@@ -65,13 +65,13 @@ public class UserRepository {
                 switch (response.code()) {
                     case 201: registerResponseLiveData.postValue(AsyncData.getSuccessState(response.body()));break;
                     case 400: registerResponseLiveData.postValue(AsyncData.getFailureState(new RegisterResponse("Incorrect data, Either email exists or username exists or password did not match", "Error")));break;
-                    default: registerResponseLiveData.postValue(AsyncData.getFailureState(null));
+                    default: registerResponseLiveData.postValue(AsyncData.getFailureState(new RegisterResponse("Fatal Error", "Error")));
                 }
             }
 
             @Override
             public void onFailure(Call<RegisterResponse> call, Throwable t) {
-                registerResponseLiveData.postValue(AsyncData.getFailureState(null));
+                registerResponseLiveData.postValue(AsyncData.getFailureState(new RegisterResponse("Fatal Error", "Error")));
             }
         });
 
