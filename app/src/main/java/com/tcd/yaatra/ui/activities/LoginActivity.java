@@ -1,15 +1,20 @@
 package com.tcd.yaatra.ui.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.databinding.ActivityLoginBinding;
@@ -18,11 +23,13 @@ import com.tcd.yaatra.repository.UserInfoRepository;
 import com.tcd.yaatra.ui.viewmodels.LoginActivityViewModel;
 import com.tcd.yaatra.utils.Constants;
 import com.tcd.yaatra.utils.SharedPreferenceUtils;
+
 import org.jetbrains.annotations.TestOnly;
 import javax.inject.Inject;
 
 public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
 
+    private static final String TAG = "LoginActivity.class";
     @Inject
     LoginActivityViewModel loginActivityViewModel;
     SharedPreferences loginPreferences;
@@ -98,6 +105,15 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
 
                             Intent myIntent = new Intent(LoginActivity.this, MenuContainerActivity.class);
                             startActivity(myIntent);
+
+//                          Permissions for offline maps
+                            String sPermission = android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+                            if (!checkPermission(sPermission, this))
+                            {
+                                String sPermission2 = android.Manifest.permission.ACCESS_FINE_LOCATION;
+                                requestPermission(new String[]{sPermission, sPermission2});
+                            }
+
                             finish();
                             break;
 
@@ -107,6 +123,30 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
                             break;
                         }
                     });
+        }
+    }
+
+    private void requestPermission(String[] sPermission){
+        if(this != null)
+            ActivityCompat.requestPermissions(this, sPermission, 1);
+    }
+
+    private static boolean checkPermission(String sPermission, Activity activity) {
+        if (ActivityCompat.checkSelfPermission(activity, sPermission)
+                == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if(grantResults.length >= 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            finish();
+        }
+        else {
+            Log.d(TAG, "onRequestPermissionsResult: No access");
         }
     }
 

@@ -218,7 +218,7 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
         }
         else {
             layoutDataBinding.tvInstructions.setText(ENJOY_YOUR_OWN_COMPANY);
-            layoutDataBinding.cvSoloTravel.setVisibility(View.VISIBLE);
+//            layoutDataBinding.cvSoloTravel.setVisibility(View.VISIBLE);
         }
     }
 

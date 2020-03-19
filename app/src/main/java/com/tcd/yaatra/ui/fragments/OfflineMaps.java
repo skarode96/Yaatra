@@ -21,44 +21,32 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 
 import android.os.Environment;
 import android.provider.Settings;
-import android.telephony.PhoneStateListener;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.graphhopper.GHRequest;
 import com.graphhopper.GHResponse;
 import com.graphhopper.GraphHopper;
 import com.graphhopper.PathWrapper;
-import com.graphhopper.util.Constants;
 import com.graphhopper.util.Parameters;
 import com.graphhopper.util.PointList;
 import com.graphhopper.util.StopWatch;
-import com.mapbox.android.core.permissions.PermissionsManager;
+import com.graphhopper.util.shapes.GHPoint;
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.databinding.FragmentOfflineMapsBinding;
-import com.tcd.yaatra.databinding.FragmentSettingsBinding;
-import com.tcd.yaatra.utils.GHAsyncTask;
-import com.tcd.yaatra.utils.KalmanLocationManager;
-import com.tcd.yaatra.utils.MapHandlerListener;
+import com.tcd.yaatra.utils.offlinemaps.GHAsyncTask;
+import com.tcd.yaatra.utils.offlinemaps.KalmanLocationManager;
 
 import org.oscim.android.MapView;
 import org.oscim.android.canvas.AndroidGraphics;
 import org.oscim.backend.canvas.Bitmap;
 import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
-import org.oscim.event.Gesture;
-import org.oscim.event.GestureListener;
-import org.oscim.event.MotionEvent;
-import org.oscim.layers.Layer;
 import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
 import org.oscim.layers.marker.MarkerSymbol;
@@ -96,7 +84,6 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
     private LocationManager locationManager;
     private KalmanLocationManager kalmanLocationManager;
     private MapView mapView;
-    private MapHandlerListener mapHandlerListener;
     MapPosition tmpPos = new MapPosition();
     private boolean needLocation = false;
     private MapFileTileSource tileSource;
@@ -112,7 +99,6 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
-//        TextView sampleText = (TextView) this.layoutDataBinding.sampleText;
         mapView = (MapView) this.layoutDataBinding.mapview;
 
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
@@ -125,23 +111,14 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
             public void onReceive(final Context context, Intent intent) {
 
                 if(intent.getAction().equals(DownloadManager.ACTION_DOWNLOAD_COMPLETE)){
-
                     unZipFiles();
-//                    sampleText.setText("Downloading and unzipping completed");
+                    initMap();
                 }
 
             }
         };
 
         File apkStorage = null;
-
-
-        String sPermission = android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
-        if (!checkPermission(sPermission, getActivity()))
-        {
-            String sPermission2 = android.Manifest.permission.ACCESS_FINE_LOCATION;
-            requestPermission(new String[]{sPermission, sPermission2});
-        }
 
         DownloadManager dm = (DownloadManager) getActivity().getSystemService(getContext().DOWNLOAD_SERVICE);
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse("http://vsrv15044.customer.xenway.de/maps/maps/2019-10/europe_ireland-and-northern-ireland.ghz"));
@@ -182,22 +159,47 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
         }
         else if (!zipFile.exists()) {
             unZipFiles();
-//            sampleText.setText("Downloading and unzipping completed");
+            initMap();
+        }
+        else {
+            initMap();
         }
 
-//        mapView = new MapView(getContext());
+        return view;
+
+    }
+
+    public void initMap() {
         mapView.setClickable(true);
+        File apkStorage = new File(
+                Environment.getExternalStorageDirectory() + "/"
+                        + "Yaatra Downloads");
+        File zipFile = new File(apkStorage, "ireland_map-gh");
         loadMap(zipFile, this);
         checkGpsAvailability();
         ensureLastLocationInit();
         updateCurrentLocation(mLastLocation);
 
-        calcPath(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 53.280355, -6.214713, getActivity());
+        List<GHPoint> points = new ArrayList<>();
+        points.add(new GHPoint(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+        points.add(new GHPoint(53.280355, -6.214713));
+        points.add(new GHPoint(53.33999864, -6.25499898));
+
+        calcPath(points, getActivity());
         GeoPoint destLatLong = new GeoPoint(53.280355, -6.214713);
+        GeoPoint dest2LatLong = new GeoPoint(53.33999864, -6.25499898);
         setCustomPoint(getActivity(), destLatLong, destIcon);
+        setCustomPoint(getActivity(), dest2LatLong, destIcon);
+    }
 
-        return view;
-
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if(grantResults.length >= 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            getActivity().finish();
+        }
+        else {
+            Log.d(TAG, "onRequestPermissionsResult: No access");
+        }
     }
 
     private void updateCurrentLocation(Location location) {
@@ -211,22 +213,13 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
 
             centerPointOnMap(
                     mcLatLong, 0, 0, 0);
-//            if (Tracking.getTracking(getApplicationContext()).isTracking()) {
-//                MapHandler.getMapHandler().addTrackPoint(this, mcLatLong);
-//                Tracking.getTracking(getApplicationContext()).addPoint(mCurrentLocation, mapActions.getAppSettings());
-//            }
-//            if (NaviEngine.getNaviEngine().isNavigating())
-//            {
-//                NaviEngine.getNaviEngine().updatePosition(this, mCurrentLocation);
-//            }
             setCustomPoint(getActivity(), mcLatLong, customIcon);
         }
     }
 
     public void setCustomPoint(Activity activity, GeoPoint p, int icon)
     {
-        if (customLayer==null) { return; } // Not loaded yet.
-//        customLayer.removeAllItems();
+        if (customLayer==null) { return; }
         if (p!=null)
         {
             customLayer.addItem(createMarkerItem(activity, p, icon, 0.5f, 0.5f));
@@ -235,7 +228,6 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
     }
 
     private MarkerItem createMarkerItem(Activity activity, GeoPoint p, int resource, float offsetX, float offsetY) {
-//      Drawable drawable = activity.getDrawable(resource); // Since API21
         Drawable drawable = ContextCompat.getDrawable(activity, resource);
         Bitmap bitmap = AndroidGraphics.drawableToBitmap(drawable);
         MarkerSymbol markerSymbol = new MarkerSymbol(bitmap, offsetX, offsetY);
@@ -292,10 +284,6 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
 
     private void loadMap(File path, OfflineMaps activity) {
 
-        // Map events receiver
-//        mapView.map().layers().add(new MapEventsReceiver(mapView.map()));
-
-        // Map file source
         tileSource = new MapFileTileSource();
         tileSource.setMapFile(new File(path,  "europe_ireland-and-northern-ireland.map").getAbsolutePath());
         VectorTileLayer l = mapView.map().setBaseMap(tileSource);
@@ -303,34 +291,25 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
         mapView.map().layers().add(new BuildingLayer(mapView.map(), l));
         mapView.map().layers().add(new LabelLayer(mapView.map(), l));
 
-        // Markers layer
         itemizedLayer = new ItemizedLayer<>(mapView.map(), (MarkerSymbol) null);
         mapView.map().layers().add(itemizedLayer);
         customLayer = new ItemizedLayer<>(mapView.map(), (MarkerSymbol) null);
         mapView.map().layers().add(customLayer);
 
-        // Map position
         GeoPoint mapCenter = tileSource.getMapInfo().boundingBox.getCenterPoint();
         mapView.map().setMapPosition(mapCenter.getLatitude(), mapCenter.getLongitude(), 1 << 12);
-
-//        ViewGroup.LayoutParams params =
-//                new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-//        activity.getActivity().addContentView(mapView, params);
 
         loadGraphStorage();
 
     }
 
     void loadGraphStorage() {
-//        logUser(activity, "loading graph (" + Constants.VERSION + ") ... ");
         new GHAsyncTask<Void, Void, Path>() {
             protected Path saveDoInBackground(Void... v) throws Exception {
                 GraphHopper tmpHopp = new GraphHopper().forMobile();
-                // Why is "shortest" missing in default config? Add!
                 tmpHopp.getCHFactoryDecorator().addCHProfileAsString("shortest");
                 tmpHopp.load(new File(Environment.getExternalStorageDirectory() + "/"
                         + "Yaatra Downloads/ireland_map") + "-gh");
-//                log("found graph " + tmpHopp.getGraphHopperStorage().toString() + ", nodes:" + tmpHopp.getGraphHopperStorage().getNodes());
                 hopper = tmpHopp;
                 return null;
             }
@@ -341,19 +320,6 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
                 } else {
                     Log.d(TAG, "AFinished loading graph.");
                 }
-
-//                GeoPoint g = ShowLocationActivity.locationGeoPoint;
-//                String lss = ShowLocationActivity.locationSearchString;
-//                if (g != null)
-//                {
-//                    activity.getMapActions().onPressLocationEndPoint(g);
-//                    ShowLocationActivity.locationGeoPoint = null;
-//                }
-//                else if (lss != null)
-//                {
-//                    activity.getMapActions().startGeocodeActivity(null, null, false, false);
-//                }
-//                prepareInProgress = false;
             }
         }.execute();
     }
@@ -431,7 +397,7 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
 
     private void requestPermission(String[] sPermission){
         if(getActivity() != null)
-            requestPermissions(sPermission, 1);
+            ActivityCompat.requestPermissions(getActivity(), sPermission, 1);
     }
 
     private static boolean checkPermission(String sPermission, Activity activity) {
@@ -439,25 +405,6 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
                 == PackageManager.PERMISSION_GRANTED) {
             return true;
         } else {
-            return false;
-        }
-    }
-
-    class MapEventsReceiver extends Layer implements GestureListener {
-
-        MapEventsReceiver(org.oscim.map.Map map) {
-            super(map);
-        }
-
-        @Override
-        public boolean onGesture(Gesture g, MotionEvent e) {
-            if (g instanceof Gesture.Tap) {
-                GeoPoint p = mMap.viewport().fromScreenPoint(e.getX(), e.getY());
-                if (mapHandlerListener!=null && needLocation)
-                {
-                    mapHandlerListener.onPressLocation(p);
-                }
-            }
             return false;
         }
     }
@@ -476,8 +423,7 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
         mapView.map().animator().animateTo(300, tmpPos);
     }
 
-    public void calcPath(final double fromLat, final double fromLon,
-                         final double toLat, final double toLon, final Activity activity) {
+    public void calcPath(final List<GHPoint> points, final Activity activity) {
 
 
         new AsyncTask<Void, Void, GHResponse>() {
@@ -486,7 +432,7 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
             @Override
             protected GHResponse doInBackground(Void... v) {
                 StopWatch sw = new StopWatch().start();
-                GHRequest req = new GHRequest(fromLat, fromLon, toLat, toLon).
+                GHRequest req = new GHRequest(points).
                         setAlgorithm(Parameters.Algorithms.DIJKSTRA_BI);
                 req.getHints().put(Parameters.Routing.INSTRUCTIONS, true);
                 req.setVehicle("car");
@@ -495,19 +441,6 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
                 if (hopper != null)
                 {
                     resp = hopper.route(req);
-                }
-                if (resp==null || resp.hasErrors())
-                {
-//                    NaviEngine.getNaviEngine().setDirectTargetDir(true);
-//                    Throwable error;
-//                    if (resp != null) { error = resp.getErrors().get(0); }
-//                    else { error = new NullPointerException("Hopper is null!!!"); }
-//                    log("Multible errors, first: " + error);
-//                    resp = TargetDirComputer.getInstance().createTargetdirResponse(fromLat, fromLon, toLat, toLon);
-                }
-                else
-                {
-//                    NaviEngine.getNaviEngine().setDirectTargetDir(false);
                 }
                 time = sw.stop().getSeconds();
                 return resp;
@@ -518,32 +451,10 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
             protected void onPostExecute(GHResponse ghResp) {
                 if (!ghResp.hasErrors()) {
                     PathWrapper resp = ghResp.getBest();
-
-
                     int sWidth = 4;
                     pathLayer = updatePathLayer(activity, pathLayer, resp.getPoints(), "#0EB5D3", sWidth);
                     mapView.map().updateMap(true);
-//                    if (true) {
-//                        Navigator.getNavigator().setGhResponse(resp);
-//                    }
-                } else {
-//                    logUser(activity, "Multible errors: " + ghResp.getErrors().size());
-//                    log("Multible errors, first: " + ghResp.getErrors().get(0));
                 }
-//                if (NaviEngine.getNaviEngine().isNavigating())
-//                {
-//                    setCalculatePath(false, false);
-//                }
-//                else
-//                {
-//                    setCalculatePath(false, true);
-//                    try
-//                    {
-//                        activity.findViewById(R.id.map_nav_settings_path_finding).setVisibility(View.GONE);
-//                        activity.findViewById(R.id.nav_settings_layout).setVisibility(View.VISIBLE);
-//                    }
-//                    catch (Exception e) { e.printStackTrace(); }
-//                }
             }
         }.execute();
     }

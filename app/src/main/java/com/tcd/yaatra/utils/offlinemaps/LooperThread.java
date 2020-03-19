@@ -1,4 +1,4 @@
-package com.tcd.yaatra.utils;
+package com.tcd.yaatra.utils.offlinemaps;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -11,9 +11,11 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.os.SystemClock;
-import com.tcd.yaatra.utils.KalmanLocationManager.*;
 
-import static com.tcd.yaatra.utils.KalmanLocationManager.KALMAN_PROVIDER;
+import com.tcd.yaatra.utils.offlinemaps.Tracker1D;
+import com.tcd.yaatra.utils.offlinemaps.KalmanLocationManager.*;
+
+import static com.tcd.yaatra.utils.offlinemaps.KalmanLocationManager.KALMAN_PROVIDER;
 
 
 class LooperThread extends Thread {

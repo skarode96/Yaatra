@@ -1,4 +1,4 @@
-package com.tcd.yaatra.utils;
+package com.tcd.yaatra.utils.offlinemaps;
 
 import android.os.AsyncTask;
 
