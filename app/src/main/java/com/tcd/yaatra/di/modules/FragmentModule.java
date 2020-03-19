@@ -1,6 +1,7 @@
 package com.tcd.yaatra.di.modules;
 
 import com.tcd.yaatra.ui.activities.DailyCommuteMapFragment;
+import com.tcd.yaatra.ui.fragments.RouteInfoFragment;
 import com.tcd.yaatra.ui.fragments.PeerToPeerFragment;
 import com.tcd.yaatra.ui.fragments.DailyCommuteDetailsFragment;
 import com.tcd.yaatra.ui.fragments.DailyFragment;
@@ -35,6 +36,9 @@ public interface FragmentModule {
 
     @ContributesAndroidInjector
     PeerToPeerFragment contributePeerToPeerFragment();
+
+    @ContributesAndroidInjector
+    RouteInfoFragment contributeRouteinfo();
 
     @ContributesAndroidInjector
     OfflineMaps contributeOfflineMaps();

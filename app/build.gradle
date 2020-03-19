@@ -106,6 +106,7 @@ dependencies {
 
     testImplementation 'androidx.test:core:1.0.0'
     androidTestImplementation 'androidx.arch.core:core-testing:2.1.0'
+    implementation 'com.google.code.gson:gson:2.8.6'
 
     // offline maps
     implementation 'com.jjoe64:graphview:4.2.2'

@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.material.navigation.NavigationView;
 import com.tcd.yaatra.R;
@@ -48,21 +49,25 @@ public class MenuContainerActivity extends BaseActivity<ActivityMenuBinding> imp
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
         ActionBarDrawerToggle toggle = initActionBarDrawer();
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().replace(layoutDataBinding.fragmentContainer.getId(), new MapFragment()).commit();
-            layoutDataBinding.navView.setCheckedItem(R.id.ad_hoc);
-            this.drawer.addDrawerListener(toggle);
-        }
+        //if (savedInstanceState == null) {
+        getSupportFragmentManager().beginTransaction().replace(layoutDataBinding.fragmentContainer.getId(), new MapFragment()).commit();
+        layoutDataBinding.navView.setCheckedItem(R.id.ad_hoc);
+        this.drawer.addDrawerListener(toggle);
+        //}
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        View headerView =  navigationView.inflateHeaderView(R.layout.nav_header);
+        View headerView = navigationView.inflateHeaderView(R.layout.nav_header);
 
         //reference to views
-        ImageView imgvw = (ImageView)headerView.findViewById(R.id.headerImage);
-        TextView tv1 = (TextView)headerView.findViewById(R.id.headerUsername);
-        userInfoRepository.getUserProfile(SharedPreferenceUtils.getUserName()).observe(this,response -> {
+        ImageView imgvw = (ImageView) headerView.findViewById(R.id.headerImage);
+        TextView tv1 = (TextView) headerView.findViewById(R.id.headerUsername);
+        userInfoRepository.getUserProfile(SharedPreferenceUtils.getUserName()).observe(this, response -> {
             tv1.setText(response.getUsername());
             imgvw.setImageResource(response.getGender().equals(Gender.MALE) ? R.drawable.guy : R.drawable.girl);
         });
@@ -89,7 +94,8 @@ public class MenuContainerActivity extends BaseActivity<ActivityMenuBinding> imp
             case R.id.logout:
                 handleLogout();
                 break;
-            default: break;
+            default:
+                break;
         }
         this.drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -125,14 +131,24 @@ public class MenuContainerActivity extends BaseActivity<ActivityMenuBinding> imp
     }
 
     @Override
-    protected void onPause(){
-        peerCommunicator.cleanup();
+    protected void onPause() {
+        performCleanup();
         super.onPause();
     }
 
     @Override
-    protected void onDestroy(){
-        peerCommunicator.cleanup();
+    protected void onDestroy() {
+        performCleanup();
         super.onDestroy();
+    }
+
+    private void performCleanup() {
+        peerCommunicator.cleanup();
+
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+            if (fragment != null) {
+                getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+            }
+        }
     }
 }
