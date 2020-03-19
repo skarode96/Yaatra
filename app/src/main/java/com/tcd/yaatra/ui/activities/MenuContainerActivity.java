@@ -66,10 +66,14 @@ public class MenuContainerActivity extends BaseActivity<ActivityMenuBinding> imp
         //reference to views
         ImageView imgvw = (ImageView) headerView.findViewById(R.id.headerImage);
         TextView tv1 = (TextView) headerView.findViewById(R.id.headerUsername);
-        userInfoRepository.getUserProfile(SharedPreferenceUtils.getUserName()).observe(this, response -> {
-            tv1.setText(response.getUsername());
-            imgvw.setImageResource(response.getGender().equals(Gender.MALE) ? R.drawable.guy : R.drawable.girl);
-        });
+        if(SharedPreferenceUtils.getUserName() != null) {
+            userInfoRepository.getUserProfile(SharedPreferenceUtils.getUserName()).observe(this, response -> {
+                if(response != null) {
+                    tv1.setText(response.getUsername());
+                    imgvw.setImageResource(response.getGender().equals(Gender.MALE) ? R.drawable.guy : R.drawable.girl);
+                }
+            });
+        }
     }
 
     @Override
