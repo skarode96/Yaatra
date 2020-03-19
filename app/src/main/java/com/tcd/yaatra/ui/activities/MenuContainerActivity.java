@@ -48,11 +48,11 @@ public class MenuContainerActivity extends BaseActivity<ActivityMenuBinding> imp
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+        //To solve double time rendering issue of drawer image and username
+//    @Override
+//    protected void onResume() {
+        //super.onResume();
         ActionBarDrawerToggle toggle = initActionBarDrawer();
         //if (savedInstanceState == null) {
         getSupportFragmentManager().beginTransaction().replace(layoutDataBinding.fragmentContainer.getId(), new MapFragment()).commit();
@@ -74,8 +74,9 @@ public class MenuContainerActivity extends BaseActivity<ActivityMenuBinding> imp
                 }
             });
         }
-    }
+//    }
 
+    }
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
 
