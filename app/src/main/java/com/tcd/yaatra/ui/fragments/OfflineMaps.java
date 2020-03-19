@@ -14,6 +14,7 @@ import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -33,9 +34,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.graphhopper.GHRequest;
+import com.graphhopper.GHResponse;
 import com.graphhopper.GraphHopper;
+import com.graphhopper.PathWrapper;
 import com.graphhopper.util.Constants;
+import com.graphhopper.util.Parameters;
 import com.graphhopper.util.PointList;
+import com.graphhopper.util.StopWatch;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.databinding.FragmentOfflineMapsBinding;
@@ -59,6 +65,8 @@ import org.oscim.layers.marker.MarkerSymbol;
 import org.oscim.layers.tile.buildings.BuildingLayer;
 import org.oscim.layers.tile.vector.VectorTileLayer;
 import org.oscim.layers.tile.vector.labeling.LabelLayer;
+import org.oscim.layers.vector.PathLayer;
+import org.oscim.layers.vector.geometries.Style;
 import org.oscim.theme.VtmThemes;
 import org.oscim.tiling.source.mapfile.MapFileTileSource;
 
@@ -69,6 +77,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -97,6 +107,8 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
     private Location mLastLocation;
     PointList trackingPointList = new PointList();
     private int customIcon = R.drawable.ic_my_location_dark_24dp;
+    private int destIcon = R.drawable.ic_location_start_24dp ;
+    private PathLayer pathLayer;
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
@@ -179,6 +191,11 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
         checkGpsAvailability();
         ensureLastLocationInit();
         updateCurrentLocation(mLastLocation);
+
+        calcPath(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 53.280355, -6.214713, getActivity());
+        GeoPoint destLatLong = new GeoPoint(53.280355, -6.214713);
+        setCustomPoint(getActivity(), destLatLong, destIcon);
+
         return view;
 
     }
@@ -202,17 +219,17 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
 //            {
 //                NaviEngine.getNaviEngine().updatePosition(this, mCurrentLocation);
 //            }
-            setCustomPoint(getActivity(), mcLatLong);
+            setCustomPoint(getActivity(), mcLatLong, customIcon);
         }
     }
 
-    public void setCustomPoint(Activity activity, GeoPoint p)
+    public void setCustomPoint(Activity activity, GeoPoint p, int icon)
     {
         if (customLayer==null) { return; } // Not loaded yet.
-        customLayer.removeAllItems();
+//        customLayer.removeAllItems();
         if (p!=null)
         {
-            customLayer.addItem(createMarkerItem(activity, p,customIcon, 0.5f, 0.5f));
+            customLayer.addItem(createMarkerItem(activity, p, icon, 0.5f, 0.5f));
             mapView.map().updateMap(true);
         }
     }
@@ -458,4 +475,102 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
         tmpPos.setTilt(tilt);
         mapView.map().animator().animateTo(300, tmpPos);
     }
+
+    public void calcPath(final double fromLat, final double fromLon,
+                         final double toLat, final double toLon, final Activity activity) {
+
+
+        new AsyncTask<Void, Void, GHResponse>() {
+            float time;
+
+            @Override
+            protected GHResponse doInBackground(Void... v) {
+                StopWatch sw = new StopWatch().start();
+                GHRequest req = new GHRequest(fromLat, fromLon, toLat, toLon).
+                        setAlgorithm(Parameters.Algorithms.DIJKSTRA_BI);
+                req.getHints().put(Parameters.Routing.INSTRUCTIONS, true);
+                req.setVehicle("car");
+                req.setWeighting("shortest");
+                GHResponse resp = null;
+                if (hopper != null)
+                {
+                    resp = hopper.route(req);
+                }
+                if (resp==null || resp.hasErrors())
+                {
+//                    NaviEngine.getNaviEngine().setDirectTargetDir(true);
+//                    Throwable error;
+//                    if (resp != null) { error = resp.getErrors().get(0); }
+//                    else { error = new NullPointerException("Hopper is null!!!"); }
+//                    log("Multible errors, first: " + error);
+//                    resp = TargetDirComputer.getInstance().createTargetdirResponse(fromLat, fromLon, toLat, toLon);
+                }
+                else
+                {
+//                    NaviEngine.getNaviEngine().setDirectTargetDir(false);
+                }
+                time = sw.stop().getSeconds();
+                return resp;
+            }
+
+
+            @Override
+            protected void onPostExecute(GHResponse ghResp) {
+                if (!ghResp.hasErrors()) {
+                    PathWrapper resp = ghResp.getBest();
+
+
+                    int sWidth = 4;
+                    pathLayer = updatePathLayer(activity, pathLayer, resp.getPoints(), "#0EB5D3", sWidth);
+                    mapView.map().updateMap(true);
+//                    if (true) {
+//                        Navigator.getNavigator().setGhResponse(resp);
+//                    }
+                } else {
+//                    logUser(activity, "Multible errors: " + ghResp.getErrors().size());
+//                    log("Multible errors, first: " + ghResp.getErrors().get(0));
+                }
+//                if (NaviEngine.getNaviEngine().isNavigating())
+//                {
+//                    setCalculatePath(false, false);
+//                }
+//                else
+//                {
+//                    setCalculatePath(false, true);
+//                    try
+//                    {
+//                        activity.findViewById(R.id.map_nav_settings_path_finding).setVisibility(View.GONE);
+//                        activity.findViewById(R.id.nav_settings_layout).setVisibility(View.VISIBLE);
+//                    }
+//                    catch (Exception e) { e.printStackTrace(); }
+//                }
+            }
+        }.execute();
+    }
+
+    private PathLayer updatePathLayer(Activity activity, PathLayer ref, PointList pointList, String color, int strokeWidth) {
+        if (ref==null) {
+            ref = createPathLayer(activity, color, strokeWidth);
+            mapView.map().layers().add(ref);
+        }
+        List<GeoPoint> geoPoints = new ArrayList<>();
+        //TODO: Search for a more efficient way
+        for (int i = 0; i < pointList.getSize(); i++)
+            geoPoints.add(new GeoPoint(pointList.getLatitude(i), pointList.getLongitude(i)));
+        ref.setPoints(geoPoints);
+        return ref;
+    }
+
+    private PathLayer createPathLayer(Activity activity, String color, int strokeWidth)
+    {
+        Style style = Style.builder()
+                .fixed(true)
+                .generalization(Style.GENERALIZATION_SMALL)
+                .strokeColor(color)
+                .strokeWidth(strokeWidth * activity.getResources().getDisplayMetrics().density)
+                .build();
+        PathLayer newPathLayer = new PathLayer(mapView.map(), style);
+        return newPathLayer;
+    }
+
 }
