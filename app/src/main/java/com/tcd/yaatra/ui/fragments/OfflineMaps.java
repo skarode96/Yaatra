@@ -100,7 +100,8 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
-        TextView sampleText = (TextView) this.layoutDataBinding.sampleText;
+//        TextView sampleText = (TextView) this.layoutDataBinding.sampleText;
+        mapView = (MapView) this.layoutDataBinding.mapview;
 
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         kalmanLocationManager = new KalmanLocationManager(getContext());
@@ -114,7 +115,7 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
                 if(intent.getAction().equals(DownloadManager.ACTION_DOWNLOAD_COMPLETE)){
 
                     unZipFiles();
-                    sampleText.setText("Downloading and unzipping completed");
+//                    sampleText.setText("Downloading and unzipping completed");
                 }
 
             }
@@ -169,10 +170,10 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
         }
         else if (!zipFile.exists()) {
             unZipFiles();
-            sampleText.setText("Downloading and unzipping completed");
+//            sampleText.setText("Downloading and unzipping completed");
         }
 
-        mapView = new MapView(getContext());
+//        mapView = new MapView(getContext());
         mapView.setClickable(true);
         loadMap(zipFile, this);
         checkGpsAvailability();
@@ -190,6 +191,9 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
         }
         if (mCurrentLocation != null) {
             GeoPoint mcLatLong = new GeoPoint(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+
+            centerPointOnMap(
+                    mcLatLong, 0, 0, 0);
 //            if (Tracking.getTracking(getApplicationContext()).isTracking()) {
 //                MapHandler.getMapHandler().addTrackPoint(this, mcLatLong);
 //                Tracking.getTracking(getApplicationContext()).addPoint(mCurrentLocation, mapActions.getAppSettings());
@@ -292,9 +296,9 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
         GeoPoint mapCenter = tileSource.getMapInfo().boundingBox.getCenterPoint();
         mapView.map().setMapPosition(mapCenter.getLatitude(), mapCenter.getLongitude(), 1 << 12);
 
-        ViewGroup.LayoutParams params =
-                new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        activity.getActivity().addContentView(mapView, params);
+//        ViewGroup.LayoutParams params =
+//                new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+//        activity.getActivity().addContentView(mapView, params);
 
         loadGraphStorage();
 
