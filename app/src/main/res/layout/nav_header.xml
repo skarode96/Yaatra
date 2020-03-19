@@ -16,12 +16,12 @@
             android:paddingTop="8dp"
             android:layout_alignParentTop="true"
             android:paddingLeft="10dp"
-            android:id="@+id/headerImage" />
+            android:id="@+id/profile_image" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:paddingTop="10dp"
-            android:id="@+id/headerUsername"
+            android:id="@+id/profile_username"
             android:paddingLeft="20dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
