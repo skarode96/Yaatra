@@ -55,8 +55,9 @@ public class MenuContainerActivity extends BaseActivity<ActivityMenuBinding> imp
         //super.onResume();
         ActionBarDrawerToggle toggle = initActionBarDrawer();
         //if (savedInstanceState == null) {
-        getSupportFragmentManager().beginTransaction().replace(layoutDataBinding.fragmentContainer.getId(), new MapFragment()).commit();
+
         layoutDataBinding.navView.setCheckedItem(R.id.ad_hoc);
+
         this.drawer.addDrawerListener(toggle);
         //}
 
@@ -77,10 +78,24 @@ public class MenuContainerActivity extends BaseActivity<ActivityMenuBinding> imp
 //    }
 
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        addFragmentAsPerMenuSelection(layoutDataBinding.navView.getCheckedItem());
+    }
+
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
 
         peerCommunicator.cleanup();
+        addFragmentAsPerMenuSelection(menuItem);
+        this.drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    private void addFragmentAsPerMenuSelection(@NonNull MenuItem menuItem) {
         switch (menuItem.getItemId()) {
 
             case R.id.ad_hoc:
@@ -98,8 +113,6 @@ public class MenuContainerActivity extends BaseActivity<ActivityMenuBinding> imp
             default:
                 break;
         }
-        this.drawer.closeDrawer(GravityCompat.START);
-        return true;
     }
 
     private void handleLogout() {
