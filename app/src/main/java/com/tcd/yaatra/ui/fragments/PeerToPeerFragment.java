@@ -1,7 +1,6 @@
 package com.tcd.yaatra.ui.fragments;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -37,6 +36,7 @@ import com.tcd.yaatra.utils.SharedPreferenceUtils;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
@@ -74,6 +74,7 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
     private Handler backgroundTaskHandler;
     PeerToPeerFragment fragmentContext;
     View view;
+    private ArrayList<LatLng> travelPath;
 
     //endregion
 
@@ -205,16 +206,12 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
             layoutDataBinding.tvInstructions.setTextSize(20);
             layoutDataBinding.tvInstructions.setText(WAIT_FOR_OTHERS);
             layoutDataBinding.tvSearching.setText(LISTENING_TO_FELLOW_TRAVELLERS);
+            enableStartNavigationButton();
         }
         else if(travellerInfos.size() > 0){
             layoutDataBinding.tvInstructions.setText(MEET_AT);
-
-            if (travellerInfos.size() > 0) {
-                layoutDataBinding.startNavigation.show();
-            } else {
-                layoutDataBinding.startNavigation.hide();
-            }
             layoutDataBinding.tvSearching.setText(LISTENING_TO_FELLOW_TRAVELLERS);
+            enableStartNavigationButton();
         }
         else {
             layoutDataBinding.tvInstructions.setText(ENJOY_YOUR_OWN_COMPANY);
@@ -281,29 +278,12 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
 
         peerCommunicator.broadcastTravellers(TravellerStatus.TravellingToStartPoint);
 
-        Intent mapIntent = new Intent(this.getActivity(), RouteInfoFragment.class);
-
-        //rohan+chetan: Mocking multi destination start
-        ArrayList<LatLng> locations = new ArrayList<>();
-        Boolean multidestination = true;
-        LatLng point1 = new LatLng(53.34684951262867, -6.259117126464844);
-        LatLng point2 = new LatLng(53.34587597399326, -6.255190372467041);
-        LatLng point3 = new LatLng(53.345145805428125, -6.254847049713134);
-        LatLng point4 = new LatLng(53.34490241312763, -6.253151893615723);
-        locations.add(point1);
-        locations.add(point2);
-        locations.add(point3);
-        locations.add(point4);
-
         Bundle bundle = new Bundle();
-        bundle.putParcelableArrayList("destLocations", locations);
+        bundle.putParcelableArrayList("destLocations", travelPath);
 
         Gson gson = new Gson();
         bundle.putString("UserList", gson.toJson(travellerInfos));
-        bundle.putBoolean("multiDestination", multidestination);
-        //rohan+chetan: Mocking multi destination end
-        /*mapIntent.putExtras(bundle);
-        startActivity(mapIntent);*/
+        bundle.putBoolean("multiDestination", true);
 
         RouteInfoFragment routeInfoFragment = new RouteInfoFragment();
         routeInfoFragment.setArguments(bundle);
@@ -327,16 +307,52 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
     }
 
     private boolean amIGroupOwner(){
+        return makeTravelPath();
+    }
 
-        final LocalDateTime[] leastFellowTravellerRequestStartTime = {LocalDateTime.MAX};
+    //check if current user is group owner of the travellers list
+    //Initialize travel path including destinations of all travellers
+    //Travel path also includes group owner's location as destination for other travellers
+    private boolean makeTravelPath() {
 
-        travellerInfos.forEach((info)->{
+        travelPath = new ArrayList<>();
+        LocalDateTime leastFellowTravellerRequestStartTime = LocalDateTime.MAX;
 
-            if(info.getRequestStartTime().isBefore(leastFellowTravellerRequestStartTime[0])){
-                leastFellowTravellerRequestStartTime[0] = info.getRequestStartTime();
+        double groupOwnerSourceLat = 0.0;
+        double groupOwnerSourceLong = 0.0;
+
+        Iterator<TravellerInfo> iterator = travellerInfos.iterator();
+
+        while(iterator.hasNext()){
+
+            TravellerInfo info = iterator.next();
+
+            if(info.getRequestStartTime().isBefore(leastFellowTravellerRequestStartTime)){
+                leastFellowTravellerRequestStartTime = info.getRequestStartTime();
+                groupOwnerSourceLat = info.getSourceLatitude();
+                groupOwnerSourceLong = info.getSourceLongitude();
             }
-        });
 
-        return ownTravellerInfo.getRequestStartTime().isBefore(leastFellowTravellerRequestStartTime[0]);
+            travelPath.add(new LatLng(info.getDestinationLatitude(), info.getDestinationLongitude()));
+        }
+
+        boolean isGroupOwner = ownTravellerInfo.getRequestStartTime().isBefore(leastFellowTravellerRequestStartTime);
+
+        if(!isGroupOwner){
+            travelPath.add(0, new LatLng(groupOwnerSourceLat, groupOwnerSourceLong));
+        }
+
+        travelPath.add(0, new LatLng(ownTravellerInfo.getSourceLatitude(), ownTravellerInfo.getSourceLongitude()));
+        travelPath.add(new LatLng(ownTravellerInfo.getDestinationLatitude(), ownTravellerInfo.getDestinationLongitude()));
+
+        return isGroupOwner;
+    }
+
+    private void enableStartNavigationButton(){
+        if (travellerInfos.size() > 0) {
+            layoutDataBinding.startNavigation.show();
+        } else {
+            layoutDataBinding.startNavigation.hide();
+        }
     }
 }
