@@ -32,8 +32,8 @@ public class WiFiP2pFacade implements WifiP2pManager.ConnectionInfoListener {
     private static final String TAG = "WiFiP2pFacade";
     private static final String SERVICE_INSTANCE = "com.tcd.yaatra.WifiDirectService";
     private static final String SERVICE_TYPE = "tcp";
-    private static final int MIN_BROADCAST_INTERVAL = 4111;
-    private static final int MAX_BROADCAST_INTERVAL = 8111;
+    private static final int MIN_BROADCAST_INTERVAL = 15111;
+    private static final int MAX_BROADCAST_INTERVAL = 20111;
 
     PeerListener peerListener;
     Activity parentActivity;
