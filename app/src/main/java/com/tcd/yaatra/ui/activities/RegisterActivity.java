@@ -10,10 +10,14 @@ import android.widget.Toast;
 
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.databinding.ActivityRegisterBinding;
+import com.tcd.yaatra.repository.UserInfoRepository;
 import com.tcd.yaatra.repository.models.Gender;
 import com.tcd.yaatra.repository.models.TransportPreference;
 import com.tcd.yaatra.services.api.yaatra.models.RegisterRequestBody;
+import com.tcd.yaatra.ui.viewmodels.LoginActivityViewModel;
 import com.tcd.yaatra.ui.viewmodels.RegisterActivityViewModel;
+
+import org.jetbrains.annotations.TestOnly;
 
 import javax.inject.Inject;
 
@@ -22,6 +26,8 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
     @Inject
     RegisterActivityViewModel registerActivityViewModel;
 
+    @Inject
+    UserInfoRepository userInfoRepository;
     @Override
     protected int getLayoutResourceId() {
         return R.layout.activity_register;
@@ -194,5 +200,15 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
             });
 
         }
+    }
+
+    @TestOnly
+    public void setRegisterActivityViewModel(RegisterActivityViewModel viewModel){
+        this.registerActivityViewModel = viewModel;
+    }
+
+    @TestOnly
+    public void setUserInfoRepository(UserInfoRepository repository){
+        this.userInfoRepository = repository;
     }
 }
