@@ -30,7 +30,7 @@ public class NaviInstruction
       nextInstruction = Navigator.getNavigator().getDirectionDescription(in, true);
       nextInstructionShort = Navigator.getNavigator().getDirectionDescription(in, false);
     }
-    if (nextSignResource == 0) { nextSignResource = R.drawable.ic_exit_arrow_right; }
+    if (nextSignResource == 0) { nextSignResource = R.drawable.ic_exit; }
     nextDistance = in.getDistance();
     this.fullTime = fullTime;
     fullTimeString = Navigator.getNavigator().getTimeString(fullTime);

@@ -1,13 +1,9 @@
 package com.tcd.yaatra.utils.offlinemaps;
 
-import android.app.Activity;
-
 import com.graphhopper.PathWrapper;
 import com.graphhopper.util.Helper;
 import com.graphhopper.util.Instruction;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.tcd.yaatra.R;
 
 /**
  * singleton class
@@ -125,34 +121,34 @@ public class Navigator {
      * @return int resId to instruction direction's sign icon
      */
     public int getDirectionSign(Instruction itemData) {
-//        switch (itemData.getSign()) {
-//            case Instruction.LEAVE_ROUNDABOUT:
-//                return R.drawable.ic_roundabout;
-//            case Instruction.TURN_SHARP_LEFT:
-//                return R.drawable.ic_turn_sharp_left;
-//            case Instruction.TURN_LEFT:
-//                return R.drawable.ic_turn_left;
-//            case Instruction.TURN_SLIGHT_LEFT:
-//                return R.drawable.ic_turn_slight_left;
-//            case Instruction.CONTINUE_ON_STREET:
-//                return R.drawable.ic_continue_on_street;
-//            case Instruction.TURN_SLIGHT_RIGHT:
-//                return R.drawable.ic_turn_slight_right;
-//            case Instruction.TURN_RIGHT:
-//                return R.drawable.ic_turn_right;
-//            case Instruction.TURN_SHARP_RIGHT:
-//                return R.drawable.ic_turn_sharp_right;
-//            case Instruction.FINISH:
-//                return R.drawable.ic_finish_flag;
-//            case Instruction.REACHED_VIA:
-//                return R.drawable.ic_reached_via;
-//            case Instruction.USE_ROUNDABOUT:
-//                return R.drawable.ic_roundabout;
-//            case Instruction.KEEP_RIGHT:
-//                return R.drawable.ic_keep_right;
-//            case Instruction.KEEP_LEFT:
-//                return R.drawable.ic_keep_left;
-//        }
+        switch (itemData.getSign()) {
+            case Instruction.LEAVE_ROUNDABOUT:
+                return R.drawable.ic_roundabout;
+            case Instruction.TURN_SHARP_LEFT:
+                return R.drawable.ic_sharp_left;
+            case Instruction.TURN_LEFT:
+                return R.drawable.ic_turn_left;
+            case Instruction.TURN_SLIGHT_LEFT:
+                return R.drawable.ic_slight_left;
+            case Instruction.CONTINUE_ON_STREET:
+                return R.drawable.ic_arrow_upward_black_24dp;
+            case Instruction.TURN_SLIGHT_RIGHT:
+                return R.drawable.ic_slight_right;
+            case Instruction.TURN_RIGHT:
+                return R.drawable.ic_turn_right;
+            case Instruction.TURN_SHARP_RIGHT:
+                return R.drawable.ic_sharp_right;
+            case Instruction.FINISH:
+                return R.drawable.ic_finish_flag;
+            case Instruction.REACHED_VIA:
+                return R.drawable.ic_reached_via;
+            case Instruction.USE_ROUNDABOUT:
+                return R.drawable.ic_roundabout;
+            case Instruction.KEEP_RIGHT:
+                return R.drawable.ic_keep_right;
+            case Instruction.KEEP_LEFT:
+                return R.drawable.ic_keep_left;
+        }
         return 0;
     }
     
@@ -161,34 +157,34 @@ public class Navigator {
      * @return int resId to instruction direction's sign icon
      */
     public int getDirectionSignHuge(Instruction itemData) {
-//        switch (itemData.getSign()) {
-//            case Instruction.LEAVE_ROUNDABOUT:
-//                return R.drawable.ic_2x_roundabout;
-//            case Instruction.TURN_SHARP_LEFT:
-//                return R.drawable.ic_2x_turn_sharp_left;
-//            case Instruction.TURN_LEFT:
-//                return R.drawable.ic_2x_turn_left;
-//            case Instruction.TURN_SLIGHT_LEFT:
-//                return R.drawable.ic_2x_turn_slight_left;
-//            case Instruction.CONTINUE_ON_STREET:
-//                return R.drawable.ic_2x_continue_on_street;
-//            case Instruction.TURN_SLIGHT_RIGHT:
-//                return R.drawable.ic_2x_turn_slight_right;
-//            case Instruction.TURN_RIGHT:
-//                return R.drawable.ic_2x_turn_right;
-//            case Instruction.TURN_SHARP_RIGHT:
-//                return R.drawable.ic_2x_turn_sharp_right;
-//            case Instruction.FINISH:
-//                return R.drawable.ic_2x_finish_flag;
-//            case Instruction.REACHED_VIA:
-//                return R.drawable.ic_2x_reached_via;
-//            case Instruction.USE_ROUNDABOUT:
-//                return R.drawable.ic_2x_roundabout;
-//            case Instruction.KEEP_RIGHT:
-//                return R.drawable.ic_2x_keep_right;
-//            case Instruction.KEEP_LEFT:
-//              return R.drawable.ic_2x_keep_left;
-//        }
+        switch (itemData.getSign()) {
+            case Instruction.LEAVE_ROUNDABOUT:
+                return R.drawable.ic_roundabout;
+            case Instruction.TURN_SHARP_LEFT:
+                return R.drawable.ic_sharp_left;
+            case Instruction.TURN_LEFT:
+                return R.drawable.ic_turn_left;
+            case Instruction.TURN_SLIGHT_LEFT:
+                return R.drawable.ic_slight_left;
+            case Instruction.CONTINUE_ON_STREET:
+                return R.drawable.ic_arrow_upward_black_24dp;
+            case Instruction.TURN_SLIGHT_RIGHT:
+                return R.drawable.ic_slight_right;
+            case Instruction.TURN_RIGHT:
+                return R.drawable.ic_turn_right;
+            case Instruction.TURN_SHARP_RIGHT:
+                return R.drawable.ic_sharp_right;
+            case Instruction.FINISH:
+                return R.drawable.ic_finish_flag;
+            case Instruction.REACHED_VIA:
+                return R.drawable.ic_reached_via;
+            case Instruction.USE_ROUNDABOUT:
+                return R.drawable.ic_roundabout;
+            case Instruction.KEEP_RIGHT:
+                return R.drawable.ic_keep_right;
+            case Instruction.KEEP_LEFT:
+              return R.drawable.ic_keep_left;
+        }
         return 0;
     }
 
