@@ -246,11 +246,11 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
         }catch (Exception e){ Toast.makeText(getActivity(), "Error generating geoname", Toast.LENGTH_SHORT).show();}
 
         if(sourceName != null) {
-            ownTravellerInfo.setSourceName(sourceName.substring(0, 10));
+            ownTravellerInfo.setSourceName(sourceName.replace(',','.').substring(0, 10));
         }
 
         if(destname != null) {
-            ownTravellerInfo.setDestinationName(destname.substring(0, 10));
+            ownTravellerInfo.setDestinationName(destname.replace(',','.').substring(0, 10));
         }
 
         ownTravellerInfo.setSourceLatitude(locationComponent.getLastKnownLocation().getLatitude());
