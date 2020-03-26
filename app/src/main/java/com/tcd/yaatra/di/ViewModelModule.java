@@ -6,6 +6,7 @@ import com.tcd.yaatra.ui.viewmodels.CreateDailyCommuteFragmentViewModel;
 import com.tcd.yaatra.ui.viewmodels.DailyCommuteActivityViewModel;
 import com.tcd.yaatra.ui.viewmodels.DailyCommuteDetailsViewModel;
 import com.tcd.yaatra.ui.viewmodels.LoginActivityViewModel;
+import com.tcd.yaatra.ui.viewmodels.PeerToPeerFragmentViewModel;
 import com.tcd.yaatra.ui.viewmodels.RegisterActivityViewModel;
 import com.tcd.yaatra.ui.viewmodels.ViewModelFactory;
 
@@ -43,5 +44,10 @@ public abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(CreateDailyCommuteFragmentViewModel.class)
     abstract DailyCommuteDetailsViewModel bindDailyCommuteDetailsViewModel(DailyCommuteDetailsViewModel dailyCommuteDetailsViewModel);
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(PeerToPeerFragmentViewModel.class)
+    abstract PeerToPeerFragmentViewModel bindPeerToPeerFragmentViewModel(PeerToPeerFragmentViewModel peerToPeerFragmentViewModel);
 
 }
