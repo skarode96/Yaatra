@@ -19,6 +19,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -33,6 +34,8 @@ import com.graphhopper.GHRequest;
 import com.graphhopper.GHResponse;
 import com.graphhopper.GraphHopper;
 import com.graphhopper.PathWrapper;
+import com.graphhopper.util.Instruction;
+import com.graphhopper.util.InstructionList;
 import com.graphhopper.util.Parameters;
 import com.graphhopper.util.PointList;
 import com.graphhopper.util.StopWatch;
@@ -41,6 +44,8 @@ import com.tcd.yaatra.R;
 import com.tcd.yaatra.databinding.FragmentOfflineMapsBinding;
 import com.tcd.yaatra.utils.offlinemaps.GHAsyncTask;
 import com.tcd.yaatra.utils.offlinemaps.KalmanLocationManager;
+import com.tcd.yaatra.utils.offlinemaps.NaviInstruction;
+import com.tcd.yaatra.utils.offlinemaps.NaviVoice;
 
 import org.oscim.android.MapView;
 import org.oscim.android.canvas.AndroidGraphics;
@@ -81,6 +86,7 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
     }
 
     public static final int BUFFER_SIZE = 8 * 1024;
+    private static final int BEST_NAVI_ZOOM = 18;
     private LocationManager locationManager;
     private KalmanLocationManager kalmanLocationManager;
     private MapView mapView;
@@ -93,13 +99,114 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
     private static Location mCurrentLocation;
     private Location mLastLocation;
     PointList trackingPointList = new PointList();
-    private int customIcon = R.drawable.ic_my_location_dark_24dp;
-    private int destIcon = R.drawable.ic_location_start_24dp ;
+    private int customIcon = R.drawable.ic_my_location_black_24dp;
+    private int destIcon = R.drawable.ic_place_black_24dp;
+    private int navIcon = R.drawable.ic_navigation_black_24dp;
     private PathLayer pathLayer;
+
+    private Location pos;
+    boolean naviVoiceSpoken = false;
+    enum UiJob { Nothing, RecalcPath, UpdateInstruction, Finished };
+    private UiJob uiJob = UiJob.Nothing;
+    private InstructionList instructions;
+    private static final double MAX_WAY_TOLERANCE = 0.000008993 * 30.0;
+    private ViewGroup navTopVP;
+
+    NaviVoice naviVoice;
+    private boolean active = false;
+    final PointPosData nearestP = new PointPosData();
+
+    @Override
+    protected void initEventHandlers() {
+        super.initEventHandlers();
+        layoutDataBinding.fabNav.setOnClickListener(view -> handleOnNavClick(view));
+    }
+
+    private void handleOnNavClick(View view) {
+
+        navTopVP.setVisibility(View.VISIBLE);
+
+    }
+
+    public void setNavigating(boolean active)
+    {
+            this.active = active;
+            if (naviVoice == null)
+            {
+                naviVoice = new NaviVoice(getContext());
+            }
+            if (active == false)
+            {
+                GeoPoint mcLatLong = new GeoPoint(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+
+                centerPointOnMap(
+                        mcLatLong, 0, 0, 0);
+                setCustomPoint(getActivity(), mcLatLong, customIcon);
+                if (pos != null)
+                {
+                    GeoPoint curPos = new GeoPoint(pos.getLatitude(), pos.getLongitude());
+                    centerPointOnMap(curPos, BEST_NAVI_ZOOM, 0, 0);
+
+                }
+//                NaviDebugSimulator.getSimu().setSimuRun(false);
+                return;
+            }
+            setCustomPoint(getActivity(), new GeoPoint(0, 0), customIcon);
+            naviVoiceSpoken = false;
+            uiJob = UiJob.Nothing;
+//            initFields(activity);
+//            instructions = Navigator.getNavigator().getGhResponse().getInstructions();
+            resetNewInstruction();
+            if (instructions.size() > 0) {
+//                startDebugSimulator(activity, false);
+            }
+    }
+
+    @UiThread
+    private void resetNewInstruction()
+    {
+        nearestP.arrPos = 0;
+        nearestP.distance = Double.MAX_VALUE;
+        uiJob = UiJob.UpdateInstruction;
+        showInstruction(null);
+    }
+
+    @UiThread
+    private void showInstruction(NaviInstruction in)
+    {
+//        if (in==null)
+//        {
+//            navtop_when.setText("0 " + UnitCalculator.getUnit(false));
+//            navtop_time.setText("--------");
+//            navtop_curloc.setText(R.string.search_location);
+//            navtop_nextloc.setText("==================");
+//            navtop_image.setImageResource(R.drawable.ic_2x_continue_on_street);
+//            setTiltMult(1);
+//        }
+//        else if(nearestP.isDirectionOk())
+//        {
+//            navtop_when.setText(in.getNextDistanceString());
+//            navtop_time.setText(in.getFullTimeString());
+//            navtop_curloc.setText(in.getCurStreet());
+//            navtop_nextloc.setText(in.getNextInstruction());
+//            navtop_image.setImageResource(in.getNextSignResource());
+//            setTiltMult(in.getNextDistance());
+//        }
+//        else
+//        {
+//            navtop_when.setText("0 " + UnitCalculator.getUnit(false));
+//            navtop_time.setText(in.getFullTimeString());
+//            navtop_curloc.setText(R.string.wrong_direction);
+//            navtop_nextloc.setText("==================");
+//            navtop_image.setImageResource(R.drawable.ic_2x_roundabout);
+//            setTiltMult(1);
+//        }
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
         mapView = (MapView) this.layoutDataBinding.mapview;
+        navTopVP = (ViewGroup) view.findViewById(R.id.navtop_layout);
 
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         kalmanLocationManager = new KalmanLocationManager(getContext());
@@ -451,8 +558,9 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
             protected void onPostExecute(GHResponse ghResp) {
                 if (!ghResp.hasErrors()) {
                     PathWrapper resp = ghResp.getBest();
+                    instructions = resp.getInstructions();
                     int sWidth = 4;
-                    pathLayer = updatePathLayer(activity, pathLayer, resp.getPoints(), "#0EB5D3", sWidth);
+                    pathLayer = updatePathLayer(activity, pathLayer, resp.getPoints(), "#0EA3BF", sWidth);
                     mapView.map().updateMap(true);
                 }
             }
@@ -482,6 +590,69 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
                 .build();
         PathLayer newPathLayer = new PathLayer(mapView.map(), style);
         return newPathLayer;
+    }
+
+
+    static class PointPosData
+    {
+        public enum Status { CurPosIsExactly, CurPosIsBackward, CurPosIsForward, CurPosIsForwardNext };
+        public int arrPos;
+        public double distance;
+        public Status status = Status.CurPosIsExactly;
+        private boolean wrongDir = false;
+        private boolean wrongDirHint = false;
+        public boolean isDistanceOk()
+        {
+            return (distance < MAX_WAY_TOLERANCE);
+        }
+        public boolean isBackward() { return (status == Status.CurPosIsBackward); }
+        public boolean isForward() { return (status == Status.CurPosIsForward); }
+        public boolean isForwardNext() { return (status == Status.CurPosIsForwardNext); }
+        public boolean isDirectionOk() { return (!wrongDir); }
+        public void resetDirectionOk()
+        {
+            if (!isDistanceOk()) { return; }
+            wrongDirHint = false;
+            wrongDir = false;
+        }
+        public void checkDirectionOk(Location pos, Instruction in, NaviVoice v)
+        {
+            calculateWrongDir(pos, in);
+            if (wrongDir)
+            {
+                if (wrongDirHint) { return; }
+                wrongDirHint = true;
+                v.speak("Wrong direction");
+            }
+        }
+
+        private void calculateWrongDir(Location pos, Instruction in)
+        {
+            if (in.getPoints().size()<2) { return; }
+            if (!wrongDir)
+            {
+                GeoPoint pathP1 = new GeoPoint(in.getPoints().getLat(0), in.getPoints().getLon(0));
+                GeoPoint pathP2 = new GeoPoint(in.getPoints().getLat(1), in.getPoints().getLon(1));
+                double bearingOk = pathP1.bearingTo(pathP2);
+                double bearingCur = pos.getBearing();
+                double bearingDiff = bearingOk - bearingCur;
+                if (bearingDiff < 0) { bearingDiff += 360.0; } //Normalize
+                if (bearingDiff > 180) { bearingDiff = 360.0 - bearingDiff; } //Normalize
+                wrongDir = (bearingDiff > 100);
+                Log.d(TAG, "Compare bearing cur=" + bearingCur + " way=" + bearingOk + " wrong=" + wrongDir);
+            }
+        }
+
+        public void setBaseData(PointPosData p)
+        {
+            this.arrPos = p.arrPos;
+            this.distance = p.distance;
+            this.status = p.status;
+            if (arrPos > 0)
+            {
+                resetDirectionOk();
+            }
+        }
     }
 
 }

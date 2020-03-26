@@ -106,7 +106,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
                             Intent myIntent = new Intent(LoginActivity.this, MenuContainerActivity.class);
                             startActivity(myIntent);
 
-//                          Permissions for offline maps
+                            // Permissions for offline maps
                             String sPermission = android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
                             if (!checkPermission(sPermission, this))
                             {
@@ -126,6 +126,9 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
         }
     }
 
+    /**
+     * Permissions for offline maps
+     */
     private void requestPermission(String[] sPermission){
         if(this != null)
             ActivityCompat.requestPermissions(this, sPermission, 1);
