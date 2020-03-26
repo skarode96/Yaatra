@@ -18,25 +18,17 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.gson.Gson;
-import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.WifiDirectP2PHelper.FellowTravellersSubscriberFragment;
 import com.tcd.yaatra.WifiDirectP2PHelper.PeerCommunicator;
 import com.tcd.yaatra.databinding.FragmentPeerToPeerBinding;
 import com.tcd.yaatra.repository.UserInfoRepository;
-import com.tcd.yaatra.repository.models.FellowTravellersCache;
-import com.tcd.yaatra.repository.models.Gender;
-import com.tcd.yaatra.repository.models.TravellerInfo;
 import com.tcd.yaatra.repository.models.TravellerStatus;
-import com.tcd.yaatra.services.api.yaatra.models.UserInfo;
 import com.tcd.yaatra.ui.adapter.PeerListAdapter;
-import com.tcd.yaatra.utils.MapUtils;
+import com.tcd.yaatra.ui.viewmodels.PeerToPeerFragmentViewModel;
+import com.tcd.yaatra.utils.Constants;
 import com.tcd.yaatra.utils.NetworkUtils;
 import com.tcd.yaatra.utils.SharedPreferenceUtils;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
@@ -51,23 +43,9 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
     PeerCommunicator peerCommunicator;
 
     @Inject
-    TravellerInfo ownTravellerInfo;
+    PeerToPeerFragmentViewModel peerToPeerFragmentViewModel;
 
-    @Inject
-    FellowTravellersCache fellowTravellersCache;
-
-    private ArrayList<TravellerInfo> travellerInfos = new ArrayList<>();
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
-    private static final String COUNTDOWN_FORMAT = "%02d:%02d";
-    private static final int SCAN_DURATION_IN_MILLISECONDS = 60000;
-    private static final int COUNTDOWN_INTERVAL_IN_MILLISECONDS  = 1000;
-    private static final String MEET_AT = "Let's Meet Others!";
-    private static final String WAIT_FOR_OTHERS = "You are the leader. Please wait for others!";
-    private static final String LISTENING_TO_FELLOW_TRAVELLERS = "Listening to Fellow Travellers";
-    private static final String ENJOY_YOUR_OWN_COMPANY = "Enjoy your own company!! :)";
     private boolean isLocationPermissionGranted = false;
-    private boolean isUserInfoFetched = false;
-    private static final String TAG = "PeerToPeerFragment";
     private TravellerStatus ownStatus = TravellerStatus.SeekingFellowTraveller;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
@@ -75,7 +53,6 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
     private Handler backgroundTaskHandler;
     PeerToPeerFragment fragmentContext;
     View view;
-    private ArrayList<LatLng> travelPath;
 
     //endregion
 
@@ -100,8 +77,6 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
         this.ownStatus = layoutDataBinding.travllerStatusToggle.getText() == "Seeking" ? TravellerStatus.SeekingFellowTraveller : TravellerStatus.ReachedStartPoint;
         peerCommunicator.broadcastTravellers(getOwnStatus());
     }
-
-
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -128,11 +103,11 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
 
         askLocationPermissionIfRequired();
 
-        isUserInfoFetched = false;
+        peerToPeerFragmentViewModel.setIsInitialized(false);
 
         userInfoRepository.getUserProfile(SharedPreferenceUtils.getUserName()).observe(this.getActivity(), userInfo -> {
 
-            insertOwnTravellerInfo(userInfo);
+            peerToPeerFragmentViewModel.initializeOwnTraveller(userInfo, NetworkUtils.getWiFiIPAddress(this.getActivity()));
         });
 
         backgroundInitializer.run();
@@ -144,7 +119,7 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
 
             try {
 
-                if (wifiManager.isWifiEnabled() && isUserInfoFetched && isLocationPermissionGranted) {
+                if (wifiManager.isWifiEnabled() && isLocationPermissionGranted && peerToPeerFragmentViewModel.getIsInitialized()) {
 
                     layoutDataBinding.initializeProgressBar.setVisibility(View.GONE);
 
@@ -152,7 +127,7 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
 
                     peerCommunicator.broadcastTravellers(getOwnStatus());
 
-                    if(travellerInfos.size()>0){
+                    if(peerToPeerFragmentViewModel.getFilteredPeerTravellers().size()>0){
                         instructUser();
                     }
                     else {
@@ -166,7 +141,7 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
                             .postDelayed(backgroundInitializer, 200);
                 }
             } catch (Exception ex) {
-                Log.e(TAG, "Error: " + ex.getMessage(), ex);
+                Log.e(Constants.TAG_PEER_TO_PEER_FRAGMENT, "Error: " + ex.getMessage(), ex);
             }
         }
     };
@@ -175,30 +150,11 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
         return ownStatus;
     }
 
-    private void insertOwnTravellerInfo(UserInfo userInfo) {
-
-        LocalDateTime now = LocalDateTime.now();
-
-        ownTravellerInfo.setUserId(userInfo.getId());
-        ownTravellerInfo.setUserName(userInfo.getUsername());
-        ownTravellerInfo.setAge(userInfo.getAge());
-        ownTravellerInfo.setGender(Gender.valueOfIdName(userInfo.getGender()));
-        ownTravellerInfo.setUserRating(userInfo.getRating());
-        ownTravellerInfo.setIpAddress(NetworkUtils.getWiFiIPAddress(this.getActivity()));
-        ownTravellerInfo.setRequestStartTime(now);
-        ownTravellerInfo.setStatusUpdateTime(now);
-        ownTravellerInfo.setInfoProvider(userInfo.getUsername());
-
-        processFellowTravellersInfo(fellowTravellersCache.getFellowTravellers());
-
-        isUserInfoFetched = true;
-    }
-
     private void startCountdown() {
-        new CountDownTimer(SCAN_DURATION_IN_MILLISECONDS, COUNTDOWN_INTERVAL_IN_MILLISECONDS) {
+        new CountDownTimer(Constants.SCAN_DURATION_IN_MILLISECONDS, Constants.COUNTDOWN_INTERVAL_IN_MILLISECONDS) {
 
             public void onTick(long millisUntilFinished) {
-                String formattedTimerText = String.format(COUNTDOWN_FORMAT,
+                String formattedTimerText = String.format(Constants.COUNTDOWN_FORMAT,
                         TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)%60,
                         TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) % 60);
 
@@ -207,29 +163,29 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
 
             public void onFinish() {
 
-                fellowTravellersCache.stopNewInsert();
-
+                peerToPeerFragmentViewModel.stopSavingNewPeersInCache();
                 instructUser();
             }
         }.start();
     }
 
     private void instructUser() {
-        if(travellerInfos.size() > 0 && amIGroupOwner()){
+        if(peerToPeerFragmentViewModel.getFilteredPeerTravellers().size() > 0 && peerToPeerFragmentViewModel.getAmIGroupOwner()){
             layoutDataBinding.tvInstructions.setTextSize(20);
-            layoutDataBinding.tvInstructions.setText(WAIT_FOR_OTHERS);
-            layoutDataBinding.tvSearching.setText(LISTENING_TO_FELLOW_TRAVELLERS);
-            enableStartNavigationButton();
+            layoutDataBinding.tvInstructions.setText(Constants.WAIT_FOR_OTHERS);
+            layoutDataBinding.tvSearching.setText(Constants.LISTENING_TO_FELLOW_TRAVELLERS);
         }
-        else if(travellerInfos.size() > 0){
-            layoutDataBinding.tvInstructions.setText(MEET_AT);
-            layoutDataBinding.tvSearching.setText(LISTENING_TO_FELLOW_TRAVELLERS);
-            enableStartNavigationButton();
+        else if(peerToPeerFragmentViewModel.getFilteredPeerTravellers().size() > 0){
+            layoutDataBinding.tvInstructions.setText(Constants.MEET_AT);
+            layoutDataBinding.tvSearching.setText(Constants.LISTENING_TO_FELLOW_TRAVELLERS);
         }
         else {
-            layoutDataBinding.tvInstructions.setText(ENJOY_YOUR_OWN_COMPANY);
+            layoutDataBinding.tvInstructions.setText(Constants.ENJOY_YOUR_OWN_COMPANY);
             layoutDataBinding.cvSoloTravel.setVisibility(View.VISIBLE);
+            layoutDataBinding.startNavigation.show();
         }
+
+        layoutDataBinding.startNavigation.show();
     }
 
     private void askLocationPermissionIfRequired() {
@@ -240,7 +196,7 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
 
             ActivityCompat.requestPermissions(this.getActivity()
                     , new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}
-                    , LOCATION_PERMISSION_REQUEST_CODE);
+                    , Constants.LOCATION_PERMISSION_REQUEST_CODE);
         } else {
             isLocationPermissionGranted = true;
         }
@@ -250,7 +206,7 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
     public void onRequestPermissionsResult(int requestCode,
                                            String[] permissions, int[] grantResults) {
         switch (requestCode) {
-            case LOCATION_PERMISSION_REQUEST_CODE: {
+            case Constants.LOCATION_PERMISSION_REQUEST_CODE: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -270,7 +226,7 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
     @Override
     public void onPause() {
 
-        travellerInfos.clear();
+        peerToPeerFragmentViewModel.resetFilteredPeerTravellers();
         refreshRecyclerView();
         super.onPause();
     }
@@ -278,7 +234,7 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
     @Override
     public void onDestroy() {
 
-        travellerInfos.clear();
+        peerToPeerFragmentViewModel.resetFilteredPeerTravellers();
         refreshRecyclerView();
         super.onDestroy();
     }
@@ -292,10 +248,10 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
         peerCommunicator.broadcastTravellers(TravellerStatus.TravellingToStartPoint);
 
         Bundle bundle = new Bundle();
-        bundle.putParcelableArrayList("destLocations", travelPath);
+        bundle.putParcelableArrayList("destLocations", peerToPeerFragmentViewModel.getTravelPath());
 
         Gson gson = new Gson();
-        bundle.putString("UserList", gson.toJson(travellerInfos));
+        bundle.putString("UserList", gson.toJson(peerToPeerFragmentViewModel.getFilteredPeerTravellers()));
         bundle.putBoolean("multiDestination", true);
 
         RouteInfoFragment routeInfoFragment = new RouteInfoFragment();
@@ -306,66 +262,14 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
     //endregion
 
     @Override
-    protected void processFellowTravellersInfo(HashMap<Integer, TravellerInfo> fellowTravellers) {
+    protected void processFellowTravellersInfo() {
 
-        this.travellerInfos.clear();
-        ArrayList<TravellerInfo> peerTravellerArrayList = new ArrayList<>(fellowTravellers.values());
-        MapUtils.filterFellowTravellers(ownTravellerInfo, peerTravellerArrayList).forEach(travellerInfo -> this.travellerInfos.add(travellerInfo));
+        peerToPeerFragmentViewModel.setFilteredPeerTravellers();
         refreshRecyclerView();
     }
 
     private void refreshRecyclerView() {
-        mAdapter = new PeerListAdapter(this.getActivity().getApplicationContext(), this.travellerInfos);
+        mAdapter = new PeerListAdapter(this.getActivity().getApplicationContext(), peerToPeerFragmentViewModel.getFilteredPeerTravellers());
         layoutDataBinding.peerRecyclerView.setAdapter(mAdapter);
-    }
-
-    private boolean amIGroupOwner(){
-        return makeTravelPath();
-    }
-
-    //check if current user is group owner of the travellers list
-    //Initialize travel path including destinations of all travellers
-    //Travel path also includes group owner's location as destination for other travellers
-    private boolean makeTravelPath() {
-
-        travelPath = new ArrayList<>();
-        LocalDateTime leastFellowTravellerRequestStartTime = LocalDateTime.MAX;
-
-        double groupOwnerSourceLat = 0.0;
-        double groupOwnerSourceLong = 0.0;
-
-        Iterator<TravellerInfo> iterator = travellerInfos.iterator();
-
-        while(iterator.hasNext()){
-
-            TravellerInfo info = iterator.next();
-
-            if(info.getRequestStartTime().isBefore(leastFellowTravellerRequestStartTime)){
-                leastFellowTravellerRequestStartTime = info.getRequestStartTime();
-                groupOwnerSourceLat = info.getSourceLatitude();
-                groupOwnerSourceLong = info.getSourceLongitude();
-            }
-
-            travelPath.add(new LatLng(info.getDestinationLatitude(), info.getDestinationLongitude()));
-        }
-
-        boolean isGroupOwner = ownTravellerInfo.getRequestStartTime().isBefore(leastFellowTravellerRequestStartTime);
-
-        if(!isGroupOwner){
-            travelPath.add(0, new LatLng(groupOwnerSourceLat, groupOwnerSourceLong));
-        }
-
-        travelPath.add(0, new LatLng(ownTravellerInfo.getSourceLatitude(), ownTravellerInfo.getSourceLongitude()));
-        travelPath.add(new LatLng(ownTravellerInfo.getDestinationLatitude(), ownTravellerInfo.getDestinationLongitude()));
-
-        return isGroupOwner;
-    }
-
-    private void enableStartNavigationButton(){
-        if (travellerInfos.size() > 0) {
-            layoutDataBinding.startNavigation.show();
-        } else {
-            layoutDataBinding.startNavigation.hide();
-        }
     }
 }
