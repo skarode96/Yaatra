@@ -65,7 +65,7 @@
             android:id="@+id/peer_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="100dp"/>
+            android:layout_marginTop="100dp" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cvSoloTravel"
@@ -100,6 +100,20 @@
             android:paddingTop="200dp"
             android:src="@drawable/ic_btn_navigation"
             android:tooltipText="Start Navigation" />
+
+
+        <ToggleButton
+            android:id="@+id/travller_status_toggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/peer_recycler_view"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="end|bottom"
+            android:layout_marginBottom="107dp"
+            android:gravity="center"
+            android:text="ToggleButton"
+            android:textOff="Seeking"
+            android:textOn="Reached" />
 
         <FrameLayout
             android:id="@+id/initializeProgressBar"
