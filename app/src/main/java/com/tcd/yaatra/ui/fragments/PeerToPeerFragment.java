@@ -68,6 +68,7 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
     private boolean isLocationPermissionGranted = false;
     private boolean isUserInfoFetched = false;
     private static final String TAG = "PeerToPeerFragment";
+    private TravellerStatus ownStatus = TravellerStatus.SeekingFellowTraveller;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
     WifiManager wifiManager;
@@ -92,7 +93,15 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
         layoutManager = new LinearLayoutManager(this.getActivity());
         layoutDataBinding.peerRecyclerView.setLayoutManager(layoutManager);
         layoutDataBinding.startNavigation.setOnClickListener(view -> handleStartNavigationClick());
+        layoutDataBinding.travllerStatusToggle.setOnClickListener(view -> handleStatusUpdateClick());
     }
+
+    private void handleStatusUpdateClick() {
+        this.ownStatus = layoutDataBinding.travllerStatusToggle.getText() == "Seeking" ? TravellerStatus.SeekingFellowTraveller : TravellerStatus.ReachedStartPoint;
+        peerCommunicator.broadcastTravellers(getOwnStatus());
+    }
+
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -141,7 +150,7 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
 
                     peerCommunicator.initialize(fragmentContext);
 
-                    peerCommunicator.broadcastTravellers(TravellerStatus.SeekingFellowTraveller);
+                    peerCommunicator.broadcastTravellers(getOwnStatus());
 
                     if(travellerInfos.size()>0){
                         instructUser();
@@ -161,6 +170,10 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
             }
         }
     };
+
+    private TravellerStatus getOwnStatus() {
+        return ownStatus;
+    }
 
     private void insertOwnTravellerInfo(UserInfo userInfo) {
 
