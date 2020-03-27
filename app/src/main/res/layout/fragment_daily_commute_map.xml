@@ -70,29 +70,40 @@
             android:orientation="horizontal"
             android:background="@android:color/transparent" >
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
+            <Button
                 android:id="@+id/addDestination"
-                android:layout_width="wrap_content"
+                android:layout_width="500dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end|bottom"
-                android:src="@drawable/add_location_w"
+                android:layout_weight="1"
+                android:background="@color/colorAccent"
+                android:clickable="true"
                 android:gravity="center"
-                android:tooltipText=" Enter Destination"
-                android:visibility="visible"
-                android:background="@android:color/transparent" />
+                android:text="Add Source"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:visibility="visible" />
 
             <Button
                 android:id="@+id/journeyPref"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="1dp"
-                android:layout_marginEnd="10dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:background="@color/md_grey_200"
+                android:background="@color/colorAccent"
                 android:clickable="true"
-                android:text="Add Journey Preferences"
-                android:visibility="gone" />
+                android:text="Add Destination"
+                android:visibility="gone"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:textColor="@color/white"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:textSize="20sp"
+                android:textStyle="bold"/>
 
         </LinearLayout>
 
