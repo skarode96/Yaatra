@@ -37,13 +37,13 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
     //region Private Variables
 
     @Inject
-    UserInfoRepository userInfoRepository;
+    protected UserInfoRepository userInfoRepository;
 
     @Inject
-    PeerCommunicator peerCommunicator;
+    protected PeerCommunicator peerCommunicator;
 
     @Inject
-    PeerToPeerFragmentViewModel peerToPeerFragmentViewModel;
+    protected PeerToPeerFragmentViewModel peerToPeerFragmentViewModel;
 
     private boolean isLocationPermissionGranted = false;
     private TravellerStatus ownStatus = TravellerStatus.SeekingFellowTraveller;
@@ -87,7 +87,7 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
         return view;
     }
 
-    private void initialize() {
+    protected void initialize() {
         fragmentContext = this;
         backgroundTaskHandler = new Handler();
 
