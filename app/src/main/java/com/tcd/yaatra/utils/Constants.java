@@ -8,7 +8,7 @@ public class Constants {
     public static final String PLEASE_ENTER_PASSWORD = "Please enter password.";
     public static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     public static final String COUNTDOWN_FORMAT = "%02d:%02d";
-    public static final int SCAN_DURATION_IN_MILLISECONDS = 10000;
+    public static final int SCAN_DURATION_IN_MILLISECONDS = 60000;
     public static final int COUNTDOWN_INTERVAL_IN_MILLISECONDS  = 1000;
     public static final String MEET_AT = "Let's Meet Others!";
     public static final String WAIT_FOR_OTHERS = "You are the leader. Please wait for others!";

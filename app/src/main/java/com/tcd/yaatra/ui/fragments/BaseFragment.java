@@ -30,7 +30,7 @@ public abstract class BaseFragment<DataBindingClass extends ViewDataBinding> ext
         this.layoutDataBinding = DataBindingUtil.inflate(inflater, getFragmentResourceId(), container, false);
     }
 
-    private void configureDagger() {
+    protected void configureDagger() {
 //        AndroidInjection.inject(getActivity());
         AndroidSupportInjection.inject(this);
     }
