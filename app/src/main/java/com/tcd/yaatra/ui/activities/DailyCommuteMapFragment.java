@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -51,7 +52,7 @@ public class DailyCommuteMapFragment extends BaseFragment<FragmentDailyCommuteMa
     boolean destinationIndicator;
     SearchView destinationArea;
     LocationComponent locationComponent;
-    FloatingActionButton fab;
+    Button fab;
     private Point dailySource;
     private Point dailyDestination;
     private PermissionsManager permissionsManager;
@@ -91,6 +92,7 @@ public class DailyCommuteMapFragment extends BaseFragment<FragmentDailyCommuteMa
     }
 
     @SuppressLint("RestrictedApi")
+
     private void handleOnFABButtonClick(View view) {
 
         if(marker == null)
