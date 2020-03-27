@@ -60,7 +60,7 @@ public class PeerCommunicator implements PeerListener {
 
         if (isCacheUpdated) {
 
-            parentFragment.processFellowTravellersInfo(fellowTravellersCache.getFellowTravellers());
+            parentFragment.processFellowTravellersInfo();
 
             //Start advertising newly discovered/updated fellow travellers
             advertiseStatusAndDiscoverFellowTravellers();

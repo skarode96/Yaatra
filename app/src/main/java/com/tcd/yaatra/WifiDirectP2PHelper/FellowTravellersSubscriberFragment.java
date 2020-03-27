@@ -8,6 +8,6 @@ import java.util.HashMap;
 
 public abstract class FellowTravellersSubscriberFragment<DataBindingClass extends ViewDataBinding> extends BaseFragment<DataBindingClass> {
 
-    protected abstract void processFellowTravellersInfo(HashMap<Integer, TravellerInfo> fellowTravellers);
+    protected abstract void processFellowTravellersInfo();
 
 }

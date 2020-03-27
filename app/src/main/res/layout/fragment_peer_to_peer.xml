@@ -7,98 +7,122 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".ui.fragments.PeerToPeerFragment">
+        android:layout_height="match_parent">
 
-        <GridLayout
-            android:id="@+id/gridLoader"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_alignParentTop="@id/peer_recycler_view"
-            android:columnCount="2"
-            android:rowCount="1">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvSearching"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_column="0"
-                android:layout_marginEnd="5dp"
-                android:layout_gravity="end|center_vertical"
-                android:text="@string/searching_label"
-                android:textColor="#014C45"
-                android:textSize="18sp"
-                android:textStyle="bold">
-
-            </androidx.appcompat.widget.AppCompatTextView>
-
-            <com.agrawalsuneet.dotsloader.loaders.AllianceLoader
-                android:id="@+id/loader"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_column="1"
-                android:layout_gravity="start|center_vertical"
-                android:layout_marginStart="5dp"
-                app:alliance_distanceMultiplier="3"
-                app:alliance_dotsRadius="3dp"
-                app:alliance_drawOnlyStroke="true"
-                app:alliance_firstDotsColor="@color/darkGreen"
-                app:alliance_secondDotsColor="@color/red"
-                app:alliance_strokeWidth="2dp"
-                app:alliance_thirdDotsColor="@color/blue" />
-
-        </GridLayout>
-
-        <TextView
-            android:id="@+id/tvInstructions"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
-            android:fontFamily="sans-serif-black"
-            android:gravity="center_horizontal"
-            android:textColor="#222222"
-            android:textSize="30sp" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/peer_recycler_view"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="100dp" />
+            tools:context=".ui.fragments.PeerToPeerFragment">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cvSoloTravel"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            card_view:cardBackgroundColor="@color/white"
-            android:layout_marginTop="100dp"
-            card_view:cardCornerRadius="15dp"
-            card_view:cardElevation="10dp"
-            card_view:cardUseCompatPadding="true"
-            android:visibility="gone">
+            <GridLayout
+                android:id="@+id/gridLoader"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_alignParentTop="@id/peer_recycler_view"
+                android:columnCount="2"
+                android:rowCount="1">
 
-            <ImageView
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvSearching"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:layout_column="0"
+                    android:layout_marginEnd="5dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:text="@string/searching_label"
+                    android:textColor="#014C45"
+                    android:textSize="18sp"
+                    android:textStyle="bold">
+
+                </androidx.appcompat.widget.AppCompatTextView>
+
+                <com.agrawalsuneet.dotsloader.loaders.AllianceLoader
+                    android:id="@+id/loader"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:layout_column="1"
+                    android:layout_gravity="start|center_vertical"
+                    android:layout_marginStart="5dp"
+                    app:alliance_distanceMultiplier="3"
+                    app:alliance_dotsRadius="3dp"
+                    app:alliance_drawOnlyStroke="true"
+                    app:alliance_firstDotsColor="@color/darkGreen"
+                    app:alliance_secondDotsColor="@color/red"
+                    app:alliance_strokeWidth="2dp"
+                    app:alliance_thirdDotsColor="@color/blue" />
+
+            </GridLayout>
+
+            <TextView
+                android:id="@+id/tvInstructions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="50dp"
+                android:fontFamily="sans-serif-black"
+                android:gravity="center_horizontal"
+                android:textColor="#222222"
+                android:textSize="30sp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/peer_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:srcCompat="@drawable/solo_travel"
-                android:scaleType="fitXY"
-                android:contentDescription="@string/imagesolotravel"/>
-        </androidx.cardview.widget.CardView>
+                android:layout_marginTop="100dp" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvSoloTravel"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                card_view:cardBackgroundColor="@color/white"
+                android:layout_marginTop="100dp"
+                card_view:cardCornerRadius="15dp"
+                card_view:cardElevation="10dp"
+                card_view:cardUseCompatPadding="true"
+                android:visibility="gone" >
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:srcCompat="@drawable/solo_travel"
+                    android:scaleType="fitXY"
+                    android:contentDescription="@string/imagesolotravel"/>
+            </androidx.cardview.widget.CardView>
+
+            <FrameLayout
+                android:id="@+id/initializeProgressBar"
+                android:animateLayoutChanges="true"
+                android:visibility="gone"
+                android:alpha="0.4"
+                android:background="#000000"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ProgressBar
+                    style="?android:attr/progressBarStyleLarge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:indeterminate="true"
+                    android:layout_gravity="center"
+                    android:indeterminateTint="#003989"/>
+            </FrameLayout>
+
+        </RelativeLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/startNavigation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/peer_recycler_view"
             android:layout_alignParentEnd="true"
-            android:layout_gravity="end|bottom"
+            android:layout_alignParentBottom="true"
             android:layout_marginBottom="37dp"
             android:layout_marginEnd="10dp"
             android:background="@android:color/transparent"
             android:gravity="center"
             android:paddingTop="200dp"
             android:src="@drawable/ic_btn_navigation"
+            android:elevation="100dp"
             android:tooltipText="Start Navigation" />
 
 
@@ -106,32 +130,14 @@
             android:id="@+id/travller_status_toggle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/peer_recycler_view"
             android:layout_alignParentEnd="true"
-            android:layout_gravity="end|bottom"
+            android:layout_alignParentBottom="true"
             android:layout_marginBottom="107dp"
             android:gravity="center"
             android:text="ToggleButton"
             android:textOff="Seeking"
-            android:textOn="Reached" />
-
-        <FrameLayout
-            android:id="@+id/initializeProgressBar"
-            android:animateLayoutChanges="true"
-            android:visibility="gone"
-            android:alpha="0.4"
-            android:background="#000000"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <ProgressBar
-                style="?android:attr/progressBarStyleLarge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:indeterminate="true"
-                android:layout_gravity="center"
-                android:indeterminateTint="#003989"/>
-        </FrameLayout>
+            android:textOn="Reached"
+            android:elevation="20dp" />
 
     </RelativeLayout>
 

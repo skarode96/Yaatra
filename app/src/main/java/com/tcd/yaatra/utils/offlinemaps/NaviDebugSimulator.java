@@ -74,16 +74,12 @@ public class NaviDebugSimulator {
         GeoPoint p = debug_simulator_points.get(index);
         int newIndex = checkDistance(index, p);
         p = checkP;
-//        final MapActivity cur = ((MapActivity) activity);
         pLoc.setLatitude(p.getLatitude());
         pLoc.setLongitude(p.getLongitude());
         float bearing = lastLoc.bearingTo(pLoc);
         lastLoc.set(pLoc);
         pLoc.setBearing(bearing);
         pLoc.setSpeed(5.55f);
-//        cur.onLocationChanged(pLoc);
-//        NaviEngine.getNaviEngine().updatePosition(this, mCurrentLocation);
-//        OfflineMaps offlineMaps = new OfflineMaps();
         offlineMaps.updatePosition(offlineMaps.getActivity(), pLoc);
         offlineMaps.setCustomPoint(offlineMaps.getActivity(), new GeoPoint(p.getLatitude(), p.getLongitude()), navIcon);
         log("Update position for Debug purpose! Lat=" + pLoc.getLatitude() + " Lon=" + pLoc.getLongitude());
@@ -91,7 +87,7 @@ public class NaviDebugSimulator {
           runDelayed(offlineMaps, pLoc, lastLoc, newIndex);
         }
       }
-    }, 100);
+    }, 1000);
   }
 
 
