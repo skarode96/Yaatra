@@ -16,39 +16,52 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:gravity="center"
+                android:layout_marginTop="10dp"
+                android:paddingEnd="0dp"
+                android:text="Create Daily Commute Preference"
+                android:background="@color/userDetailsBlue"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <AutoCompleteTextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="10dp"
+                android:drawableLeft="@drawable/ic_title"
+                android:drawablePadding="5dp"
+                android:hint="Title"
+                android:textStyle="bold"
+                android:paddingStart="10dp"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/transportPref"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:text="Mode of Transport Preference"
+                android:textStyle="bold"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:textColor="#003989"
+                android:textSize="18sp"/>
+
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="20dp">
-
-                <AutoCompleteTextView
-                    android:id="@+id/title"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginEnd="15dp"
-                    android:layout_marginBottom="10dp"
-                    android:drawableLeft="@drawable/ic_title"
-                    android:drawablePadding="5dp"
-                    android:hint="Title"
-                    android:paddingStart="10dp"
-                    android:textSize="14sp" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="20dp">
-
-                <TextView
-                    android:id="@+id/transportPref"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginEnd="15dp"
-                    android:layout_marginBottom="10dp"
-                    android:text="Mode of Transport Preference" />
+                android:layout_marginTop="0dp">
 
                 <RadioGroup
                     android:id="@+id/transportPrefGroup"
@@ -56,7 +69,8 @@
                     android:layout_height="match_parent"
                     android:layout_marginStart="15dp"
                     android:layout_marginEnd="15dp"
-                    android:layout_marginBottom="10dp">
+                    android:layout_marginTop="0dp"
+                    android:layout_marginBottom="5dp">
 
 
                     <RadioButton
@@ -83,16 +97,21 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="20dp">
+                android:layout_marginTop="10dp">
 
                 <TextView
                     android:id="@+id/genderPref"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
+                    android:layout_height="30dp"
                     android:layout_marginStart="15dp"
                     android:layout_marginEnd="15dp"
-                    android:layout_marginBottom="10dp"
-                    android:text="Gender Preference" />
+                    android:layout_marginBottom="0dp"
+                    android:layout_marginTop="0dp"
+                    android:text="Gender Preference"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                    android:textColor="#003989"
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
 
                 <RadioGroup
                     android:id="@+id/genderPrefGroup"
@@ -127,16 +146,21 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="20dp">
+                android:layout_marginTop="10dp">
 
                 <TextView
                     android:id="@+id/journeyFreq"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
+                    android:layout_height="30dp"
                     android:layout_marginStart="15dp"
                     android:layout_marginEnd="15dp"
-                    android:layout_marginBottom="10dp"
-                    android:text="Journey Frequency" />
+                    android:layout_marginBottom="0dp"
+                    android:layout_marginTop="0dp"
+                    android:text="Journey Frequency"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                    android:textColor="#003989"
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
 
                 <RadioGroup
                     android:id="@+id/journeyFreqGroup"
@@ -144,7 +168,7 @@
                     android:layout_height="match_parent"
                     android:layout_marginStart="15dp"
                     android:layout_marginEnd="15dp"
-                    android:layout_marginBottom="10dp">
+                    android:layout_marginBottom="5dp">
 
 
                     <RadioButton
@@ -171,7 +195,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="20dp">
+                android:layout_marginTop="10dp">
 
                 <EditText
                     android:id="@+id/journeyStartDate"
@@ -179,20 +203,21 @@
                     android:layout_height="40dp"
                     android:layout_marginStart="15dp"
                     android:layout_marginEnd="15dp"
-                    android:layout_marginBottom="10dp"
+                    android:layout_marginBottom="0dp"
                     android:clickable="true"
                     android:drawableLeft="@drawable/ic_date"
                     android:drawablePadding="5dp"
                     android:hint="Journey Start Date"
                     android:inputType="date"
                     android:paddingStart="10dp"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    android:textStyle="bold"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="20dp">
+                android:layout_marginTop="10dp">
 
                 <EditText
                     android:id="@+id/journeyStartTime"
@@ -200,18 +225,19 @@
                     android:layout_height="40dp"
                     android:layout_marginStart="15dp"
                     android:layout_marginEnd="15dp"
-                    android:layout_marginBottom="10dp"
+                    android:layout_marginBottom="20dp"
                     android:drawableLeft="@drawable/ic_time"
                     android:hint="Journey Start Time"
                     android:paddingStart="10dp"
                     android:drawablePadding="5dp"
                     android:textSize="14sp"
-                    android:inputType="time"/>
+                    android:inputType="time"
+                    android:textStyle="bold"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button
                 android:id="@+id/buttonCreate"
-                android:layout_width="wrap_content"
+                android:layout_width="125dp"
                 android:layout_height="50dp"
                 android:layout_gravity="center"
                 android:layout_marginBottom="10dp"
@@ -220,7 +246,9 @@
                 android:paddingRight="20dp"
                 android:text="Create"
                 android:textColor="@color/white"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 
         </LinearLayout>
         </ScrollView>
