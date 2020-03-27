@@ -43,7 +43,12 @@ public class PeerToPeerFragmentTest {
     public void setup(){
         MockitoAnnotations.initMocks(this);
 
-        SharedPreferenceUtils.setUserName(testUserName);
+        if(SharedPreferenceUtils.getUserName() == null){
+            SharedPreferenceUtils.setUserName(testUserName);
+        }
+        else {
+            testUserName = SharedPreferenceUtils.getUserName();
+        }
 
         LiveData<UserInfo> userInfoLiveData = new LiveData<UserInfo>() {
             @Override
