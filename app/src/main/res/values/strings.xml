@@ -45,4 +45,6 @@
     <string name="searching_label">Searching</string>
     <string name="imagesolotravel">ImageSoloTravel</string>
     <string name="offline_map">Offline Maps</string>
+    <string name="search_location">Search location</string>
+    <string name="wrong_direction">Wrong direction</string>
 </resources>

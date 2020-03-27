@@ -20,6 +20,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
+import androidx.annotation.WorkerThread;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -29,11 +30,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.graphhopper.GHRequest;
 import com.graphhopper.GHResponse;
 import com.graphhopper.GraphHopper;
 import com.graphhopper.PathWrapper;
+import com.graphhopper.routing.util.EdgeFilter;
+import com.graphhopper.storage.NodeAccess;
+import com.graphhopper.storage.index.QueryResult;
 import com.graphhopper.util.Instruction;
 import com.graphhopper.util.InstructionList;
 import com.graphhopper.util.Parameters;
@@ -43,9 +49,12 @@ import com.graphhopper.util.shapes.GHPoint;
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.databinding.FragmentOfflineMapsBinding;
 import com.tcd.yaatra.utils.offlinemaps.GHAsyncTask;
+import com.tcd.yaatra.utils.offlinemaps.GeoMath;
 import com.tcd.yaatra.utils.offlinemaps.KalmanLocationManager;
+import com.tcd.yaatra.utils.offlinemaps.NaviDebugSimulator;
 import com.tcd.yaatra.utils.offlinemaps.NaviInstruction;
 import com.tcd.yaatra.utils.offlinemaps.NaviVoice;
+import com.tcd.yaatra.utils.offlinemaps.UnitCalculator;
 
 import org.oscim.android.MapView;
 import org.oscim.android.canvas.AndroidGraphics;
@@ -79,6 +88,8 @@ import static com.mapbox.services.android.navigation.ui.v5.feedback.FeedbackBott
 
 
 public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
+    
+    
 
     @Override
     public int getFragmentResourceId() {
@@ -87,6 +98,8 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
 
     public static final int BUFFER_SIZE = 8 * 1024;
     private static final int BEST_NAVI_ZOOM = 18;
+    private float tiltMult = 1.0f;
+    private float tiltMultPos = 1.0f;
     private LocationManager locationManager;
     private KalmanLocationManager kalmanLocationManager;
     private MapView mapView;
@@ -103,6 +116,7 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
     private int destIcon = R.drawable.ic_place_black_24dp;
     private int navIcon = R.drawable.ic_navigation_black_24dp;
     private PathLayer pathLayer;
+    private int previousIcon;
 
     private Location pos;
     boolean naviVoiceSpoken = false;
@@ -112,9 +126,20 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
     private static final double MAX_WAY_TOLERANCE = 0.000008993 * 30.0;
     private ViewGroup navTopVP;
 
+    private ImageView navtop_image;
+    private TextView navtop_curloc;
+    private TextView navtop_nextloc;
+    private TextView navtop_when;
+    private TextView navtop_time;
+
     NaviVoice naviVoice;
     private boolean active = false;
     final PointPosData nearestP = new PointPosData();
+    GHAsyncTask<GeoPoint, NaviInstruction, NaviInstruction> naviEngineTask;
+    private GeoPoint recalcFrom, recalcTo;
+    private boolean directTargetDir = false;
+    private static final double MAX_WAY_TOLERANCE_METER = 30.0;
+    private double partDistanceScaler = 1.0;
 
     @Override
     protected void initEventHandlers() {
@@ -125,7 +150,385 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
     private void handleOnNavClick(View view) {
 
         navTopVP.setVisibility(View.VISIBLE);
+        setNavigating(true);
+        Location curLoc = mLastLocation;
+        if (curLoc!=null)
+        {
+            updatePosition(getActivity(), curLoc);
+        }
 
+    }
+
+    @UiThread
+    public void updatePosition(Activity activity, Location pos)
+    {
+        if (active == false) { return; }
+        if (uiJob == UiJob.RecalcPath) { return; }
+        if (this.pos == null) { this.pos = new Location((String)null); }
+        this.pos.set(pos);
+        GeoPoint curPos = new GeoPoint(pos.getLatitude(), pos.getLongitude());
+        GeoPoint newCenter = curPos.destinationPoint(70.0 * tiltMultPos, pos.getBearing());
+        centerPointOnMap(mapView,newCenter, BEST_NAVI_ZOOM, 360.0f - pos.getBearing(), 45.0f * tiltMult);
+
+        calculatePositionAsync(activity, curPos);
+    }
+
+    @UiThread
+    private void calculatePositionAsync(Activity activity, GeoPoint curPos)
+    {
+        if (naviEngineTask == null) { createNaviEngineTask(activity); }
+        updateDirectTargetDir(curPos);
+        if (naviEngineTask.getStatus() == AsyncTask.Status.RUNNING)
+        {
+            Log.d(TAG, "calculatePositionAsync: Error, NaviEngineTask is still running! Drop job ...");
+        }
+        else if (naviEngineTask.hasError())
+        {
+            naviEngineTask.getError().printStackTrace();
+        }
+        else
+        {
+            createNaviEngineTask(activity); //TODO: Recreation of Asynctask seems necessary?!
+            naviEngineTask.execute(curPos);
+        }
+    }
+
+    private void updateDirectTargetDir(GeoPoint curPos)
+    {
+        if (!directTargetDir) { return; }
+        joinPathLayerToPos(curPos.getLatitude(), curPos.getLongitude());
+    }
+
+    public void joinPathLayerToPos(double lat, double lon)
+    {
+        try
+        {
+            List<GeoPoint> geoPoints = new ArrayList<>();
+            geoPoints.add(new GeoPoint(lat,lon));
+            geoPoints.add(pathLayer.getPoints().get(1));
+            pathLayer.setPoints(geoPoints);
+        }
+        catch (Exception e) {
+            Log.d(TAG, "joinPathLayerToPos: Error: " + e); }
+    }
+
+    @UiThread
+    private void createNaviEngineTask(final Activity activity)
+    {
+        naviEngineTask = new GHAsyncTask<GeoPoint, NaviInstruction, NaviInstruction>()
+        {
+            @Override
+            protected NaviInstruction saveDoInBackground(GeoPoint... params) throws Exception
+            {
+                return calculatePosition(params[0]);
+            }
+
+            @Override
+            protected void onPostExecute(NaviInstruction in)
+            {
+                if (in == null)
+                {
+                    if (uiJob == UiJob.RecalcPath)
+                    {
+                        if (instructions != null)
+                        {
+                            instructions = null;
+                            List<GHPoint> points = new ArrayList<>();
+                            points.add(new GHPoint(recalcFrom.getLatitude(), recalcFrom.getLongitude()));
+                            points.add(new GHPoint(recalcTo.getLatitude(), recalcTo.getLongitude()));
+                            calcPath(points, getActivity());
+                        }
+                    }
+                    else if (uiJob == UiJob.Finished)
+                    {
+                        active = false;
+                    }
+                }
+                else if (uiJob == UiJob.UpdateInstruction)
+                {
+                    showInstruction(in);
+                }
+            }
+        };
+    }
+
+    @WorkerThread
+    private NaviInstruction calculatePosition(GeoPoint curPos)
+    {
+        if (uiJob == UiJob.RecalcPath) { return null; }
+        if (uiJob == UiJob.Finished) { return null; }
+        nearestP.setBaseData(getNearestPoint(instructions.get(0), nearestP.arrPos, curPos));
+
+        if (nearestP.arrPos > 0)
+        { // Check dist to line (backward)
+            double lat1 = instructions.get(0).getPoints().getLatitude(nearestP.arrPos);
+            double lon1 = instructions.get(0).getPoints().getLongitude(nearestP.arrPos);
+            double lat2 = instructions.get(0).getPoints().getLatitude(nearestP.arrPos-1);
+            double lon2 = instructions.get(0).getPoints().getLongitude(nearestP.arrPos-1);
+            double lDist = GeoMath.distToLineSegment(curPos.getLatitude(), curPos.getLongitude(), lat1, lon1, lat2, lon2);
+            if (lDist < nearestP.distance)
+            {
+                nearestP.distance = lDist;
+                nearestP.status = PointPosData.Status.CurPosIsBackward;
+            }
+        }
+        if (nearestP.arrPos < instructions.get(0).getPoints().size()-1)
+        { // Check dist to line (forward)
+            double lat1 = instructions.get(0).getPoints().getLatitude(nearestP.arrPos);
+            double lon1 = instructions.get(0).getPoints().getLongitude(nearestP.arrPos);
+            double lat2 = instructions.get(0).getPoints().getLatitude(nearestP.arrPos+1);
+            double lon2 = instructions.get(0).getPoints().getLongitude(nearestP.arrPos+1);
+            double lDist = GeoMath.distToLineSegment(curPos.getLatitude(), curPos.getLongitude(), lat1, lon1, lat2, lon2);
+            if (lDist < nearestP.distance)
+            {
+                nearestP.distance = lDist;
+                nearestP.status = PointPosData.Status.CurPosIsForward;
+            }
+        }
+        else if (nearestP.arrPos == instructions.get(0).getPoints().size()-1 &&
+                instructions.size()>1)
+        {
+            if (instructions.get(1).getPoints().size() > 0)
+            { // Check dist to line (forward to next instruction)
+                double lat1 = instructions.get(0).getPoints().getLatitude(nearestP.arrPos);
+                double lon1 = instructions.get(0).getPoints().getLongitude(nearestP.arrPos);
+                double lat2 = instructions.get(1).getPoints().getLatitude(0);
+                double lon2 = instructions.get(1).getPoints().getLongitude(0);
+                double lDist = GeoMath.distToLineSegment(curPos.getLatitude(), curPos.getLongitude(), lat1, lon1, lat2, lon2);
+                if (lDist < nearestP.distance)
+                {
+                    nearestP.distance = lDist;
+                    nearestP.status = PointPosData.Status.CurPosIsForward;
+                }
+            }
+            if (instructions.get(1).getPoints().size() > 1)
+            { // Check dist to line (forward next instruction p1+p2)
+                double lat1 = instructions.get(1).getPoints().getLatitude(0);
+                double lon1 = instructions.get(1).getPoints().getLongitude(0);
+                double lat2 = instructions.get(1).getPoints().getLatitude(1);
+                double lon2 = instructions.get(1).getPoints().getLongitude(1);
+                double lDist = GeoMath.distToLineSegment(curPos.getLatitude(), curPos.getLongitude(), lat1, lon1, lat2, lon2);
+                if (lDist < nearestP.distance)
+                {
+                    nearestP.distance = lDist;
+                    nearestP.status = PointPosData.Status.CurPosIsForwardNext;
+                }
+            }
+        }
+        if (nearestP.isForward())
+        {
+            // Reset bearing with calculatePosition()
+            nearestP.resetDirectionOk();
+        }
+        if (!nearestP.isDistanceOk())
+        {
+            double maxWayTolMeters = MAX_WAY_TOLERANCE_METER;
+            if (directTargetDir) { maxWayTolMeters = maxWayTolMeters * 10.0; }
+            Instruction nearestNext = instructions.find(curPos.getLatitude(), curPos.getLongitude(), maxWayTolMeters);
+            if (nearestNext == null)
+            {
+                GeoPoint closestP = findClosestStreet(curPos);
+                nearestNext = instructions.find(closestP.getLatitude(), closestP.getLongitude(), maxWayTolMeters);
+            }
+            if (nearestNext == null)
+            {
+                uiJob = UiJob.RecalcPath;
+                recalcFrom = curPos;
+                Instruction lastInstruction = instructions.get(instructions.size()-1);
+                int lastPoint = lastInstruction.getPoints().size()-1;
+                double lastPointLat = lastInstruction.getPoints().getLat(lastPoint);
+                double lastPointLon = lastInstruction.getPoints().getLon(lastPoint);
+                recalcTo = new GeoPoint(lastPointLat, lastPointLon);
+                Log.d(TAG, "calculatePosition: NaviTask Start recalc !!!!!!");
+                return null;
+            }
+            else
+            { // Forward to nearest instruction.
+                int deleteCounter = 0;
+                Instruction lastDeleted = null;
+
+                while (instructions.size()>0 && !instructions.get(0).equals(nearestNext))
+                {
+                    deleteCounter++;
+                    lastDeleted = instructions.remove(0);
+                }
+                if (lastDeleted != null)
+                { // Because we need the current, and not the next Instruction
+                    instructions.add(0, lastDeleted);
+                    deleteCounter --;
+                }
+                if (deleteCounter == 0)
+                {
+                    PointPosData newNearestP = getNearestPoint(instructions.get(0), 0, curPos);
+                    //TODO: Continue-Instruction with DirectionInfo: getContinueInstruction() ?
+                    Log.d(TAG, "calculatePosition: NaviTask Start update far !!!!!!");
+                    return getUpdatedInstruction(curPos, newNearestP);
+                }
+                Log.d(TAG, "calculatePosition: NaviTask Start update skip-mult-" + deleteCounter + " !!!!!!");
+                return getNewInstruction();
+            }
+        }
+        else if (nearestP.isForwardNext())
+        {
+            instructions.remove(0);
+            Log.d(TAG, "calculatePosition: NaviTask Start skip-next !!!!!!");
+            return getNewInstruction();
+        }
+        else
+        {
+            // NaviTask Start update!
+            return getUpdatedInstruction(curPos, nearestP);
+        }
+    }
+
+    private NaviInstruction getNewInstruction()
+    {
+        nearestP.arrPos = 0;
+        nearestP.distance = Double.MAX_VALUE;
+        uiJob = UiJob.UpdateInstruction;
+        if (instructions.size() > 0)
+        {
+            Instruction in = instructions.get(0);
+            long fullTime = countFullTime(in.getTime());
+            GeoPoint curPos = new GeoPoint(in.getPoints().getLat(0), in.getPoints().getLon(0));
+            double partDistance = countPartDistance(curPos, in, 0);
+            if (partDistance == 0) { partDistanceScaler = 1; }
+            else
+            {
+                partDistanceScaler = in.getDistance() / partDistance;
+            }
+            Instruction nextIn = null;
+            if (instructions.size() > 1) { nextIn = instructions.get(1); }
+            NaviInstruction nIn = new NaviInstruction(in, nextIn, fullTime);
+            if (speakDistanceCheck(in.getDistance()) && nearestP.isDirectionOk())
+            {
+                naviVoice.speak(nIn.getVoiceText());
+                naviVoiceSpoken = true;
+            }
+            else
+            {
+                naviVoiceSpoken = false;
+            }
+            return nIn;
+        }
+        uiJob = UiJob.Finished;
+        return null;
+    }
+
+    private long countFullTime(long partTime)
+    {
+        long fullTime = partTime;
+        for (int i=1; i<instructions.size(); i++)
+        {
+            fullTime += instructions.get(i).getTime();
+        }
+        return fullTime;
+    }
+
+    private double countPartDistance(GeoPoint curPos, Instruction in, int nearestPointPos)
+    {
+        double partDistance = 0;
+        double lastLat = curPos.getLatitude();
+        double lastLon = curPos.getLongitude();
+        for (int i=nearestPointPos+1; i<in.getPoints().size(); i++)
+        {
+            double nextLat = in.getPoints().getLat(i);
+            double nextLon = in.getPoints().getLon(i);
+            partDistance += GeoMath.fastDistance(lastLat, lastLon, nextLat, nextLon);
+            lastLat = nextLat;
+            lastLon = nextLon;
+        }
+        partDistance = partDistance * GeoMath.METER_PER_DEGREE;
+        return partDistance;
+    }
+
+    private NaviInstruction getUpdatedInstruction(GeoPoint curPos, PointPosData nearestP)
+    {
+        uiJob = UiJob.UpdateInstruction;
+        if (instructions.size() > 0)
+        {
+            Instruction in = instructions.get(0);
+            long partTime = 0;
+            double partDistance = countPartDistance(curPos, in, nearestP.arrPos);
+            partDistance = partDistance * partDistanceScaler;
+            if (in.getDistance() <= partDistance)
+            {
+                partDistance = in.getDistance();
+                partTime = in.getTime();
+            }
+            else
+            {
+                double partValue = partDistance / in.getDistance();
+                partTime = (long)(in.getTime() * partValue);
+            }
+            long fullTime = countFullTime(partTime);
+            Instruction nextIn = null;
+            if (instructions.size() > 1) { nextIn = instructions.get(1); }
+            NaviInstruction newIn = new NaviInstruction(in, nextIn, fullTime);
+            newIn.updateDist(partDistance);
+            if (!naviVoiceSpoken && nearestP.isDirectionOk() && speakDistanceCheck(partDistance))
+            {
+                naviVoice.speak(newIn.getVoiceText());
+                naviVoiceSpoken = true;
+            }
+            return newIn;
+        }
+        return null;
+    }
+
+    private boolean speakDistanceCheck(double dist)
+    {
+        if (dist < 200) { return true; }
+        if (pos.getSpeed() > 150 * GeoMath.KMH_TO_MSEC)
+        {
+            if (dist < 1500) { return true; }
+        }
+        else if (pos.getSpeed() > 100 * GeoMath.KMH_TO_MSEC)
+        {
+            if (dist < 900) { return true; }
+        }
+        else if (pos.getSpeed() > 70 * GeoMath.KMH_TO_MSEC)
+        {
+            if (dist < 500) { return true; }
+        }
+        else if (pos.getSpeed() > 30 * GeoMath.KMH_TO_MSEC)
+        {
+            if (dist < 350) { return true; }
+        }
+        return false;
+    }
+
+    private static PointPosData getNearestPoint(Instruction instruction, int curPointPos, GeoPoint curPos)
+    {
+        int nextPointPos = curPointPos;
+        int nearestPointPos = curPointPos;
+        double nearestDist = Double.MAX_VALUE;
+        while (instruction.getPoints().size() > nextPointPos)
+        {
+            double lat = instruction.getPoints().getLatitude(nextPointPos);
+            double lon = instruction.getPoints().getLongitude(nextPointPos);
+            double dist = GeoMath.fastDistance(curPos.getLatitude(), curPos.getLongitude(), lat, lon);
+            if (dist < nearestDist)
+            {
+                nearestDist = dist;
+                nearestPointPos = nextPointPos;
+            }
+            nextPointPos++;
+        }
+        PointPosData p = new PointPosData();
+        p.arrPos = nearestPointPos;
+        p.distance = nearestDist;
+        return p;
+    }
+
+    private GeoPoint findClosestStreet(GeoPoint fromPos)
+    {
+        if (hopper == null) { return fromPos; } // Not loaded yet!
+        QueryResult pos = hopper.getLocationIndex().findClosest(fromPos.getLatitude(), fromPos.getLongitude(), EdgeFilter.ALL_EDGES);
+        int n = pos.getClosestEdge().getBaseNode();
+        NodeAccess nodeAccess = hopper.getGraphHopperStorage().getNodeAccess();
+        GeoPoint gp = new GeoPoint(nodeAccess.getLat(n), nodeAccess.getLon(n));
+        return gp;
     }
 
     public void setNavigating(boolean active)
@@ -139,27 +542,32 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
             {
                 GeoPoint mcLatLong = new GeoPoint(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
 
-                centerPointOnMap(
+                centerPointOnMap(mapView,
                         mcLatLong, 0, 0, 0);
                 setCustomPoint(getActivity(), mcLatLong, customIcon);
                 if (pos != null)
                 {
                     GeoPoint curPos = new GeoPoint(pos.getLatitude(), pos.getLongitude());
-                    centerPointOnMap(curPos, BEST_NAVI_ZOOM, 0, 0);
+                    centerPointOnMap(mapView,curPos, BEST_NAVI_ZOOM, 0, 0);
 
                 }
-//                NaviDebugSimulator.getSimu().setSimuRun(false);
+                NaviDebugSimulator.getSimu().setSimuRun(false);
                 return;
             }
-            setCustomPoint(getActivity(), new GeoPoint(0, 0), customIcon);
+            setCustomPoint(getActivity(), new GeoPoint(0, 0), navIcon);
             naviVoiceSpoken = false;
             uiJob = UiJob.Nothing;
 //            initFields(activity);
 //            instructions = Navigator.getNavigator().getGhResponse().getInstructions();
             resetNewInstruction();
             if (instructions.size() > 0) {
-//                startDebugSimulator(activity, false);
+                startDebugSimulator(getActivity(), false);
             }
+    }
+
+    public void startDebugSimulator(Activity activity, boolean fromTracking)
+    {
+        NaviDebugSimulator.getSimu().startDebugSimulator(this, instructions, fromTracking);
     }
 
     @UiThread
@@ -174,39 +582,70 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
     @UiThread
     private void showInstruction(NaviInstruction in)
     {
-//        if (in==null)
-//        {
-//            navtop_when.setText("0 " + UnitCalculator.getUnit(false));
-//            navtop_time.setText("--------");
-//            navtop_curloc.setText(R.string.search_location);
-//            navtop_nextloc.setText("==================");
-//            navtop_image.setImageResource(R.drawable.ic_2x_continue_on_street);
-//            setTiltMult(1);
-//        }
-//        else if(nearestP.isDirectionOk())
-//        {
-//            navtop_when.setText(in.getNextDistanceString());
-//            navtop_time.setText(in.getFullTimeString());
-//            navtop_curloc.setText(in.getCurStreet());
-//            navtop_nextloc.setText(in.getNextInstruction());
-//            navtop_image.setImageResource(in.getNextSignResource());
-//            setTiltMult(in.getNextDistance());
-//        }
-//        else
-//        {
-//            navtop_when.setText("0 " + UnitCalculator.getUnit(false));
-//            navtop_time.setText(in.getFullTimeString());
-//            navtop_curloc.setText(R.string.wrong_direction);
-//            navtop_nextloc.setText("==================");
-//            navtop_image.setImageResource(R.drawable.ic_2x_roundabout);
-//            setTiltMult(1);
-//        }
+        if (in==null)
+        {
+            navtop_when.setText("0 " + UnitCalculator.getUnit(false));
+            navtop_time.setText("--------");
+            navtop_curloc.setText(R.string.search_location);
+            navtop_nextloc.setText("==================");
+            navtop_image.setImageResource(R.drawable.ic_up_arrow);
+            setTiltMult(1);
+        }
+        else if(nearestP.isDirectionOk())
+        {
+            navtop_when.setText(in.getNextDistanceString());
+            navtop_time.setText(in.getFullTimeString());
+            navtop_curloc.setText(in.getCurStreet());
+            navtop_nextloc.setText(in.getNextInstruction());
+            navtop_image.setImageResource(in.getNextSignResource());
+            setTiltMult(in.getNextDistance());
+        }
+        else
+        {
+            navtop_when.setText("0 " + UnitCalculator.getUnit(false));
+            navtop_time.setText(in.getFullTimeString());
+            navtop_curloc.setText(R.string.wrong_direction);
+            navtop_nextloc.setText("==================");
+            // TOCHANGE ARROW TO ROUNDABOUT
+            navtop_image.setImageResource(R.drawable.ic_up_arrow);
+            setTiltMult(1);
+        }
+    }
+
+    private void setTiltMult(double nextDist)
+    {
+        double speedXtra = 0;
+        if (pos!=null) { speedXtra = pos.getSpeed(); }
+        if (speedXtra > 30.0) { speedXtra = 2; }
+        else if (speedXtra < 8.0) { speedXtra = 0; }
+        else
+        {
+            speedXtra = speedXtra - 8.0; // 0 - 22
+            speedXtra = speedXtra / 22.0; // 0 - 1
+            speedXtra = speedXtra * 2.0; // 0 - 2
+        }
+        if (nextDist > 400) { nextDist = 0; }
+        else if (nextDist < 100) { nextDist = 0; }
+        else
+        {
+            nextDist = nextDist - 100.0; // 0 - 300
+            nextDist = nextDist / 300.0; // 0 - 1
+            nextDist = nextDist * 2.0; // 0 - 2
+        }
+        if (speedXtra > nextDist) { nextDist = speedXtra; }
+        tiltMultPos = (float)(1.0 + (nextDist * 0.5));
+        tiltMult = (float)(1.0 + nextDist);
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
         mapView = (MapView) this.layoutDataBinding.mapview;
         navTopVP = (ViewGroup) view.findViewById(R.id.navtop_layout);
+        navtop_image = (ImageView) this.layoutDataBinding.navtopImage;
+        navtop_curloc = (TextView) this.layoutDataBinding.navtopCurloc;
+        navtop_nextloc = (TextView) this.layoutDataBinding.navtopNextloc;
+        navtop_when = (TextView) this.layoutDataBinding.navtopWhen;
+        navtop_time = (TextView) this.layoutDataBinding.navtopTime;
 
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         kalmanLocationManager = new KalmanLocationManager(getContext());
@@ -318,7 +757,7 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
         if (mCurrentLocation != null) {
             GeoPoint mcLatLong = new GeoPoint(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
 
-            centerPointOnMap(
+            centerPointOnMap(mapView,
                     mcLatLong, 0, 0, 0);
             setCustomPoint(getActivity(), mcLatLong, customIcon);
         }
@@ -326,9 +765,15 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
 
     public void setCustomPoint(Activity activity, GeoPoint p, int icon)
     {
-        if (customLayer==null) { return; }
+        if (customLayer==null) {
+            return; }
+        if(previousIcon == navIcon) {
+            customLayer.removeItem(customLayer.getItemList().size() - 1);
+        }
+
         if (p!=null)
         {
+            previousIcon = icon;
             customLayer.addItem(createMarkerItem(activity, p, icon, 0.5f, 0.5f));
             mapView.map().updateMap(true);
         }
@@ -516,18 +961,18 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
         }
     }
 
-    public void centerPointOnMap(GeoPoint latLong, int zoomLevel, float bearing, float tilt)
+    public void centerPointOnMap(MapView mapview,GeoPoint latLong, int zoomLevel, float bearing, float tilt)
     {
         if (zoomLevel == 0)
         {
-            zoomLevel = mapView.map().getMapPosition().zoomLevel;
+            zoomLevel = mapview.map().getMapPosition().zoomLevel;
         }
         double scale = 1 << zoomLevel;
         tmpPos.setPosition(latLong);
         tmpPos.setScale(scale);
         tmpPos.setBearing(bearing);
         tmpPos.setTilt(tilt);
-        mapView.map().animator().animateTo(300, tmpPos);
+        mapview.map().animator().animateTo(300, tmpPos);
     }
 
     public void calcPath(final List<GHPoint> points, final Activity activity) {
@@ -560,7 +1005,7 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
                     PathWrapper resp = ghResp.getBest();
                     instructions = resp.getInstructions();
                     int sWidth = 4;
-                    pathLayer = updatePathLayer(activity, pathLayer, resp.getPoints(), "#0EA3BF", sWidth);
+                    pathLayer = updatePathLayer(activity, pathLayer, resp.getPoints(), "#800EA3BF", sWidth);
                     mapView.map().updateMap(true);
                 }
             }

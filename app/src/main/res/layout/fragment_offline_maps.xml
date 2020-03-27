@@ -94,11 +94,12 @@
                 android:id="@+id/navtop_stop"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right"
                 android:layout_alignParentRight="true"
-                android:clickable="true"
+                android:layout_gravity="right"
                 android:background="@color/colorAccent"
+                android:clickable="true"
                 android:focusable="true"
+                android:padding="8dp"
                 android:src="@drawable/ic_stop_black_24dp" />
 
         </RelativeLayout>
