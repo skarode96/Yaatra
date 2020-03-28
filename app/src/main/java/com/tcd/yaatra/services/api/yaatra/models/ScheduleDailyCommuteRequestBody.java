@@ -2,9 +2,7 @@ package com.tcd.yaatra.services.api.yaatra.models;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.Date;
-
-public class CreateDailyCommuteResponse {
+public class ScheduleDailyCommuteRequestBody {
     @SerializedName("journey_title")
     private String journeyTitle;
     @SerializedName("source_long")
@@ -17,16 +15,18 @@ public class CreateDailyCommuteResponse {
     private double destinationLong;
     @SerializedName("start_time")
     private String startTime;
+    @SerializedName("time_of_commute")
+    private String timeOfCommute;
     @SerializedName("journey_frequency")
     private int journeyFrequency;
-    @SerializedName("journey_id")
-    private int journeyID;
-    @SerializedName("message")
-    private String message;
-    @SerializedName("response")
-    private String response;
+    @SerializedName("pref_mode_travel")
+    private int prefModeTravel;
+    @SerializedName("pref_gender")
+    private int prefGender;
+    @SerializedName("user_id")
+    private int userId;
 
-    public CreateDailyCommuteResponse() {
+    public ScheduleDailyCommuteRequestBody() {
     }
 
     public String getJourneyTitle() {
@@ -69,20 +69,20 @@ public class CreateDailyCommuteResponse {
         this.destinationLong = destinationLong;
     }
 
-    public int getJourneyID() {
-        return journeyID;
-    }
-
-    public void setJourneyID(int journeyID) {
-        this.journeyID = journeyID;
-    }
-
     public String getStartTime() {
         return startTime;
     }
 
     public void setStartTime(String startTime) {
         this.startTime = startTime;
+    }
+
+    public String getTimeOfCommute() {
+        return timeOfCommute;
+    }
+
+    public void setTimeOfCommute(String timeOfCommute) {
+        this.timeOfCommute = timeOfCommute;
     }
 
     public int getJourneyFrequency() {
@@ -93,35 +93,44 @@ public class CreateDailyCommuteResponse {
         this.journeyFrequency = journeyFrequency;
     }
 
-    public String getMessage() {
-        return message;
+    public int getPrefModeTravel() {
+        return prefModeTravel;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setPrefModeTravel(int prefModeTravel) {
+        this.prefModeTravel = prefModeTravel;
     }
 
-    public String getResponse() {
-        return response;
+    public int getPrefGender() {
+        return prefGender;
     }
 
-    public void setResponse(String response) {
-        this.response = response;
+    public void setPrefGender(int prefGender) {
+        this.prefGender = prefGender;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     @Override
     public String toString() {
-        return "CreateDailyCommuteResponse{" +
+        return "ScheduleDailyCommuteRequestBody{" +
                 "journeyTitle='" + journeyTitle + '\'' +
                 ", sourceLong=" + sourceLong +
                 ", sourceLat=" + sourceLat +
                 ", destinationLat=" + destinationLat +
                 ", destinationLong=" + destinationLong +
                 ", startTime='" + startTime + '\'' +
+                ", timeOfCommute='" + timeOfCommute + '\'' +
                 ", journeyFrequency=" + journeyFrequency +
-                ", journeyID=" + journeyID +
-                ", message='" + message + '\'' +
-                ", response='" + response + '\'' +
+                ", prefModeTravel=" + prefModeTravel +
+                ", prefGender=" + prefGender +
+                ", userId=" + userId +
                 '}';
     }
 }

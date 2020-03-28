@@ -3,6 +3,7 @@ package com.tcd.yaatra.services.api.yaatra.models;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
+import java.util.Objects;
 
 public class DailyCommuteDetailsResponse {
     @SerializedName("id")
@@ -37,6 +38,11 @@ public class DailyCommuteDetailsResponse {
     private String message;
     @SerializedName("response")
     private String response;
+
+    public DailyCommuteDetailsResponse(String message, String response) {
+        this.message = message;
+        this.response = response;
+    }
 
     public int getId() {
         return id;
@@ -186,5 +192,33 @@ public class DailyCommuteDetailsResponse {
                 ", message='" + message + '\'' +
                 ", response='" + response + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DailyCommuteDetailsResponse)) return false;
+        DailyCommuteDetailsResponse that = (DailyCommuteDetailsResponse) o;
+        return id == that.id &&
+                user == that.user &&
+                Double.compare(that.sourceLong, sourceLong) == 0 &&
+                Double.compare(that.sourceLat, sourceLat) == 0 &&
+                Double.compare(that.destinationLat, destinationLat) == 0 &&
+                Double.compare(that.destinationLong, destinationLong) == 0 &&
+                prefModeTravel == that.prefModeTravel &&
+                prefGender == that.prefGender &&
+                journeyFrequency == that.journeyFrequency &&
+                journeyId == that.journeyId &&
+                Objects.equals(journey_title, that.journey_title) &&
+                Objects.equals(startTime, that.startTime) &&
+                Objects.equals(timeOfCommute, that.timeOfCommute) &&
+                Objects.equals(travellerDetails, that.travellerDetails) &&
+                Objects.equals(message, that.message) &&
+                Objects.equals(response, that.response);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, user, journey_title, sourceLong, sourceLat, destinationLat, destinationLong, startTime, prefModeTravel, prefGender, journeyFrequency, journeyId, timeOfCommute, travellerDetails, message, response);
     }
 }
