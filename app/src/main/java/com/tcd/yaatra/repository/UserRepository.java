@@ -20,6 +20,8 @@ public class UserRepository {
 
     private LoginApi loginApi;
     private RegisterApi registerApi;
+    protected MutableLiveData<AsyncData<LoginResponse>> loginResponseLiveData;
+    protected MutableLiveData<AsyncData<RegisterResponse>> registerResponseLiveData;
 
     @Inject
     public UserRepository(LoginApi loginApi, RegisterApi registerApi){
@@ -30,7 +32,9 @@ public class UserRepository {
 
     public LiveData<AsyncData<LoginResponse>> authenticateUser(String username, String password){
 
-        MutableLiveData<AsyncData<LoginResponse>> loginResponseLiveData = new MutableLiveData<>();
+        this.loginResponseLiveData = new MutableLiveData<>();
+
+        loginResponseLiveData.postValue(AsyncData.getLoadingState());
 
         this.loginApi.getToken(username, password).enqueue(new Callback<LoginResponse>() {
             @Override
@@ -49,15 +53,14 @@ public class UserRepository {
             }
         });
 
-        loginResponseLiveData.postValue(AsyncData.getLoadingState());
-
         return loginResponseLiveData;
     }
 
 
     public LiveData<AsyncData<RegisterResponse>> registerUser(RegisterRequestBody registerRequestBody){
 
-        MutableLiveData<AsyncData<RegisterResponse>> registerResponseLiveData = new MutableLiveData<>();
+        this.registerResponseLiveData =  new MutableLiveData<>();
+        registerResponseLiveData.postValue(AsyncData.getLoadingState());
 
         this.registerApi.register(registerRequestBody).enqueue(new Callback<RegisterResponse>() {
             @Override
@@ -74,8 +77,6 @@ public class UserRepository {
                 registerResponseLiveData.postValue(AsyncData.getFailureState(new RegisterResponse("Fatal Error", "Error")));
             }
         });
-
-        registerResponseLiveData.postValue(AsyncData.getLoadingState());
 
         return registerResponseLiveData;
     }

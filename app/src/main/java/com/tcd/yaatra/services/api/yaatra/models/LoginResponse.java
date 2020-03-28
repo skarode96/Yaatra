@@ -1,7 +1,8 @@
 package com.tcd.yaatra.services.api.yaatra.models;
 
-import com.example.loginjourneysharing.activities.User;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.Objects;
 
 public class LoginResponse {
 
@@ -56,10 +57,26 @@ public class LoginResponse {
     @Override
     public String toString() {
         return "LoginResponse{" +
-                "token='" + message + '\'' +
+                "message='" + message + '\'' +
                 ", response='" + response + '\'' +
                 ", authToken='" + authToken + '\'' +
-                ", userInfo='" + userInfo + '\'' +
+                ", userInfo=" + userInfo +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof LoginResponse)) return false;
+        LoginResponse that = (LoginResponse) o;
+        return Objects.equals(message, that.message) &&
+                Objects.equals(response, that.response) &&
+                Objects.equals(authToken, that.authToken) &&
+                Objects.equals(userInfo, that.userInfo);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(message, response, authToken, userInfo);
     }
 }
