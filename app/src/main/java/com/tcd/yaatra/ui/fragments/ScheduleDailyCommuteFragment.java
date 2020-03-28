@@ -23,7 +23,7 @@ import com.tcd.yaatra.repository.models.Gender;
 import com.tcd.yaatra.repository.models.JourneyFrequency;
 import com.tcd.yaatra.repository.models.TransportPreference;
 import com.tcd.yaatra.services.api.yaatra.models.ScheduleDailyCommuteRequestBody;
-import com.tcd.yaatra.ui.viewmodels.CreateDailyCommuteFragmentViewModel;
+import com.tcd.yaatra.ui.viewmodels.ScheduleDailyCommuteFragmentViewModel;
 import com.tcd.yaatra.utils.SharedPreferenceUtils;
 
 import java.text.DecimalFormat;
@@ -41,7 +41,7 @@ public class ScheduleDailyCommuteFragment extends BaseFragment<FragmentCreateDai
 
 
     @Inject
-    CreateDailyCommuteFragmentViewModel createDailyCommuteFragmentViewModel;
+    ScheduleDailyCommuteFragmentViewModel scheduleDailyCommuteFragmentViewModel;
 
     @Override
     protected int getFragmentResourceId() {
@@ -134,7 +134,7 @@ public class ScheduleDailyCommuteFragment extends BaseFragment<FragmentCreateDai
             else if (journeyFreqBtn.getText().toString().equalsIgnoreCase(weekend.stringLabel))
                 scheduleDailyCommuteRequestBody.setJourneyFrequency(weekend.intValue);
 
-            createDailyCommuteFragmentViewModel.createDaily(scheduleDailyCommuteRequestBody).observe(this, createDailyCommuteResponse -> {
+            scheduleDailyCommuteFragmentViewModel.scheduleDailyCommute(scheduleDailyCommuteRequestBody).observe(this, createDailyCommuteResponse -> {
                 switch (createDailyCommuteResponse.getState()) {
                     case LOADING:
                         layoutDataBinding.progressBarOverlay.setVisibility(View.VISIBLE);
