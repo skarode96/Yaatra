@@ -9,16 +9,12 @@ import com.tcd.yaatra.di.modules.FragmentModule;
 import com.tcd.yaatra.di.modules.RepositoryModule;
 import com.tcd.yaatra.di.modules.RoomModule;
 import com.tcd.yaatra.di.modules.YaatraApiModule;
-import com.tcd.yaatra.repository.JourneySharingDatabase;
-import com.tcd.yaatra.repository.UserInfoRepository;
-import com.tcd.yaatra.repository.dao.UserInfoDao;
 
 import javax.inject.Singleton;
 
 import dagger.BindsInstance;
 import dagger.Component;
 import dagger.android.AndroidInjectionModule;
-import dagger.android.AndroidInjector;
 
 
 @Singleton

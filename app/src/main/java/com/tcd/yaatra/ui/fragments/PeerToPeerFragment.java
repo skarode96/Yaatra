@@ -22,7 +22,7 @@ import com.tcd.yaatra.R;
 import com.tcd.yaatra.WifiDirectP2PHelper.FellowTravellersSubscriberFragment;
 import com.tcd.yaatra.WifiDirectP2PHelper.PeerCommunicator;
 import com.tcd.yaatra.databinding.FragmentPeerToPeerBinding;
-import com.tcd.yaatra.repository.UserInfoRepository;
+import com.tcd.yaatra.repository.datasource.UserInfoRepository;
 import com.tcd.yaatra.repository.models.TravellerStatus;
 import com.tcd.yaatra.ui.adapter.PeerListAdapter;
 import com.tcd.yaatra.ui.viewmodels.PeerToPeerFragmentViewModel;

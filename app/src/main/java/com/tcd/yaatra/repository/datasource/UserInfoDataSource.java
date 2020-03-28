@@ -1,4 +1,4 @@
-package com.tcd.yaatra.repository;
+package com.tcd.yaatra.repository.datasource;
 
 import com.tcd.yaatra.repository.dao.UserInfoDao;
 import com.tcd.yaatra.services.api.yaatra.models.UserInfo;

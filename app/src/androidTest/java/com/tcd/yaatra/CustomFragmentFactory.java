@@ -5,7 +5,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentFactory;
 import com.tcd.yaatra.WifiDirectP2PHelper.PeerCommunicator;
 import com.tcd.yaatra.extendedFragments.ExtendedPeerToPeerFragment;
-import com.tcd.yaatra.repository.UserInfoRepository;
+import com.tcd.yaatra.repository.datasource.UserInfoRepository;
 import com.tcd.yaatra.ui.viewmodels.PeerToPeerFragmentViewModel;
 
 public class CustomFragmentFactory extends FragmentFactory {
