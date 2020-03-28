@@ -1,7 +1,7 @@
 package com.tcd.yaatra.extendedFragments;
 
 import com.tcd.yaatra.WifiDirectP2PHelper.PeerCommunicator;
-import com.tcd.yaatra.repository.UserInfoRepository;
+import com.tcd.yaatra.repository.datasource.UserInfoRepository;
 import com.tcd.yaatra.ui.fragments.PeerToPeerFragment;
 import com.tcd.yaatra.ui.viewmodels.PeerToPeerFragmentViewModel;
 

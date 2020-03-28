@@ -1,4 +1,4 @@
-package com.tcd.yaatra.repository;
+package com.tcd.yaatra.utils;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

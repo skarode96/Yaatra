@@ -13,8 +13,8 @@ import androidx.annotation.Nullable;
 
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.databinding.ActivityLoginBinding;
-import com.tcd.yaatra.repository.Executor;
-import com.tcd.yaatra.repository.UserInfoRepository;
+import com.tcd.yaatra.utils.Executor;
+import com.tcd.yaatra.repository.datasource.UserInfoRepository;
 import com.tcd.yaatra.ui.viewmodels.LoginActivityViewModel;
 import com.tcd.yaatra.utils.Constants;
 import com.tcd.yaatra.utils.SharedPreferenceUtils;

@@ -10,7 +10,7 @@ import com.tcd.yaatra.CustomFragmentFactory;
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.WifiDirectP2PHelper.PeerCommunicator;
 import com.tcd.yaatra.extendedFragments.ExtendedPeerToPeerFragment;
-import com.tcd.yaatra.repository.UserInfoRepository;
+import com.tcd.yaatra.repository.datasource.UserInfoRepository;
 import com.tcd.yaatra.services.api.yaatra.models.UserInfo;
 import com.tcd.yaatra.ui.viewmodels.PeerToPeerFragmentViewModel;
 import com.tcd.yaatra.utils.SharedPreferenceUtils;
