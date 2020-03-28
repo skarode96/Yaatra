@@ -10,16 +10,16 @@ import javax.inject.Inject;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
-public class CreateDailyCommuteFragmentViewModel extends ViewModel {
+public class ScheduleDailyCommuteFragmentViewModel extends ViewModel {
 
     private DailyCommuteRepository dailyCommuteRepository;
 
     @Inject
-    public CreateDailyCommuteFragmentViewModel(DailyCommuteRepository dailyCommuteRepository){
+    public ScheduleDailyCommuteFragmentViewModel(DailyCommuteRepository dailyCommuteRepository){
         this.dailyCommuteRepository = dailyCommuteRepository;
     }
 
-    public LiveData<AsyncData<ScheduleDailyCommuteResponse>> createDaily(ScheduleDailyCommuteRequestBody scheduleDailyCommuteRequestBody){
+    public LiveData<AsyncData<ScheduleDailyCommuteResponse>> scheduleDailyCommute(ScheduleDailyCommuteRequestBody scheduleDailyCommuteRequestBody){
         return this.dailyCommuteRepository.scheduleDailyCommute(scheduleDailyCommuteRequestBody);
     }
 }
