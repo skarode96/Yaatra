@@ -2,9 +2,13 @@ package com.tcd.yaatra;
 
 import android.app.Activity;
 import android.content.Context;
+
 import androidx.fragment.app.Fragment;
+
 import com.tcd.yaatra.di.modules.DaggerTestAppComponent;
+
 import javax.inject.Inject;
+
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 

@@ -2,6 +2,8 @@ package com.tcd.yaatra.services.api.yaatra.models;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Objects;
+
 public class RegisterResponse {
     @SerializedName("first_name")
     private String firstName;
@@ -110,9 +112,31 @@ public class RegisterResponse {
                 ", userName='" + userName + '\'' +
                 ", email='" + email + '\'' +
                 ", age=" + age +
-                ", gender=" + gender +
+                ", gender='" + gender + '\'' +
                 ", message='" + message + '\'' +
                 ", response='" + response + '\'' +
+                ", authToken='" + authToken + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof RegisterResponse)) return false;
+        RegisterResponse that = (RegisterResponse) o;
+        return age == that.age &&
+                Objects.equals(firstName, that.firstName) &&
+                Objects.equals(lastName, that.lastName) &&
+                Objects.equals(userName, that.userName) &&
+                Objects.equals(email, that.email) &&
+                Objects.equals(gender, that.gender) &&
+                Objects.equals(message, that.message) &&
+                Objects.equals(response, that.response) &&
+                Objects.equals(authToken, that.authToken);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(firstName, lastName, userName, email, age, gender, message, response, authToken);
     }
 }
