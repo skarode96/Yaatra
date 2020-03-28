@@ -5,7 +5,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.fragments.CreateDailyCommuteFragment">
+        tools:context=".ui.fragments.ScheduleDailyCommuteFragment">
 
         <ScrollView
             android:layout_width="match_parent"

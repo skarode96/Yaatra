@@ -3,6 +3,7 @@ package com.tcd.yaatra.services.api.yaatra.models;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
+import java.util.Objects;
 
 public class DailyCommuteResponse {
     @SerializedName("message")
@@ -36,6 +37,11 @@ public class DailyCommuteResponse {
         this.journeyDetails = journeyDetails;
     }
 
+    public DailyCommuteResponse(String message, String response) {
+        this.message = message;
+        this.response = response;
+    }
+
     @Override
     public String toString() {
         return "DailyCommuteResponse{" +
@@ -43,5 +49,20 @@ public class DailyCommuteResponse {
                 ", response='" + response + '\'' +
                 ", journeyDetails=" + journeyDetails +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DailyCommuteResponse)) return false;
+        DailyCommuteResponse that = (DailyCommuteResponse) o;
+        return Objects.equals(message, that.message) &&
+                Objects.equals(response, that.response) &&
+                Objects.equals(journeyDetails, that.journeyDetails);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(message, response, journeyDetails);
     }
 }

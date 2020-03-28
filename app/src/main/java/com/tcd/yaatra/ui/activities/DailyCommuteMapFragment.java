@@ -15,10 +15,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.geojson.Point;
@@ -38,8 +36,7 @@ import com.mapbox.mapboxsdk.plugins.locationlayer.modes.CameraMode;
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.databinding.FragmentDailyCommuteMapBinding;
 import com.tcd.yaatra.ui.fragments.BaseFragment;
-import com.tcd.yaatra.ui.fragments.CreateDailyCommuteFragment;
-import com.tcd.yaatra.ui.fragments.DailyFragment;
+import com.tcd.yaatra.ui.fragments.ScheduleDailyCommuteFragment;
 
 import java.io.IOException;
 import java.util.List;
@@ -74,7 +71,7 @@ public class DailyCommuteMapFragment extends BaseFragment<FragmentDailyCommuteMa
         if(marker == null)
             Toast.makeText(getActivity(),"Add location marker",Toast.LENGTH_SHORT).show();
         else {
-            Intent dailyCommuteIntent = new Intent(getActivity(), CreateDailyCommuteFragment.class);
+            Intent dailyCommuteIntent = new Intent(getActivity(), ScheduleDailyCommuteFragment.class);
             Bundle bundle = new Bundle();
             if(dailySource != null && dailyDestination != null)
             {
@@ -84,7 +81,7 @@ public class DailyCommuteMapFragment extends BaseFragment<FragmentDailyCommuteMa
                 bundle.putDouble("destinationLong",dailyDestination.longitude());
             }
             dailyCommuteIntent.putExtras(bundle);
-            Fragment f = new CreateDailyCommuteFragment();
+            Fragment f = new ScheduleDailyCommuteFragment();
             f.setArguments(bundle);
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment_container,f).commit();

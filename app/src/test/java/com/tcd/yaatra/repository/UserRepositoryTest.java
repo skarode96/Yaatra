@@ -35,9 +35,9 @@ public class UserRepositoryTest {
 
     @Mock
     LoginApi loginApi;
+
     @Mock
     RegisterApi registerApi;
-
 
     @Rule
     public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
@@ -112,14 +112,14 @@ public class UserRepositoryTest {
                 MediaType.parse("application/json"),
                 "Test"
         );
-        Response aResponse = Response.success(expectedRegisterResponse.toString(), new okhttp3.Response.Builder() //
+        Response mockResponse = Response.success(expectedRegisterResponse.toString(), new okhttp3.Response.Builder() //
                 .code(201)
                 .message("OK")
                 .body(body)
                 .protocol(Protocol.HTTP_1_1)
                 .request(new Request.Builder().url("http://localhost/").build())
                 .build());
-        Call<RegisterResponse> response = Calls.response(aResponse);
+        Call<RegisterResponse> response = Calls.response(mockResponse);
 
         RegisterRequestBody mockRequestBody = new RegisterRequestBody();
         Mockito.when(registerApi.register(Mockito.any(RegisterRequestBody.class))).thenReturn(response);
