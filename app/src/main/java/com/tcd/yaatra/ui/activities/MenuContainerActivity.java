@@ -71,7 +71,7 @@ public class MenuContainerActivity extends BaseActivity<ActivityMenuBinding> imp
             userInfoRepository.getUserProfile(SharedPreferenceUtils.getUserName()).observe(this, response -> {
                 if(response != null) {
                     userName.setText(response.getUsername());
-                    profileImage.setImageResource(response.getGender().equals(Gender.MALE) ? R.drawable.guy : R.drawable.girl);
+                    profileImage.setImageResource(response.getGender().equals("m") ? R.drawable.guy : R.drawable.girl);
                 }
             });
         }
