@@ -256,7 +256,7 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
 
         RouteInfoFragment routeInfoFragment = new RouteInfoFragment();
         routeInfoFragment.setArguments(bundle);
-        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, routeInfoFragment).addToBackStack("peerFrag").commit();
+        fragmentManager.beginTransaction().replace(R.id.fragment_container, routeInfoFragment).addToBackStack("peerFrag").commit();
     }
 
     //endregion
