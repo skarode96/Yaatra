@@ -7,8 +7,6 @@ import com.tcd.yaatra.repository.models.AsyncData;
 import com.tcd.yaatra.services.api.yaatra.models.RegisterRequestBody;
 import com.tcd.yaatra.services.api.yaatra.models.RegisterResponse;
 
-import net.bytebuddy.utility.RandomString;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

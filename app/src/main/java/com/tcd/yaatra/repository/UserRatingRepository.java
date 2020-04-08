@@ -16,6 +16,7 @@ import retrofit2.Response;
 
 public class UserRatingRepository {
     private RatingApi ratingApi;
+    protected MutableLiveData<AsyncData<RateResponse>> rateUsersResponseLiveData;
 
     @Inject
     public UserRatingRepository(RatingApi ratingApi) {
@@ -23,7 +24,11 @@ public class UserRatingRepository {
     }
 
     public LiveData<AsyncData<RateResponse>> rateUsers(RateRequestBody rateRequestBody) {
-        MutableLiveData<AsyncData<RateResponse>> rateUsersResponseLiveData = new MutableLiveData<>();
+
+        this.rateUsersResponseLiveData = new MutableLiveData<>();
+
+        rateUsersResponseLiveData.postValue(AsyncData.getLoadingState());
+
         this.ratingApi.rate(rateRequestBody).enqueue(new Callback<RateResponse>() {
             @Override
             public void onResponse(Call<RateResponse> call, Response<RateResponse> response) {
@@ -39,7 +44,7 @@ public class UserRatingRepository {
                 rateUsersResponseLiveData.postValue(AsyncData.getFailureState(new RateResponse("Error", "Error")));
             }
         });
-        rateUsersResponseLiveData.postValue(AsyncData.getLoadingState());
+
         return rateUsersResponseLiveData;
     }
 }
