@@ -54,7 +54,7 @@ public class DailyCommuteMapFragment extends BaseFragment<FragmentDailyCommuteMa
     private Point dailyDestination;
     private PermissionsManager permissionsManager;
     View view;
-
+    private String sourceName;
     @Override
     public int getFragmentResourceId() { return R.layout.fragment_daily_commute_map; }
 
@@ -87,7 +87,16 @@ public class DailyCommuteMapFragment extends BaseFragment<FragmentDailyCommuteMa
             transaction.replace(R.id.fragment_container,f).commit();
         }
     }
-
+    private void enableSearchView(View view, boolean enabled) {
+        view.setEnabled(enabled);
+        if (view instanceof ViewGroup) {
+            ViewGroup viewGroup = (ViewGroup) view;
+            for (int i = 0; i < viewGroup.getChildCount(); i++) {
+                View child = viewGroup.getChildAt(i);
+                enableSearchView(child, enabled);
+            }
+        }
+    }
     @SuppressLint("RestrictedApi")
 
     private void handleOnFABButtonClick(View view) {
@@ -95,9 +104,30 @@ public class DailyCommuteMapFragment extends BaseFragment<FragmentDailyCommuteMa
         if(marker == null)
             Toast.makeText(getActivity(),"Add location marker",Toast.LENGTH_SHORT).show();
         else {
-            layoutDataBinding.dailySearch.setQueryHint("Enter Destination Region");
+            List<Address> address;
+            List<Address> countries;
+            layoutDataBinding.dailySearch.setVisibility(View.VISIBLE);
+            layoutDataBinding.dailySearch.setEnabled(false);
+            enableSearchView(layoutDataBinding.dailySearch, false);
+            Geocoder coder = new Geocoder(getActivity());
+            try {
+                countries = coder.getFromLocation(dailySource.latitude(),dailySource.longitude(),1);
+                String sourceNewName = countries.get(0).getAddressLine(0);
+
+                sourceName = sourceNewName.split("\\,", 3)[0];
+                //sourceName = sourceNewName.replace(", Ireland", "");
+                layoutDataBinding.dailySearch.setQuery(sourceName, false);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+            layoutDataBinding.dailydestination.setQueryHint("Enter Destination Region");
+            layoutDataBinding.dailydestination.setVisibility(View.VISIBLE);
+            //onQueryTextSubmit(layoutDataBinding.dailydestination.getQuery());
             layoutDataBinding.addDestination.setVisibility(View.GONE);
             layoutDataBinding.journeyPref.setVisibility(View.VISIBLE);
+
             map.removeMarker(marker);
             marker=null;
             destinationIndicator = true;
@@ -193,8 +223,6 @@ public class DailyCommuteMapFragment extends BaseFragment<FragmentDailyCommuteMa
         List<Address> address;
         List<Address> countries;
         try {
-
-
             //query = query + ","+locationComponent.getLastKnownLocation().getLongitude()+","+locationComponent.getLastKnownLocation().getLatitude();
             countries = coder.getFromLocation(locationComponent.getLastKnownLocation().getLatitude(),locationComponent.getLastKnownLocation().getLongitude(),1);
             if(countries.size()>0)

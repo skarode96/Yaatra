@@ -25,10 +25,23 @@
                 android:layout_marginEnd="1dp"
                 android:layout_marginBottom="1dp"
                 android:queryHint="Enter Source Region"
-                android:background="@color/md_grey_200">
+                android:background="@color/md_grey_200"
+                android:visibility="visible">
 
             </SearchView>
-
+            <SearchView
+                android:id="@+id/dailydestination"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="1dp"
+                android:iconifiedByDefault="false"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="1dp"
+                android:layout_marginBottom="1dp"
+                android:queryHint="Enter Source Region"
+                android:background="@color/md_grey_200"
+                android:visibility="invisible">
+            </SearchView>
         </LinearLayout>
 
 
