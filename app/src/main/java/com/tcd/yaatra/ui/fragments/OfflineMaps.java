@@ -22,7 +22,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
-import androidx.annotation.WorkerThread;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -34,16 +33,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.graphhopper.GHRequest;
 import com.graphhopper.GHResponse;
 import com.graphhopper.GraphHopper;
 import com.graphhopper.PathWrapper;
-import com.graphhopper.routing.util.EdgeFilter;
-import com.graphhopper.storage.NodeAccess;
-import com.graphhopper.storage.index.QueryResult;
-import com.graphhopper.util.Instruction;
 import com.graphhopper.util.InstructionList;
 import com.graphhopper.util.Parameters;
 import com.graphhopper.util.PointList;
@@ -56,13 +52,10 @@ import com.tcd.yaatra.databinding.FragmentOfflineMapsBinding;
 import com.tcd.yaatra.repository.models.TravellerInfo;
 import com.tcd.yaatra.ui.activities.UserRatingActivity;
 import com.tcd.yaatra.utils.offlinemaps.GHAsyncTask;
-import com.tcd.yaatra.utils.offlinemaps.GeoMath;
 import com.tcd.yaatra.utils.offlinemaps.InstructionCalculation;
 import com.tcd.yaatra.utils.offlinemaps.KalmanLocationManager;
 import com.tcd.yaatra.utils.offlinemaps.NavEngine;
-import com.tcd.yaatra.utils.offlinemaps.NaviDebugSimulator;
 import com.tcd.yaatra.utils.offlinemaps.NaviInstruction;
-import com.tcd.yaatra.utils.offlinemaps.NaviVoice;
 import com.tcd.yaatra.utils.offlinemaps.PointPosData;
 import com.tcd.yaatra.utils.offlinemaps.UnitCalculator;
 
@@ -127,6 +120,7 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
     private int navIcon = R.drawable.ic_navigation_black_24dp;
     public PathLayer pathLayer;
     private int previousIcon;
+    String modeOfTravel;
 
     public Location pos;
     enum UiJob { Nothing, RecalcPath, UpdateInstruction, Finished };
@@ -244,12 +238,13 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
                             List<GHPoint> points = new ArrayList<>();
                             points.add(new GHPoint(recalcFrom.getLatitude(), recalcFrom.getLongitude()));
                             points.add(new GHPoint(recalcTo.getLatitude(), recalcTo.getLongitude()));
-                            calcPath(points, getActivity());
+                            calcPath(points, getActivity(), modeOfTravel);
                         }
                     }
                     else if (uiJob == UiJob.Finished)
                     {
                         active = false;
+                        Toast.makeText(getContext(),"finished job",Toast.LENGTH_SHORT).show();
                     }
                 }
                 else if (uiJob == UiJob.UpdateInstruction)
@@ -374,15 +369,6 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
             initMap();
         }
         else {
-
-            ArrayList<LatLng> travelPath  = getArguments().getParcelableArrayList("destLocations");
-
-            /*double latitude = ownTravellerInfo.getDestinationLatitude();
-            double longitude = ownTravellerInfo.getDestinationLongitude();
-            String modeOfTravel =  ownTravellerInfo.getModeOfTravel();*/
-            Boolean multiDestination = getArguments().getBoolean("multiDestination");
-            Boolean isGroupOwner = getArguments().getBoolean("IsGroupOwner");
-
             initMap();
         }
 
@@ -400,32 +386,70 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
         checkGpsAvailability();
         ensureLastLocationInit();
         updateCurrentLocation(mLastLocation);
-
-        Bundle bundle = getArguments();
-        double latitude = ownTravellerInfo.getDestinationLatitude();
-        double longitude = ownTravellerInfo.getDestinationLongitude();
-        String modeOfTravel =  ownTravellerInfo.getModeOfTravel();
-        Boolean multiDestination = bundle.getBoolean("multiDestination");
-        Gson gson = new Gson();
         List<GHPoint> points = new ArrayList<>();
-        points.add(new GHPoint(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
-        users = gson.fromJson(bundle.getString("UserList"), TravellerInfo[].class);
-        if(multiDestination){
-            ArrayList<LatLng> locations  = bundle.getParcelableArrayList("destLocations");
-            for(int i = 1; i< locations.size(); i++)
+
+
+        if(getArguments()!=null)
+        {
+            ArrayList<LatLng> travelPath  = getArguments().getParcelableArrayList("destLocations");
+
+            /*double latitude = ownTravellerInfo.getDestinationLatitude();
+            double longitude = ownTravellerInfo.getDestinationLongitude();
+            String modeOfTravel =  ownTravellerInfo.getModeOfTravel();*/
+//            Boolean multiDestination = getArguments().getBoolean("multiDestination");
+            Boolean isGroupOwner = getArguments().getBoolean("IsGroupOwner");
+
+            Bundle bundle = getArguments();
+            double latitude = ownTravellerInfo.getDestinationLatitude();
+            double longitude = ownTravellerInfo.getDestinationLongitude();
+            modeOfTravel =  ownTravellerInfo.getModeOfTravel();
+
+            if(modeOfTravel.equalsIgnoreCase("driving"))
             {
-                points.add(new GHPoint(locations.get(i).getLatitude(), locations.get(i).getLongitude()));
-                GeoPoint destLatLong = new GeoPoint(locations.get(i).getLatitude(), locations.get(i).getLongitude());
+                modeOfTravel="car";
+            }
+            else if(modeOfTravel.equalsIgnoreCase("walking"))
+            {
+                modeOfTravel="foot";
+            }
+            else if(modeOfTravel.equalsIgnoreCase("cycling"))
+            {
+                modeOfTravel="bike";
+            }
+            Boolean multiDestination = bundle.getBoolean("multiDestination");
+            Gson gson = new Gson();
+            points.add(new GHPoint(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+            users = gson.fromJson(bundle.getString("UserList"), TravellerInfo[].class);
+            if(multiDestination){
+                ArrayList<LatLng> locations  = bundle.getParcelableArrayList("destLocations");
+                for(int i = 1; i< locations.size(); i++)
+                {
+                    points.add(new GHPoint(locations.get(i).getLatitude(), locations.get(i).getLongitude()));
+                    GeoPoint destLatLong = new GeoPoint(locations.get(i).getLatitude(), locations.get(i).getLongitude());
+                    setCustomPoint(getActivity(), destLatLong, destIcon);
+                }
+            }
+            else {
+
+                points.add(new GHPoint(latitude, longitude));
+                GeoPoint destLatLong = new GeoPoint(latitude, longitude);
                 setCustomPoint(getActivity(), destLatLong, destIcon);
             }
         }
-        else {
+        else
+        {
+            points.add(new GHPoint(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+            points.add(new GHPoint(53.280355, -6.214713));
+            points.add(new GHPoint(53.33999864, -6.25499898));
 
-            points.add(new GHPoint(latitude, longitude));
-            GeoPoint destLatLong = new GeoPoint(latitude, longitude);
+            GeoPoint destLatLong = new GeoPoint(53.280355, -6.214713);
+            GeoPoint dest2LatLong = new GeoPoint(53.33999864, -6.25499898);
             setCustomPoint(getActivity(), destLatLong, destIcon);
+            setCustomPoint(getActivity(), dest2LatLong, destIcon);
+            modeOfTravel="car";
         }
-        calcPath(points, getActivity());
+
+        calcPath(points, getActivity(),modeOfTravel);
     }
 
     @Override
@@ -666,7 +690,7 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
         mapView.map().animator().animateTo(300, tmpPos);
     }
 
-    public void calcPath(final List<GHPoint> points, final Activity activity) {
+    public void calcPath(final List<GHPoint> points, final Activity activity, String modeOfTravel) {
 
 
         new AsyncTask<Void, Void, GHResponse>() {
@@ -678,7 +702,7 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
                 GHRequest req = new GHRequest(points).
                         setAlgorithm(Parameters.Algorithms.DIJKSTRA_BI);
                 req.getHints().put(Parameters.Routing.INSTRUCTIONS, true);
-                req.setVehicle("car");
+                req.setVehicle(modeOfTravel);
                 req.setWeighting("shortest");
                 GHResponse resp = null;
                 if (hopper != null)
