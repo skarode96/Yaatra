@@ -1,7 +1,10 @@
 package com.tcd.yaatra.ui.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -48,6 +51,11 @@ public class UserRatingActivity extends BaseActivity<ActivityUserRatingBinding> 
     }
 
     private void handleOnRateClick() {
+
+        if(!isNetworkAvailable()){
+            return;
+        }
+
         RateRequestBody rateRequestBody = new RateRequestBody();
         AtomicInteger count = new AtomicInteger();
         for (TravellerInfo travellerInfo: user) {
@@ -98,6 +106,13 @@ public class UserRatingActivity extends BaseActivity<ActivityUserRatingBinding> 
         recyclerView.setLayoutManager(layoutManager);
         urAdapter = new UserRatingAdapter(getApplicationContext(), user);
         recyclerView.setAdapter(urAdapter);
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
 }
