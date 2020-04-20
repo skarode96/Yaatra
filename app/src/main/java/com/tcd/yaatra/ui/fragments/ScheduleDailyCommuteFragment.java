@@ -22,8 +22,8 @@ import com.tcd.yaatra.databinding.FragmentCreateDailyCommuteBinding;
 import com.tcd.yaatra.repository.models.Gender;
 import com.tcd.yaatra.repository.models.JourneyFrequency;
 import com.tcd.yaatra.repository.models.TransportPreference;
-import com.tcd.yaatra.services.api.yaatra.models.CreateDailyCommuteRequestBody;
-import com.tcd.yaatra.ui.viewmodels.CreateDailyCommuteFragmentViewModel;
+import com.tcd.yaatra.services.api.yaatra.models.ScheduleDailyCommuteRequestBody;
+import com.tcd.yaatra.ui.viewmodels.ScheduleDailyCommuteFragmentViewModel;
 import com.tcd.yaatra.utils.SharedPreferenceUtils;
 
 import java.text.DecimalFormat;
@@ -31,7 +31,10 @@ import java.util.Calendar;
 
 import javax.inject.Inject;
 
-public class CreateDailyCommuteFragment extends BaseFragment<FragmentCreateDailyCommuteBinding> {
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class ScheduleDailyCommuteFragment extends BaseFragment<FragmentCreateDailyCommuteBinding> {
 
     View view;
     SharedPreferences loginPreferences;
@@ -39,9 +42,8 @@ public class CreateDailyCommuteFragment extends BaseFragment<FragmentCreateDaily
     EditText date;
     private static DecimalFormat df = new DecimalFormat("0.0000");
 
-
     @Inject
-    CreateDailyCommuteFragmentViewModel createDailyCommuteFragmentViewModel;
+    ScheduleDailyCommuteFragmentViewModel scheduleDailyCommuteFragmentViewModel;
 
     @Override
     protected int getFragmentResourceId() {
@@ -53,6 +55,16 @@ public class CreateDailyCommuteFragment extends BaseFragment<FragmentCreateDaily
         super.initEventHandlers();
         layoutDataBinding.buttonCreate.setOnClickListener(view -> handleOnCreateDailyButtonClick());
         layoutDataBinding.journeyStartDate.setOnFocusChangeListener((v, hasFocus) -> handleOnSelectDateClick());
+    }
+
+    private static final String TIME24HOURS_PATTERN = "([01]?[0-9]|2[0-3]):[0-5][0-9]";
+    Pattern pattern;
+    Matcher matcher;
+
+    public boolean validate(final String time) {
+        pattern = Pattern.compile(TIME24HOURS_PATTERN);
+        matcher = pattern.matcher(time);
+        return matcher.matches();
     }
 
     @Override
@@ -93,48 +105,56 @@ public class CreateDailyCommuteFragment extends BaseFragment<FragmentCreateDaily
             layoutDataBinding.journeyStartTime.requestFocus();
         } else {
 
-            CreateDailyCommuteRequestBody createDailyRequestBody = new CreateDailyCommuteRequestBody();
-            createDailyRequestBody.setJourneyTitle(layoutDataBinding.title.getText().toString());
+            ScheduleDailyCommuteRequestBody scheduleDailyCommuteRequestBody = new ScheduleDailyCommuteRequestBody();
+            scheduleDailyCommuteRequestBody.setJourneyTitle(layoutDataBinding.title.getText().toString());
 
             double sourceLat = getArguments().getDouble("sourceLat");
             double sourceLong = getArguments().getDouble("sourceLong");
             double destinationLat = getArguments().getDouble("destinationLat");
             double destinationLong = getArguments().getDouble("destinationLong");
 
-            createDailyRequestBody.setSourceLong(Math.round(sourceLong*1000000.0)/1000000.0);
-            createDailyRequestBody.setSourceLat(Math.round(sourceLat*1000000.0)/1000000.0);
-            createDailyRequestBody.setDestinationLong(Math.round(destinationLong*1000000.0)/1000000.0);
-            createDailyRequestBody.setDestinationLat(Math.round(destinationLat*1000000.0)/1000000.0);
-            createDailyRequestBody.setStartTime(layoutDataBinding.journeyStartDate.getText().toString());
-            createDailyRequestBody.setTimeOfCommute(layoutDataBinding.journeyStartTime.getText().toString() + ":00");
+            scheduleDailyCommuteRequestBody.setSourceLong(Math.round(sourceLong * 1000000.0) / 1000000.0);
+            scheduleDailyCommuteRequestBody.setSourceLat(Math.round(sourceLat * 1000000.0) / 1000000.0);
+            scheduleDailyCommuteRequestBody.setDestinationLong(Math.round(destinationLong * 1000000.0) / 1000000.0);
+            scheduleDailyCommuteRequestBody.setDestinationLat(Math.round(destinationLat * 1000000.0) / 1000000.0);
+            scheduleDailyCommuteRequestBody.setStartTime(layoutDataBinding.journeyStartDate.getText().toString());
+
+            if (!TextUtils.isEmpty(layoutDataBinding.journeyStartTime.getText().toString())) {
+                if (validate(layoutDataBinding.journeyStartTime.getText().toString())) {
+                    scheduleDailyCommuteRequestBody.setTimeOfCommute(layoutDataBinding.journeyStartTime.getText().toString() + ":00");
+                } else if (!validate(layoutDataBinding.journeyStartTime.getText().toString())) {
+                    layoutDataBinding.journeyStartTime.setError("Please enter 24hr format Journey Start Time in hh:mm format");
+                }
+            }
 
             RadioButton genderPrefBtn = (RadioButton) view.findViewById(layoutDataBinding.genderPrefGroup.getCheckedRadioButtonId());
             if (genderPrefBtn.getText().toString().equalsIgnoreCase(male.stringLabel))
-                createDailyRequestBody.setPrefGender(male.idNumber);
+                scheduleDailyCommuteRequestBody.setPrefGender(male.idNumber);
             else if (genderPrefBtn.getText().toString().equalsIgnoreCase(female.stringLabel))
-                createDailyRequestBody.setPrefGender(female.idNumber);
+                scheduleDailyCommuteRequestBody.setPrefGender(female.idNumber);
             else if (genderPrefBtn.getText().toString().equalsIgnoreCase(other.stringLabel))
-                createDailyRequestBody.setPrefGender(other.idNumber);
+                scheduleDailyCommuteRequestBody.setPrefGender(other.idNumber);
             else if (genderPrefBtn.getText().toString().equalsIgnoreCase(noPref.stringLabel))
-                createDailyRequestBody.setPrefGender(noPref.idNumber);
+                scheduleDailyCommuteRequestBody.setPrefGender(noPref.idNumber);
 
             RadioButton transportPrefBtn = (RadioButton) view.findViewById(layoutDataBinding.transportPrefGroup.getCheckedRadioButtonId());
             if (transportPrefBtn.getText().toString().equalsIgnoreCase(noTransportPref.stringLabel))
-                createDailyRequestBody.setPrefGender(noTransportPref.intValue);
+                scheduleDailyCommuteRequestBody.setPrefGender(noTransportPref.intValue);
             else if (transportPrefBtn.getText().toString().equalsIgnoreCase(walk.stringLabel))
-                createDailyRequestBody.setPrefGender(walk.intValue);
+                scheduleDailyCommuteRequestBody.setPrefGender(walk.intValue);
             else if (transportPrefBtn.getText().toString().equalsIgnoreCase(taxi.stringLabel))
-                createDailyRequestBody.setPrefGender(taxi.intValue);
+                scheduleDailyCommuteRequestBody.setPrefGender(taxi.intValue);
 
             RadioButton journeyFreqBtn = (RadioButton) view.findViewById(layoutDataBinding.journeyFreqGroup.getCheckedRadioButtonId());
             if (journeyFreqBtn.getText().toString().equalsIgnoreCase(daily.stringLabel))
-                createDailyRequestBody.setJourneyFrequency(daily.intValue);
+                scheduleDailyCommuteRequestBody.setJourneyFrequency(daily.intValue);
             else if (journeyFreqBtn.getText().toString().equalsIgnoreCase(weekly.stringLabel))
-                createDailyRequestBody.setJourneyFrequency(weekly.intValue);
+                scheduleDailyCommuteRequestBody.setJourneyFrequency(weekly.intValue);
             else if (journeyFreqBtn.getText().toString().equalsIgnoreCase(weekend.stringLabel))
-                createDailyRequestBody.setJourneyFrequency(weekend.intValue);
+                scheduleDailyCommuteRequestBody.setJourneyFrequency(weekend.intValue);
 
-            createDailyCommuteFragmentViewModel.createDaily(createDailyRequestBody).observe(this, createDailyCommuteResponse -> {
+
+            scheduleDailyCommuteFragmentViewModel.scheduleDailyCommute(scheduleDailyCommuteRequestBody).observe(this, createDailyCommuteResponse -> {
                 switch (createDailyCommuteResponse.getState()) {
                     case LOADING:
                         layoutDataBinding.progressBarOverlay.setVisibility(View.VISIBLE);
@@ -144,7 +164,7 @@ public class CreateDailyCommuteFragment extends BaseFragment<FragmentCreateDaily
                         layoutDataBinding.progressBarOverlay.setVisibility(View.GONE);
                         Toast.makeText(getActivity(), "daily commute creation successful", Toast.LENGTH_SHORT).show();
                         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                        transaction.replace(R.id.fragment_container,new DailyFragment()).commit();
+                        transaction.replace(R.id.fragment_container, new DailyFragment()).commit();
                         break;
 
                     case FAILURE:
@@ -156,9 +176,10 @@ public class CreateDailyCommuteFragment extends BaseFragment<FragmentCreateDaily
 
         }
     }
+
     private void handleOnSelectDateClick() {
 
-        if(date.isFocused()) {
+        if (date.isFocused()) {
             final Calendar cldr = Calendar.getInstance();
             int day = cldr.get(Calendar.DAY_OF_MONTH);
             int month = cldr.get(Calendar.MONTH);

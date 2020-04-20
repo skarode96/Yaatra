@@ -1,5 +1,7 @@
 package com.tcd.yaatra.repository.models;
 
+import java.util.Objects;
+
 public class AsyncData<DataClass> {
 
     public enum State {
@@ -45,5 +47,19 @@ public class AsyncData<DataClass> {
                 "data=" + data +
                 ", state=" + state +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AsyncData)) return false;
+        AsyncData<?> asyncData = (AsyncData<?>) o;
+        return Objects.equals(data, asyncData.data) &&
+                state == asyncData.state;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(data, state);
     }
 }

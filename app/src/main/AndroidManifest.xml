@@ -30,7 +30,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.fragments.CreateDailyCommuteFragment"></activity>
+        <activity android:name=".ui.fragments.ScheduleDailyCommuteFragment"></activity>
         <activity android:name=".ui.fragments.DailyFragment"></activity>
         <activity android:name=".ui.activities.LoginActivity"
             android:label="Yaatra Login"/>

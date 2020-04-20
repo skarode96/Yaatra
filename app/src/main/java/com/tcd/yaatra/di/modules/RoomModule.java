@@ -3,10 +3,9 @@ package com.tcd.yaatra.di.modules;
 import android.app.Application;
 
 import com.tcd.yaatra.repository.JourneySharingDatabase;
-import com.tcd.yaatra.repository.UserInfoDataSource;
-import com.tcd.yaatra.repository.UserInfoRepository;
+import com.tcd.yaatra.repository.datasource.UserInfoDataSource;
+import com.tcd.yaatra.repository.datasource.UserInfoRepository;
 import com.tcd.yaatra.repository.dao.UserInfoDao;
-import com.tcd.yaatra.services.api.yaatra.models.UserInfo;
 
 import javax.inject.Singleton;
 

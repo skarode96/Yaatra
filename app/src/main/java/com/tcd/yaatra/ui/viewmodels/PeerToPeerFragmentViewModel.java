@@ -7,6 +7,9 @@ import com.tcd.yaatra.repository.models.Gender;
 import com.tcd.yaatra.repository.models.TravellerInfo;
 import com.tcd.yaatra.services.api.yaatra.models.UserInfo;
 import com.tcd.yaatra.utils.MapUtils;
+
+import org.jetbrains.annotations.TestOnly;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -86,7 +89,7 @@ public class PeerToPeerFragmentViewModel extends ViewModel {
 
     //check if current user is group owner of the travellers list
     //Initialize travel path including destinations of all travellers
-    //Travel path also includes group owner's location as destination for other travellers
+    //Travel path also includes group owner's start location as a destination for other travellers
     private boolean setupTravelPathAndGroupOwnership() {
 
         travelPath = new ArrayList<>();
@@ -120,5 +123,11 @@ public class PeerToPeerFragmentViewModel extends ViewModel {
         travelPath.add(new LatLng(ownTravellerInfo.getDestinationLatitude(), ownTravellerInfo.getDestinationLongitude()));
 
         return isGroupOwner;
+    }
+
+    @TestOnly
+    public void setMockObjects(TravellerInfo mockTraveller, FellowTravellersCache mockCache){
+        this.ownTravellerInfo = mockTraveller;
+        this.fellowTravellersCache = mockCache;
     }
 }

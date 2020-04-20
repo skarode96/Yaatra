@@ -1,6 +1,7 @@
 package com.tcd.yaatra.di.modules;
 
-import com.tcd.yaatra.services.api.yaatra.api.CreateDailyCommuteApi;
+import com.tcd.yaatra.services.api.yaatra.api.RatingApi;
+import com.tcd.yaatra.services.api.yaatra.api.ScheduleDailyCommuteApi;
 import com.tcd.yaatra.services.api.yaatra.api.DailyCommuteApi;
 import com.tcd.yaatra.services.api.yaatra.api.DailyCommuteDetailsApi;
 import com.tcd.yaatra.services.api.yaatra.api.LoginApi;
@@ -67,14 +68,19 @@ public class YaatraApiModule {
 
     @Provides
     @Singleton
-    CreateDailyCommuteApi providesCreateDailyCommuteApi(@Named("yaatraRetrofit") Retrofit retrofit) {
-        return retrofit.create(CreateDailyCommuteApi.class);
+    ScheduleDailyCommuteApi providesCreateDailyCommuteApi(@Named("yaatraRetrofit") Retrofit retrofit) {
+        return retrofit.create(ScheduleDailyCommuteApi.class);
     }
 
     @Provides
     @Singleton
     DailyCommuteDetailsApi providesDailyCommuteDetailsApi(@Named("yaatraRetrofit") Retrofit retrofit) {
         return retrofit.create(DailyCommuteDetailsApi.class);
+    }
+    @Provides
+    @Singleton
+    RatingApi providesRatingApi(@Named("yaatraRetrofit") Retrofit retrofit) {
+        return retrofit.create(RatingApi.class);
     }
 
     @NotNull

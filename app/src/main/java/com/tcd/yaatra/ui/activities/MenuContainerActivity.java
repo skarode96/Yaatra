@@ -18,7 +18,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.WifiDirectP2PHelper.PeerCommunicator;
 import com.tcd.yaatra.databinding.ActivityMenuBinding;
-import com.tcd.yaatra.repository.UserInfoRepository;
+import com.tcd.yaatra.repository.datasource.UserInfoRepository;
 import com.tcd.yaatra.repository.models.Gender;
 import com.tcd.yaatra.ui.fragments.DailyFragment;
 import com.tcd.yaatra.ui.fragments.MapFragment;
@@ -72,7 +72,7 @@ public class MenuContainerActivity extends BaseActivity<ActivityMenuBinding> imp
             userInfoRepository.getUserProfile(SharedPreferenceUtils.getUserName()).observe(this, response -> {
                 if(response != null) {
                     userName.setText(response.getUsername());
-                    profileImage.setImageResource(response.getGender().equals(Gender.MALE) ? R.drawable.guy : R.drawable.girl);
+                    profileImage.setImageResource(response.getGender().equals("m") ? R.drawable.guy : R.drawable.girl);
                 }
             });
         }

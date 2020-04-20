@@ -7,7 +7,7 @@ import androidx.lifecycle.LiveData;
 import androidx.test.rule.ActivityTestRule;
 
 import com.tcd.yaatra.R;
-import com.tcd.yaatra.repository.UserInfoRepository;
+import com.tcd.yaatra.repository.datasource.UserInfoRepository;
 import com.tcd.yaatra.repository.models.AsyncData;
 import com.tcd.yaatra.services.api.yaatra.models.LoginResponse;
 import com.tcd.yaatra.ui.viewmodels.LoginActivityViewModel;

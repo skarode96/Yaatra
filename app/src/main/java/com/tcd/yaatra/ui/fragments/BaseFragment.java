@@ -10,12 +10,14 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import dagger.android.AndroidInjection;
 import dagger.android.support.AndroidSupportInjection;
 
 public abstract class BaseFragment<DataBindingClass extends ViewDataBinding> extends Fragment {
 
     public DataBindingClass layoutDataBinding;
+    protected FragmentManager fragmentManager;
 
     @Nullable
     @Override
@@ -23,6 +25,7 @@ public abstract class BaseFragment<DataBindingClass extends ViewDataBinding> ext
         configureDagger();
         initDataBinding(inflater, container);
         initEventHandlers();
+        fragmentManager = getActivity().getSupportFragmentManager();
         return this.layoutDataBinding.getRoot();
     }
 
