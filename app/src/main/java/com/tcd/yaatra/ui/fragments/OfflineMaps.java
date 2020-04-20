@@ -33,6 +33,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.graphhopper.GHRequest;
 import com.graphhopper.GHResponse;
 import com.graphhopper.GraphHopper;
@@ -96,8 +97,6 @@ import static com.mapbox.services.android.navigation.ui.v5.feedback.FeedbackBott
 
 
 public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
-    
-    
 
     @Override
     public int getFragmentResourceId() {
@@ -143,6 +142,7 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
     public PointPosData nearestP = new PointPosData();
     private GHAsyncTask<GeoPoint, NaviInstruction, NaviInstruction> naviEngineTask;
     public GeoPoint recalcFrom, recalcTo;
+    private TravellerInfo[] users;
 
 
     private NavEngine navEngine = new NavEngine(this);
@@ -394,16 +394,31 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
         ensureLastLocationInit();
         updateCurrentLocation(mLastLocation);
 
+        Bundle bundle = getArguments();
+        double latitude = ownTravellerInfo.getDestinationLatitude();
+        double longitude = ownTravellerInfo.getDestinationLongitude();
+        String modeOfTravel =  ownTravellerInfo.getModeOfTravel();
+        Boolean multiDestination = bundle.getBoolean("multiDestination");
+        Gson gson = new Gson();
         List<GHPoint> points = new ArrayList<>();
         points.add(new GHPoint(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
-        points.add(new GHPoint(53.280355, -6.214713));
-        points.add(new GHPoint(53.33999864, -6.25499898));
+        users = gson.fromJson(bundle.getString("UserList"), TravellerInfo[].class);
+        if(multiDestination){
+            ArrayList<LatLng> locations  = bundle.getParcelableArrayList("destLocations");
+            for(int i = 1; i< locations.size(); i++)
+            {
+                points.add(new GHPoint(locations.get(i).getLatitude(), locations.get(i).getLongitude()));
+                GeoPoint destLatLong = new GeoPoint(locations.get(i).getLatitude(), locations.get(i).getLongitude());
+                setCustomPoint(getActivity(), destLatLong, destIcon);
+            }
+        }
+        else {
 
+            points.add(new GHPoint(latitude, longitude));
+            GeoPoint destLatLong = new GeoPoint(latitude, longitude);
+            setCustomPoint(getActivity(), destLatLong, destIcon);
+        }
         calcPath(points, getActivity());
-        GeoPoint destLatLong = new GeoPoint(53.280355, -6.214713);
-        GeoPoint dest2LatLong = new GeoPoint(53.33999864, -6.25499898);
-        setCustomPoint(getActivity(), destLatLong, destIcon);
-        setCustomPoint(getActivity(), dest2LatLong, destIcon);
     }
 
     @Override
