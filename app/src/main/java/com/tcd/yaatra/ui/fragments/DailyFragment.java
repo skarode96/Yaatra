@@ -20,10 +20,12 @@ import com.tcd.yaatra.R;
 import com.tcd.yaatra.databinding.FragmentDailyBinding;
 import com.tcd.yaatra.services.api.yaatra.models.JourneyDetails;
 import com.tcd.yaatra.ui.activities.DailyCommuteMapFragment;
+import com.tcd.yaatra.ui.activities.LoginActivity;
 import com.tcd.yaatra.ui.activities.MenuContainerActivity;
 import com.tcd.yaatra.ui.adapters.DailyTripAdapter;
 import com.tcd.yaatra.ui.viewmodels.DailyCommuteActivityViewModel;
-
+import com.tcd.yaatra.utils.SharedPreferenceUtils;
+import com.tcd.yaatra.ui.activities.LoginActivity;
 import java.util.ArrayList;
 
 import javax.inject.Inject;
@@ -93,12 +95,21 @@ public class DailyFragment extends BaseFragment<FragmentDailyBinding> {
 
                 case FAILURE:
                     layoutDataBinding.progressBarOverlay.setVisibility(View.GONE);
-                    Toast.makeText(getActivity(), dailyCommuteResponse.getData().getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "yaatra service is down. Please come after some time", Toast.LENGTH_SHORT).show();
+                    handleLogout();
                     break;
             }
         });
         ((MenuContainerActivity)getActivity()).layoutDataBinding.toolbar.setTitle("Yaatra Daily Commute");
         return view;
+    }
+    private void handleLogout() {
+        SharedPreferenceUtils.clearAuthToken();
+        SharedPreferenceUtils.clearUserName();
+        SharedPreferenceUtils.clearUserId();
+        Intent myIntent = new Intent(getActivity(), LoginActivity.class);
+        startActivity(myIntent);
+        //finish();
     }
 
     private class DailyTripOnClickListener implements View.OnClickListener {
