@@ -46,8 +46,11 @@ import com.graphhopper.util.Parameters;
 import com.graphhopper.util.PointList;
 import com.graphhopper.util.StopWatch;
 import com.graphhopper.util.shapes.GHPoint;
+import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.tcd.yaatra.R;
+import com.tcd.yaatra.WifiDirectP2PHelper.PeerCommunicator;
 import com.tcd.yaatra.databinding.FragmentOfflineMapsBinding;
+import com.tcd.yaatra.repository.models.TravellerInfo;
 import com.tcd.yaatra.utils.offlinemaps.GHAsyncTask;
 import com.tcd.yaatra.utils.offlinemaps.GeoMath;
 import com.tcd.yaatra.utils.offlinemaps.InstructionCalculation;
@@ -86,6 +89,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import javax.inject.Inject;
 
 import static com.mapbox.services.android.navigation.ui.v5.feedback.FeedbackBottomSheet.TAG;
 
@@ -142,6 +147,12 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
 
     private NavEngine navEngine = new NavEngine(this);
     private InstructionCalculation instructionCalculation = new InstructionCalculation(this);
+
+    @Inject
+    TravellerInfo ownTravellerInfo;
+
+    @Inject
+    PeerCommunicator peerCommunicator;
 
     @Override
     protected void initEventHandlers() {
@@ -356,6 +367,15 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
             initMap();
         }
         else {
+
+            ArrayList<LatLng> travelPath  = getArguments().getParcelableArrayList("destLocations");
+
+            /*double latitude = ownTravellerInfo.getDestinationLatitude();
+            double longitude = ownTravellerInfo.getDestinationLongitude();
+            String modeOfTravel =  ownTravellerInfo.getModeOfTravel();*/
+            Boolean multiDestination = getArguments().getBoolean("multiDestination");
+            Boolean isGroupOwner = getArguments().getBoolean("IsGroupOwner");
+
             initMap();
         }
 

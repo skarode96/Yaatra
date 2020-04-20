@@ -70,7 +70,9 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
         layoutManager = new LinearLayoutManager(this.getActivity());
         layoutDataBinding.peerRecyclerView.setLayoutManager(layoutManager);
         layoutDataBinding.startNavigation.setOnClickListener(view -> handleStartNavigationClick());
-        layoutDataBinding.travllerStatusToggle.setOnClickListener(view -> handleStatusUpdateClick());
+
+        layoutDataBinding.travllerStatusToggle.setVisibility(View.INVISIBLE);
+        //layoutDataBinding.travllerStatusToggle.setOnClickListener(view -> handleStatusUpdateClick());
     }
 
     private void handleStatusUpdateClick() {
@@ -253,10 +255,15 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
         Gson gson = new Gson();
         bundle.putString("UserList", gson.toJson(peerToPeerFragmentViewModel.getFilteredPeerTravellers()));
         bundle.putBoolean("multiDestination", true);
+        bundle.putBoolean("IsGroupOwner", peerToPeerFragmentViewModel.getAmIGroupOwner());
 
-        RouteInfoFragment routeInfoFragment = new RouteInfoFragment();
-        routeInfoFragment.setArguments(bundle);
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, routeInfoFragment).addToBackStack("peerFrag").commit();
+        //RouteInfoFragment routeInfoFragment = new RouteInfoFragment();
+        //routeInfoFragment.setArguments(bundle);
+
+        OfflineMaps offlineMapsFragment = new OfflineMaps();
+        offlineMapsFragment.setArguments(bundle);
+
+        fragmentManager.beginTransaction().replace(R.id.fragment_container, offlineMapsFragment).addToBackStack("peerFrag").commit();
     }
 
     //endregion
