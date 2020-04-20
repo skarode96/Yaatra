@@ -147,11 +147,18 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
     protected void initEventHandlers() {
         super.initEventHandlers();
         layoutDataBinding.fabNav.setOnClickListener(view -> handleOnNavClick(view));
+        layoutDataBinding.navtopStop.setOnClickListener(view -> handleOnStopNavClick(view));
+    }
+
+    private void handleOnStopNavClick(View view) {
+        layoutDataBinding.fabNav.setEnabled(true);
+        navEngine.setNavigating(false);
     }
 
     private void handleOnNavClick(View view) {
 
         navTopVP.setVisibility(View.VISIBLE);
+        layoutDataBinding.fabNav.setEnabled(false);
         navEngine.setNavigating(true);
         Location curLoc = mLastLocation;
         if (curLoc!=null)
