@@ -9,6 +9,7 @@ import com.tcd.yaatra.ui.fragments.MapFragment;
 import com.tcd.yaatra.ui.fragments.OfflineMaps;
 import com.tcd.yaatra.ui.fragments.ScheduleDailyCommuteFragment;
 import com.tcd.yaatra.ui.fragments.SettingsFragment;
+import com.tcd.yaatra.ui.fragments.UserRatingFragment;
 
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
@@ -42,4 +43,7 @@ public interface FragmentModule {
 
     @ContributesAndroidInjector
     OfflineMaps contributeOfflineMaps();
+
+    @ContributesAndroidInjector
+    UserRatingFragment contributeUserRatingFragment();
 }

@@ -8,7 +8,7 @@ import com.tcd.yaatra.ui.viewmodels.DailyCommuteDetailsViewModel;
 import com.tcd.yaatra.ui.viewmodels.LoginActivityViewModel;
 import com.tcd.yaatra.ui.viewmodels.PeerToPeerFragmentViewModel;
 import com.tcd.yaatra.ui.viewmodels.RegisterActivityViewModel;
-import com.tcd.yaatra.ui.viewmodels.UserRatingActivityViewModel;
+import com.tcd.yaatra.ui.viewmodels.UserRatingFragmentViewModel;
 import com.tcd.yaatra.ui.viewmodels.ViewModelFactory;
 
 import dagger.Binds;
@@ -53,6 +53,6 @@ public abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(UserRatingActivityViewModel.class)
-    abstract UserRatingActivityViewModel bindUserRatingActivityViewModel(UserRatingActivityViewModel userRatingActivityViewModel);
+    @ViewModelKey(UserRatingFragmentViewModel.class)
+    abstract UserRatingFragmentViewModel bindUserRatingActivityViewModel(UserRatingFragmentViewModel userRatingActivityViewModel);
 }

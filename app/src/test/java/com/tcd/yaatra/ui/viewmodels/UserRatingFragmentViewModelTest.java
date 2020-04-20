@@ -16,9 +16,10 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class UserRatingActivityViewModelTest {
+public class UserRatingFragmentViewModelTest {
 
-    @InjectMocks UserRatingActivityViewModel userRatingActivityViewModel;
+    @InjectMocks
+    UserRatingFragmentViewModel userRatingFragmentViewModel;
 
     @Mock
     UserRatingRepository userRatingRepository;
@@ -28,6 +29,6 @@ public class UserRatingActivityViewModelTest {
         final RateRequestBody rateRequestBody = new RateRequestBody();
         MutableLiveData<AsyncData<RateResponse>> rateResponseLiveData = new MutableLiveData<>();
         Mockito.when(userRatingRepository.rateUsers(Mockito.any(RateRequestBody.class))).thenReturn(rateResponseLiveData);
-        Assert.assertEquals(userRatingActivityViewModel.rate(rateRequestBody), rateResponseLiveData);
+        Assert.assertEquals(userRatingFragmentViewModel.rate(rateRequestBody), rateResponseLiveData);
     }
 }

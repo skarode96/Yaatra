@@ -56,6 +56,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -253,8 +255,7 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
             ownTravellerInfo.setDestinationName(destname.replace(',','.').substring(0, 10));
         }
 
-        ownTravellerInfo.setSourceLatitude(locationComponent.getLastKnownLocation().getLatitude());
-        ownTravellerInfo.setSourceLongitude(locationComponent.getLastKnownLocation().getLongitude());
+        setSourceLocationForOwnTraveller(false);
         ownTravellerInfo.setDestinationLatitude(destination.latitude());
         ownTravellerInfo.setDestinationLongitude(destination.longitude());
 
@@ -524,6 +525,29 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
 
         }
         return true;
+    }
+
+    private void setSourceLocationForOwnTraveller(boolean isDemoOnly){
+
+        double currentLatitude = locationComponent.getLastKnownLocation().getLatitude();
+        double currentLongitude = locationComponent.getLastKnownLocation().getLongitude();
+
+        //This code is added only for demo purpose to change the source location of user by around 100 meters
+        if(isDemoOnly){
+
+            double r_earth_meters = 6371000.0;
+            double dy = 100;
+            double dx = 100;
+
+            DecimalFormat df = new DecimalFormat("#.#######");
+            df.setRoundingMode(RoundingMode.CEILING);
+
+            currentLatitude  = Double.parseDouble(df.format(currentLatitude  + (dy / r_earth_meters) * (180 / Math.PI)));
+            currentLongitude = Double.parseDouble(df.format(currentLongitude + (dx / r_earth_meters) * (180 / Math.PI) / Math.cos(currentLatitude * Math.PI/180)));
+        }
+
+        ownTravellerInfo.setSourceLatitude(currentLatitude);
+        ownTravellerInfo.setSourceLongitude(currentLongitude);
     }
 
     @Override
