@@ -3,6 +3,8 @@ package com.tcd.yaatra.ui.fragments;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -52,6 +54,7 @@ import com.tcd.yaatra.R;
 import com.tcd.yaatra.WifiDirectP2PHelper.PeerCommunicator;
 import com.tcd.yaatra.databinding.FragmentOfflineMapsBinding;
 import com.tcd.yaatra.repository.models.TravellerInfo;
+import com.tcd.yaatra.ui.activities.UserRatingActivity;
 import com.tcd.yaatra.utils.offlinemaps.GHAsyncTask;
 import com.tcd.yaatra.utils.offlinemaps.GeoMath;
 import com.tcd.yaatra.utils.offlinemaps.InstructionCalculation;
@@ -164,6 +167,10 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
     private void handleOnStopNavClick(View view) {
         layoutDataBinding.fabNav.setEnabled(true);
         navEngine.setNavigating(false);
+//        Fragment currentFragment = getActivity().getFragmentManager().findFragmentById(R.id.fragment_container);
+        pathLayer = null;
+        getFragmentManager().beginTransaction().detach(this).attach(this).commit();
+
     }
 
     private void handleOnNavClick(View view) {
