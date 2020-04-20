@@ -24,6 +24,7 @@ import com.tcd.yaatra.ui.fragments.DailyFragment;
 import com.tcd.yaatra.ui.fragments.MapFragment;
 import com.tcd.yaatra.ui.fragments.SettingsFragment;
 import com.tcd.yaatra.utils.SharedPreferenceUtils;
+import com.tcd.yaatra.ui.fragments.OfflineMaps;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -106,6 +107,9 @@ public class MenuContainerActivity extends BaseActivity<ActivityMenuBinding> imp
                 break;
             case R.id.settings:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SettingsFragment()).commit();
+                break;
+            case R.id.offline_map:
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new OfflineMaps()).commit();
                 break;
             case R.id.logout:
                 handleLogout();

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+
+    <org.oscim.android.MapView
+        android:id="@+id/mapview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabNav"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="40dp"
+        android:layout_marginEnd="20dp"
+        android:clickable="true"
+        android:src="@drawable/ic_directions_white_24dp"
+        app:srcCompat="@color/colorAccent" />
+
+        <RelativeLayout
+            android:id="@+id/navtop_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:background="@color/colorAccent"
+            android:fontFamily="sans-serif"
+            android:keepScreenOn="true"
+            android:fitsSystemWindows="true"
+            android:visibility="invisible"
+            >
+
+            <!-- Image for showing direction -->
+            <ImageView
+                android:id="@+id/navtop_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="8dp"
+                android:padding="8dp"
+                android:layout_gravity="top|left"
+                android:src="@drawable/ic_up_arrow" />
+
+            <!-- Text for distance to next instruction -->
+            <TextView
+                android:id="@+id/navtop_when"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/navtop_image"
+                android:text="distance"
+                android:textColor="#FFFFFF"
+                android:textSize="22sp" />
+
+            <TextView
+                android:id="@+id/navtop_curloc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:layout_toRightOf="@id/navtop_image"
+                android:text="wait_for_location"
+                android:textColor="#FFFFFF"
+                android:textSize="22sp" />
+
+            <TextView
+                android:id="@+id/navtop_nextloc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/navtop_curloc"
+                android:layout_toRightOf="@id/navtop_image"
+                android:text="to_location"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/navtop_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/navtop_stop"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_gravity="right"
+                android:text="time"
+                android:textColor="#FFFFFF"
+                android:textSize="22sp" />
+
+            <ImageButton
+                android:id="@+id/navtop_stop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_gravity="right"
+                android:background="@color/colorAccent"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="8dp"
+                android:src="@drawable/ic_stop_black_24dp" />
+
+        </RelativeLayout>
+    </RelativeLayout>
+
+
+
+</layout>
