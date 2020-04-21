@@ -93,6 +93,10 @@ public class PeerToPeerFragmentViewModel extends ViewModel {
     private boolean setupTravelPathAndGroupOwnership() {
 
         travelPath = new ArrayList<>();
+
+        ArrayList<LatLng> destinations = new ArrayList<>();
+        LatLng ownTravellerSourceLocation = new LatLng(ownTravellerInfo.getSourceLatitude(), ownTravellerInfo.getSourceLongitude());
+
         LocalDateTime leastFellowTravellerRequestStartTime = LocalDateTime.MAX;
 
         double groupOwnerSourceLat = 0.0;
@@ -110,17 +114,26 @@ public class PeerToPeerFragmentViewModel extends ViewModel {
                 groupOwnerSourceLong = info.getSourceLongitude();
             }
 
-            travelPath.add(new LatLng(info.getDestinationLatitude(), info.getDestinationLongitude()));
+            destinations.add(new LatLng(info.getDestinationLatitude(), info.getDestinationLongitude()));
         }
+
+        destinations.add(new LatLng(ownTravellerInfo.getDestinationLatitude(), ownTravellerInfo.getDestinationLongitude()));
 
         isGroupOwner = ownTravellerInfo.getRequestStartTime().isBefore(leastFellowTravellerRequestStartTime);
 
         if(!isGroupOwner){
-            travelPath.add(0, new LatLng(groupOwnerSourceLat, groupOwnerSourceLong));
+
+            LatLng groupOwnerSourceLocation = new LatLng(groupOwnerSourceLat, groupOwnerSourceLong);
+            destinations = MapUtils.sortDestinationsByDistance(groupOwnerSourceLocation, destinations);
+
+            travelPath.add(0, groupOwnerSourceLocation);
+        }
+        else {
+            destinations = MapUtils.sortDestinationsByDistance(ownTravellerSourceLocation, destinations);
         }
 
-        travelPath.add(0, new LatLng(ownTravellerInfo.getSourceLatitude(), ownTravellerInfo.getSourceLongitude()));
-        travelPath.add(new LatLng(ownTravellerInfo.getDestinationLatitude(), ownTravellerInfo.getDestinationLongitude()));
+        travelPath.add(0, ownTravellerSourceLocation);
+        travelPath.addAll(destinations);
 
         return isGroupOwner;
     }
