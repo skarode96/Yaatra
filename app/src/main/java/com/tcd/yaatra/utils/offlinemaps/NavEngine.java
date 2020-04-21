@@ -13,6 +13,7 @@ import com.graphhopper.storage.NodeAccess;
 import com.graphhopper.storage.index.QueryResult;
 import com.graphhopper.util.Instruction;
 import com.graphhopper.util.InstructionList;
+import com.graphhopper.util.ViaInstruction;
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.ui.fragments.OfflineMaps;
 
@@ -30,8 +31,9 @@ public class NavEngine {
 
 
     boolean naviVoiceSpoken = false;
-    enum UiJob { Nothing, RecalcPath, UpdateInstruction, Finished };
-    private UiJob uiJob = UiJob.Nothing;
+//    enum UiJob { Nothing, RecalcPath, UpdateInstruction, Finished };
+
+    private OfflineMaps.UiJob uiJob;
     private int customIcon = R.drawable.ic_my_location_black_24dp;
     private static final int BEST_NAVI_ZOOM = 18;
     private int navIcon = R.drawable.ic_navigation_black_24dp;
@@ -41,8 +43,10 @@ public class NavEngine {
 
     OfflineMaps offlineMaps;
 
+
     public NavEngine(OfflineMaps offlineMaps) {
         this.offlineMaps = offlineMaps;
+        this.uiJob = offlineMaps.uiJob;
     }
 
     public void setNavigating(boolean active)
@@ -70,7 +74,7 @@ public class NavEngine {
         }
         offlineMaps.setCustomPoint(offlineMaps.getActivity(), new GeoPoint(0, 0), navIcon);
         naviVoiceSpoken = false;
-        uiJob = UiJob.Nothing;
+        uiJob = OfflineMaps.UiJob.Nothing;
 //            initFields(activity);
 //            instructions = Navigator.getNavigator().getGhResponse().getInstructions();
         offlineMaps.resetNewInstruction();
@@ -108,8 +112,8 @@ public class NavEngine {
     {
         PointPosData nearestP = offlineMaps.nearestP;
         InstructionList instructions = offlineMaps.instructions;
-        if (uiJob == UiJob.RecalcPath) { return null; }
-        if (uiJob == UiJob.Finished) { return null; }
+        if (uiJob == OfflineMaps.UiJob.RecalcPath) { return null; }
+        if (uiJob == OfflineMaps.UiJob.Finished) { return null; }
         nearestP.setBaseData(getNearestPoint(instructions.get(0), nearestP.arrPos, curPos));
 
         if (nearestP.arrPos > 0)
@@ -185,7 +189,7 @@ public class NavEngine {
             }
             if (nearestNext == null)
             {
-                uiJob = UiJob.RecalcPath;
+                uiJob = OfflineMaps.UiJob.RecalcPath;
                 offlineMaps.recalcFrom = curPos;
                 Instruction lastInstruction = instructions.get(instructions.size()-1);
                 int lastPoint = lastInstruction.getPoints().size()-1;
@@ -273,9 +277,10 @@ public class NavEngine {
         InstructionList instructions = offlineMaps.instructions;
         nearestP.arrPos = 0;
         nearestP.distance = Double.MAX_VALUE;
-        uiJob = UiJob.UpdateInstruction;
+        uiJob = OfflineMaps.UiJob.UpdateInstruction;
         if (instructions.size() > 0)
         {
+
             Instruction in = instructions.get(0);
             long fullTime = countFullTime(in.getTime());
             GeoPoint curPos = new GeoPoint(in.getPoints().getLat(0), in.getPoints().getLon(0));
@@ -286,7 +291,25 @@ public class NavEngine {
                 partDistanceScaler = in.getDistance() / partDistance;
             }
             Instruction nextIn = null;
-            if (instructions.size() > 1) { nextIn = instructions.get(1); }
+            if (instructions.size() > 1) { nextIn = instructions.get(1);
+            if(nextIn.getExtraInfoJSON().size()!= 0){
+                Log.d(TAG, "----------#######-------getNewInstruction--------******--------:--------- " + nextIn.getPoints());
+                if(nextIn.getClass().toString().contains("ViaInstruction")){
+                    offlineMaps.viaReached = true;
+                    offlineMaps.viaCount = ((ViaInstruction) nextIn).getViaCount();
+                }
+                else if (nextIn.getClass().toString().contains("FinishInstruction")) {
+                    offlineMaps.uiJob = OfflineMaps.UiJob.Finished;
+                }
+            }
+            }
+            else if (instructions.size() == 1) {
+                if(instructions.get(0).getExtraInfoJSON().size()!= 0) {
+                    if (instructions.get(0).getClass().toString().contains("FinishInstruction")) {
+                        offlineMaps.uiJob = OfflineMaps.UiJob.Finished;
+                    }
+                }
+            }
             NaviInstruction nIn = new NaviInstruction(in, nextIn, fullTime);
             if (speakDistanceCheck(in.getDistance()) && nearestP.isDirectionOk())
             {
@@ -299,7 +322,7 @@ public class NavEngine {
             }
             return nIn;
         }
-        uiJob = UiJob.Finished;
+        uiJob = OfflineMaps.UiJob.Finished;
         return null;
     }
 
@@ -333,7 +356,7 @@ public class NavEngine {
     private NaviInstruction getUpdatedInstruction(GeoPoint curPos, PointPosData nearestP)
     {
         InstructionList instructions = offlineMaps.instructions;
-        uiJob = UiJob.UpdateInstruction;
+        uiJob = OfflineMaps.UiJob.UpdateInstruction;
         if (instructions.size() > 0)
         {
             Instruction in = instructions.get(0);
