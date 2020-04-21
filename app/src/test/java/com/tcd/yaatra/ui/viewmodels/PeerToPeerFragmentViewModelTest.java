@@ -191,6 +191,67 @@ public class PeerToPeerFragmentViewModelTest {
         Assert.assertEquals(0, testObjectPeerToPeerFragmentViewModel.getFilteredPeerTravellers().size());
     }
 
+    @Test
+    public void verifyListOfFilteredPeerTravellersAsPerUsersPreferredModeOfTravel(){
+
+        LocalDateTime requestTime = LocalDateTime.now();
+        setupOwnTravellerInfo(requestTime.minusSeconds(2));
+        Mockito.when(mockTravellerInfo.getModeOfTravel()).thenReturn("Walk");
+
+        HashMap<Integer, TravellerInfo> peerTravellers = getPeerTravellers(requestTime);
+
+        peerTravellers.get(2).setModeOfTravel("Walk");
+        //Peer with non-matching mode of travel
+        peerTravellers.get(3).setModeOfTravel("Car");
+        //Peer with destination outside 1 km range
+        peerTravellers.get(4).setModeOfTravel("Car");
+
+        Mockito.when(mockFellowTravellersCache.getFellowTravellers()).thenReturn(peerTravellers);
+
+        testObjectPeerToPeerFragmentViewModel.setFilteredPeerTravellers();
+
+        ArrayList<TravellerInfo> filteredTravellers = testObjectPeerToPeerFragmentViewModel.getFilteredPeerTravellers();
+
+        //Verify only travellers within 1 km distance are selected
+        Assert.assertEquals(1, filteredTravellers.size());
+        Assert.assertEquals(peerTravellers.get(2).getUserId(), filteredTravellers.get(0).getUserId());
+    }
+
+    @Test
+    public void verifyListOfFilteredPeerTravellersAsPerUsersPreferredGender(){
+
+        LocalDateTime requestTime = LocalDateTime.now();
+        setupOwnTravellerInfo(requestTime.minusSeconds(2));
+        Mockito.when(mockTravellerInfo.getModeOfTravel()).thenReturn("Walk");
+
+        UserInfo userInfo = getDummyUserInfo();
+        userInfo.setPref_gender(Gender.FEMALE.idNumber);
+        testObjectPeerToPeerFragmentViewModel.initializeOwnTraveller(userInfo, "");
+
+        HashMap<Integer, TravellerInfo> peerTravellers = getPeerTravellers(requestTime);
+
+        //Peer with non-matching preferred Gender
+        peerTravellers.get(2).setModeOfTravel("Walk");
+        peerTravellers.get(2).setGender(Gender.MALE);
+
+        peerTravellers.get(3).setModeOfTravel("Walk");
+        peerTravellers.get(3).setGender(Gender.FEMALE);
+
+        //Peer with destination outside 1 km range
+        peerTravellers.get(4).setModeOfTravel("Walk");
+        peerTravellers.get(4).setGender(Gender.FEMALE);
+
+        Mockito.when(mockFellowTravellersCache.getFellowTravellers()).thenReturn(peerTravellers);
+
+        testObjectPeerToPeerFragmentViewModel.setFilteredPeerTravellers();
+
+        ArrayList<TravellerInfo> filteredTravellers = testObjectPeerToPeerFragmentViewModel.getFilteredPeerTravellers();
+
+        //Verify only travellers within 1 km distance are selected
+        Assert.assertEquals(1, filteredTravellers.size());
+        Assert.assertEquals(peerTravellers.get(3).getUserId(), filteredTravellers.get(0).getUserId());
+    }
+
     private void setupOwnTravellerInfo(LocalDateTime requestStartTime){
 
         Double sourceLat = 53.343191;

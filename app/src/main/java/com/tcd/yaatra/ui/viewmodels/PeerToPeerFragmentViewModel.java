@@ -7,12 +7,11 @@ import com.tcd.yaatra.repository.models.Gender;
 import com.tcd.yaatra.repository.models.TravellerInfo;
 import com.tcd.yaatra.services.api.yaatra.models.UserInfo;
 import com.tcd.yaatra.utils.MapUtils;
-
 import org.jetbrains.annotations.TestOnly;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 public class PeerToPeerFragmentViewModel extends ViewModel {
@@ -29,6 +28,7 @@ public class PeerToPeerFragmentViewModel extends ViewModel {
     private ArrayList<LatLng> travelPath;
     private boolean isGroupOwner = false;
     private int groupOwnerId = 0;
+    private int preferredGender = Gender.NOT_SPECIFIED.idNumber;
 
     @Inject
     public PeerToPeerFragmentViewModel(){}
@@ -57,6 +57,8 @@ public class PeerToPeerFragmentViewModel extends ViewModel {
         ownTravellerInfo.setStatusUpdateTime(now);
         ownTravellerInfo.setInfoProvider(userInfo.getUsername());
 
+        preferredGender = userInfo.getPref_gender();
+
         setupTravelPathAndGroupOwnership();
 
         isInitialized = true;
@@ -66,6 +68,8 @@ public class PeerToPeerFragmentViewModel extends ViewModel {
         filteredPeerTravellers.clear();
         ArrayList<TravellerInfo> peerTravellerArrayList = new ArrayList<>(fellowTravellersCache.getFellowTravellers().values());
         MapUtils.filterFellowTravellers(ownTravellerInfo, peerTravellerArrayList).forEach(travellerInfo -> filteredPeerTravellers.add(travellerInfo));
+
+        filteredPeerTravellers = filterTravellersAsPerUserPreference(filteredPeerTravellers);
 
         setupTravelPathAndGroupOwnership();
     }
@@ -142,6 +146,39 @@ public class PeerToPeerFragmentViewModel extends ViewModel {
         travelPath.addAll(destinations);
 
         return isGroupOwner;
+    }
+
+    private ArrayList<TravellerInfo> filterTravellersAsPerUserPreference(ArrayList<TravellerInfo> filteredPeerTravellers) {
+
+        ArrayList<TravellerInfo> preferredPeers = filteredPeerTravellers;
+
+        //Consider Preferred Gender and Mode of Travel
+        switch (Gender.valueOfIdNumber(preferredGender)){
+
+            case MALE: preferredPeers = new ArrayList<>(filteredPeerTravellers
+                                                        .stream()
+                                                        .filter(t->t.getGender() == Gender.MALE
+                                                                    && t.getModeOfTravel() == ownTravellerInfo.getModeOfTravel())
+                                                        .collect(Collectors.toList()));
+                        break;
+
+            case FEMALE: preferredPeers = new ArrayList<>(filteredPeerTravellers
+                    .stream()
+                    .filter(t->t.getGender() == Gender.FEMALE
+                            && t.getModeOfTravel() == ownTravellerInfo.getModeOfTravel())
+                    .collect(Collectors.toList()));
+                    break;
+
+            case NOT_SPECIFIED:
+            case OTHER:
+                preferredPeers = new ArrayList<>(filteredPeerTravellers
+                        .stream()
+                        .filter(t -> t.getModeOfTravel() == ownTravellerInfo.getModeOfTravel())
+                        .collect(Collectors.toList()));
+                        break;
+        }
+
+        return preferredPeers;
     }
 
     @TestOnly

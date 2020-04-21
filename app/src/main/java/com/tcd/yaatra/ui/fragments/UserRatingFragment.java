@@ -101,10 +101,10 @@ public class UserRatingFragment extends BaseFragment<FragmentUserRatingBinding> 
                 }
             });
         }
-        if (count.get() == peerTravellers.size()) {
+        //if (count.get() == peerTravellers.size()) {
 
             this.getActivity().recreate();
-        }
+        //}
     }
 
     @Override
