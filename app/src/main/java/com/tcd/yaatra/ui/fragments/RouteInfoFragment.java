@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,7 +53,6 @@ import com.mapbox.services.android.navigation.v5.routeprogress.RouteProgress;
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.databinding.FragmentRouteInfoBinding;
 import com.tcd.yaatra.repository.models.TravellerInfo;
-import com.tcd.yaatra.ui.activities.UserRatingActivity;
 import com.tcd.yaatra.ui.viewmodels.RouteInfoViewModel;
 
 import java.util.ArrayList;
@@ -116,7 +114,7 @@ public class RouteInfoFragment extends BaseFragment<FragmentRouteInfoBinding> im
     }
 
     private void handleOnendNavigationClick() {
-        Intent userrate = new Intent(this.getActivity(), UserRatingActivity.class);
+        Intent userrate = new Intent(this.getActivity(), UserRatingFragment.class);
         Bundle bundle = new Bundle();
         Gson gson = new Gson();
         bundle.putString("UserList", gson.toJson(users));

@@ -163,6 +163,7 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
         super.initEventHandlers();
         layoutDataBinding.fabNav.setOnClickListener(view -> handleOnNavClick(view));
         layoutDataBinding.navtopStop.setOnClickListener(view -> handleOnStopNavClick(view));
+        layoutDataBinding.fabRate.setOnClickListener(view -> handleOnRateClick(view));
     }
 
     private void handleOnStopNavClick(View view) {
@@ -185,6 +186,16 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
             updatePosition(getActivity(), curLoc);
         }
 
+    }
+
+    private void handleOnRateClick(View view) {
+        Bundle bundle = new Bundle();
+        bundle.putString("UserList", getArguments().getString("UserList"));
+
+        UserRatingFragment userRatingFragment = new UserRatingFragment();
+        userRatingFragment.setArguments(bundle);
+
+        fragmentManager.beginTransaction().replace(R.id.fragment_container, userRatingFragment).addToBackStack("offlineMaps").commit();
     }
 
     @UiThread
