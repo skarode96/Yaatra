@@ -256,9 +256,7 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
         bundle.putString("UserList", gson.toJson(peerToPeerFragmentViewModel.getFilteredPeerTravellers()));
         bundle.putBoolean("multiDestination", true);
         bundle.putBoolean("IsGroupOwner", peerToPeerFragmentViewModel.getAmIGroupOwner());
-
-        //RouteInfoFragment routeInfoFragment = new RouteInfoFragment();
-        //routeInfoFragment.setArguments(bundle);
+        bundle.putInt("GroupOwnerId", peerToPeerFragmentViewModel.getGroupOwnerId());
 
         OfflineMaps offlineMapsFragment = new OfflineMaps();
         offlineMapsFragment.setArguments(bundle);

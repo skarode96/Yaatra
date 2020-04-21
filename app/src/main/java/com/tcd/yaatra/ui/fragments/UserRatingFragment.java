@@ -1,9 +1,6 @@
 package com.tcd.yaatra.ui.fragments;
 
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,6 +21,7 @@ import com.tcd.yaatra.repository.datasource.RatingRepository;
 import com.tcd.yaatra.repository.models.TravellerInfo;
 import com.tcd.yaatra.services.api.yaatra.models.RateRequestBody;
 import com.tcd.yaatra.services.api.yaatra.models.Rating;
+import com.tcd.yaatra.synchronizationHelper.SynchronizationEngine;
 import com.tcd.yaatra.ui.adapter.UserRatingAdapter;
 import com.tcd.yaatra.ui.viewmodels.UserRatingFragmentViewModel;
 import com.tcd.yaatra.utils.NetworkUtils;
@@ -42,10 +40,13 @@ public class UserRatingFragment extends BaseFragment<FragmentUserRatingBinding> 
     private ArrayList<TravellerInfo> peerTravellers;
 
     @Inject
-    UserRatingFragmentViewModel userRatingActivityViewModel;
+    UserRatingFragmentViewModel userRatingFragmentViewModel;
 
     @Inject
     RatingRepository ratingRepository;
+
+    @Inject
+    SynchronizationEngine synchronizationEngine;
 
     SharedPreferences ratingPreferences;
 
@@ -63,18 +64,7 @@ public class UserRatingFragment extends BaseFragment<FragmentUserRatingBinding> 
     private void handleOnRateClick() {
 
         if(!NetworkUtils.isInternetAvailable(getActivity())){
-            Runnable runnableTask = () -> {
-
-                for (TravellerInfo travellerInfo : peerTravellers) {
-                    Rating rating = new Rating();
-                    rating.setUsername(travellerInfo.getUserName());
-                    rating.setValue(travellerInfo.getUserRating());
-
-                    ratingRepository.insertRating(rating);
-                }
-            };
-
-            AsyncTask.execute(runnableTask);
+            saveRatingsToRoomDatabase();
 
             this.getActivity().recreate();
             return;
@@ -88,7 +78,7 @@ public class UserRatingFragment extends BaseFragment<FragmentUserRatingBinding> 
 //        rateRequestBody.setUserName("Jay");
 //        rateRequestBody.setRating(2);
 
-            userRatingActivityViewModel.rate(rateRequestBody).observe(this, rateResponse -> {
+            userRatingFragmentViewModel.rate(rateRequestBody).observe(this, rateResponse -> {
                 switch (rateResponse.getState()) {
                     case LOADING:
                         Toast.makeText(this.getActivity(), "Updating the rating of the users", Toast.LENGTH_LONG).show();
@@ -132,5 +122,22 @@ public class UserRatingFragment extends BaseFragment<FragmentUserRatingBinding> 
         recyclerView.setAdapter(urAdapter);
 
         return view;
+    }
+
+    private void saveRatingsToRoomDatabase() {
+        Runnable runnableTask = () -> {
+
+            for (TravellerInfo travellerInfo : peerTravellers) {
+                Rating rating = new Rating();
+                rating.setUsername(travellerInfo.getUserName());
+                rating.setValue(travellerInfo.getUserRating());
+
+                ratingRepository.insertRating(rating);
+            }
+        };
+
+        AsyncTask.execute(runnableTask);
+
+        synchronizationEngine.scheduleSynchronization();
     }
 }

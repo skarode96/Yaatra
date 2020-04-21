@@ -6,4 +6,5 @@ public enum TravellerStatus {
     SeekingFellowTraveller,
     TravellingToStartPoint,
     ReachedStartPoint,
+    JourneyStarted
 }
