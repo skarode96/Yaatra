@@ -123,8 +123,8 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
     String modeOfTravel;
 
     public Location pos;
-    enum UiJob { Nothing, RecalcPath, UpdateInstruction, Finished };
-    private UiJob uiJob = UiJob.Nothing;
+    public enum UiJob { Nothing, RecalcPath, UpdateInstruction, Finished };
+    public UiJob uiJob = UiJob.Nothing;
     public InstructionList instructions;
     private static final double MAX_WAY_TOLERANCE = 0.000008993 * 30.0;
     private ViewGroup navTopVP;
@@ -140,6 +140,13 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
     private GHAsyncTask<GeoPoint, NaviInstruction, NaviInstruction> naviEngineTask;
     public GeoPoint recalcFrom, recalcTo;
     private TravellerInfo[] users;
+    public LatLng startingLocation;
+    public ArrayList<LatLng> destPoints = new ArrayList<>();
+    public boolean viaReached = false;
+    public int viaCount = 0;
+    public boolean startingPointJourney = false;
+    public boolean startPointReached = false;
+    View view;
 
 
     private NavEngine navEngine = new NavEngine(this);
@@ -228,31 +235,56 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
             @Override
             protected void onPostExecute(NaviInstruction in)
             {
-                if (in == null)
-                {
-                    if (uiJob == UiJob.RecalcPath)
-                    {
-                        if (instructions != null)
-                        {
-                            instructions = null;
-                            List<GHPoint> points = new ArrayList<>();
-                            points.add(new GHPoint(recalcFrom.getLatitude(), recalcFrom.getLongitude()));
-                            points.add(new GHPoint(recalcTo.getLatitude(), recalcTo.getLongitude()));
-                            calcPath(points, getActivity(), modeOfTravel);
+                if(viaReached == false) {
+//                    Log.d(TAG, "onPostExecute: Class-------------------------"+in.getNextDistance() + " "+ in.getFullTime() + " " + in.getNextInstruction() + " "+in.getVoiceText());
+                    if (in!=null && in.getNextDistance()==0.0 && in.getNextInstruction().contains("Navigation End")) {
+                        Log.d(TAG, "onPostExecute: Inside end function -----------------------------");
+                        if (uiJob == UiJob.RecalcPath) {
+                            if (instructions != null) {
+                                instructions = null;
+                                List<GHPoint> points = new ArrayList<>();
+                                points.add(new GHPoint(recalcFrom.getLatitude(), recalcFrom.getLongitude()));
+                                points.add(new GHPoint(recalcTo.getLatitude(), recalcTo.getLongitude()));
+                                calcPath(points, getActivity(), modeOfTravel);
+                            }
+                        } else if (uiJob == UiJob.Finished) {
+                            if(startingPointJourney){
+                                active = false;
+                                startingPointJourney = false;
+                                startPointReached = true;
+                                // TODO: Start point reached for this user, start point navigation ends for this user and reached starting point is broadcasted.
+
+//                                calcPath(points, getActivity(),modeOfTravel);
+//                                pathLayer = null;
+                                reloadPage();
+                            }
+                            else {
+                                active = false;
+                                LatLng reachedPoint = destPoints.get(destPoints.size()-1);
+                                Log.d(TAG, "onPostExecute: " + reachedPoint);
+                                // TODO: Final Destination reached of the above latitude longitude (reachedPoint), navigation ends for this user and rating screen opens.
+                            }
                         }
-                    }
-                    else if (uiJob == UiJob.Finished)
-                    {
-                        active = false;
-                        Toast.makeText(getContext(),"finished job",Toast.LENGTH_SHORT).show();
+                    } else if (uiJob == UiJob.UpdateInstruction) {
+                        showInstruction(in);
                     }
                 }
-                else if (uiJob == UiJob.UpdateInstruction)
-                {
+                else {
+                    LatLng reachedPoint = destPoints.get(viaCount-1);
+                    Log.d(TAG, "onPostExecute: " + reachedPoint);
+                    viaReached = false;
+                    // TODO: Via Destination reached of the above latitude longitude (reachedPoint), navigation ends for this user and rating screen opens.
                     showInstruction(in);
                 }
             }
         };
+    }
+
+    public void reloadPage()
+    {
+        pathLayer = null;
+        previousIcon = 0;
+        getFragmentManager().beginTransaction().detach(this).attach(this).commit();
     }
 
     @UiThread
@@ -299,7 +331,8 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
 
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = super.onCreateView(inflater, container, savedInstanceState);
+        view = super.onCreateView(inflater, container, savedInstanceState);
+        previousIcon=0;
         mapView = (MapView) this.layoutDataBinding.mapview;
         navTopVP = (ViewGroup) view.findViewById(R.id.navtop_layout);
         navtop_image = (ImageView) this.layoutDataBinding.navtopImage;
@@ -389,67 +422,94 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
         List<GHPoint> points = new ArrayList<>();
 
 
-        if(getArguments()!=null)
-        {
-            ArrayList<LatLng> travelPath  = getArguments().getParcelableArrayList("destLocations");
+        if(startPointReached){
+            points.add(new GHPoint(startingLocation.getLatitude(), startingLocation.getLongitude()));
+            for (int i = 0; i < destPoints.size(); i++) {
+                points.add(new GHPoint(destPoints.get(i).getLatitude(), destPoints.get(i).getLongitude()));
+                GeoPoint destLatLong = new GeoPoint(destPoints.get(i).getLatitude(), destPoints.get(i).getLongitude());
+                setCustomPoint(getActivity(), destLatLong, destIcon);
+            }
+            calcPath(points, getActivity(),modeOfTravel);
+            layoutDataBinding.fabNav.setEnabled(false);
+            // TODO: Reached starting point and sent the status. The new path to all the destination is calculated. Waiting for signal from group owner to start navigation. Uncomment below code after adding this
+//            mLastLocation.setLatitude(startingLocation.getLatitude());
+//            mLastLocation.setLongitude(startingLocation.getLongitude());
+//            handleOnNavClick(view);
+//            startPointReached = false;
+        }
+        else {
+            if (getArguments() != null) {
+                ArrayList<LatLng> travelPath = getArguments().getParcelableArrayList("destLocations");
 
             /*double latitude = ownTravellerInfo.getDestinationLatitude();
             double longitude = ownTravellerInfo.getDestinationLongitude();
             String modeOfTravel =  ownTravellerInfo.getModeOfTravel();*/
 //            Boolean multiDestination = getArguments().getBoolean("multiDestination");
             Boolean isGroupOwner = getArguments().getBoolean("IsGroupOwner");
+//                Boolean isGroupOwner = false;
+                Bundle bundle = getArguments();
+                double latitude = ownTravellerInfo.getDestinationLatitude();
+                double longitude = ownTravellerInfo.getDestinationLongitude();
+                modeOfTravel = ownTravellerInfo.getModeOfTravel();
 
-            Bundle bundle = getArguments();
-            double latitude = ownTravellerInfo.getDestinationLatitude();
-            double longitude = ownTravellerInfo.getDestinationLongitude();
-            modeOfTravel =  ownTravellerInfo.getModeOfTravel();
+                if (modeOfTravel.equalsIgnoreCase("driving")) {
+                    modeOfTravel = "car";
+                } else if (modeOfTravel.equalsIgnoreCase("walking")) {
+                    modeOfTravel = "foot";
+                } else if (modeOfTravel.equalsIgnoreCase("cycling")) {
+                    modeOfTravel = "bike";
+                }
+                Boolean multiDestination = bundle.getBoolean("multiDestination");
+                Gson gson = new Gson();
+                points.add(new GHPoint(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                users = gson.fromJson(bundle.getString("UserList"), TravellerInfo[].class);
+                if (multiDestination) {
 
-            if(modeOfTravel.equalsIgnoreCase("driving"))
-            {
-                modeOfTravel="car";
-            }
-            else if(modeOfTravel.equalsIgnoreCase("walking"))
-            {
-                modeOfTravel="foot";
-            }
-            else if(modeOfTravel.equalsIgnoreCase("cycling"))
-            {
-                modeOfTravel="bike";
-            }
-            Boolean multiDestination = bundle.getBoolean("multiDestination");
-            Gson gson = new Gson();
-            points.add(new GHPoint(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
-            users = gson.fromJson(bundle.getString("UserList"), TravellerInfo[].class);
-            if(multiDestination){
+
                 ArrayList<LatLng> locations  = bundle.getParcelableArrayList("destLocations");
-                for(int i = 1; i< locations.size(); i++)
-                {
-                    points.add(new GHPoint(locations.get(i).getLatitude(), locations.get(i).getLongitude()));
-                    GeoPoint destLatLong = new GeoPoint(locations.get(i).getLatitude(), locations.get(i).getLongitude());
+//                    ArrayList<LatLng> locations = new ArrayList<>();
+//                    locations.add(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+//                    locations.add(new LatLng(53.278630, -6.216663));
+//                    locations.add(new LatLng(53.279733, -6.213209));
+//                    locations.add(new LatLng(53.278855, -6.209675));
+                    if (isGroupOwner) {
+                        for (int i = 1; i < locations.size(); i++) {
+                            destPoints.add(locations.get(i));
+                            points.add(new GHPoint(locations.get(i).getLatitude(), locations.get(i).getLongitude()));
+                            GeoPoint destLatLong = new GeoPoint(locations.get(i).getLatitude(), locations.get(i).getLongitude());
+                            setCustomPoint(getActivity(), destLatLong, destIcon);
+                        }
+                    } else {
+                        startingPointJourney = true;
+                        startingLocation = locations.get(1);
+                        for (int i = 2; i < locations.size(); i++) {
+                            destPoints.add(locations.get(i));
+                        }
+                        points.add(new GHPoint(startingLocation.getLatitude(), startingLocation.getLongitude()));
+                        GeoPoint destLatLong = new GeoPoint(startingLocation.getLatitude(), startingLocation.getLongitude());
+                        setCustomPoint(getActivity(), destLatLong, destIcon);
+                    }
+                } else {
+
+                    points.add(new GHPoint(latitude, longitude));
+                    GeoPoint destLatLong = new GeoPoint(latitude, longitude);
                     setCustomPoint(getActivity(), destLatLong, destIcon);
                 }
-            }
-            else {
+            } else {
+                points.add(new GHPoint(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                points.add(new GHPoint(53.280355, -6.214713));
+                points.add(new GHPoint(53.33999864, -6.25499898));
 
-                points.add(new GHPoint(latitude, longitude));
-                GeoPoint destLatLong = new GeoPoint(latitude, longitude);
+                GeoPoint destLatLong = new GeoPoint(53.280355, -6.214713);
+                GeoPoint dest2LatLong = new GeoPoint(53.33999864, -6.25499898);
                 setCustomPoint(getActivity(), destLatLong, destIcon);
+                setCustomPoint(getActivity(), dest2LatLong, destIcon);
+                modeOfTravel = "car";
             }
-        }
-        else
-        {
-            points.add(new GHPoint(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
-            points.add(new GHPoint(53.280355, -6.214713));
-            points.add(new GHPoint(53.33999864, -6.25499898));
-
-            GeoPoint destLatLong = new GeoPoint(53.280355, -6.214713);
-            GeoPoint dest2LatLong = new GeoPoint(53.33999864, -6.25499898);
-            setCustomPoint(getActivity(), destLatLong, destIcon);
-            setCustomPoint(getActivity(), dest2LatLong, destIcon);
-            modeOfTravel="car";
+            calcPath(points, getActivity(),modeOfTravel);
         }
 
-        calcPath(points, getActivity(),modeOfTravel);
+
     }
 
     @Override
