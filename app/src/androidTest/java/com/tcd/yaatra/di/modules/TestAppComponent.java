@@ -17,7 +17,8 @@ import dagger.android.AndroidInjectionModule;
         RepositoryModule.class,
         AndroidInjectionModule.class,
         RoomModule.class,
-        ExtendedFragmentModule.class
+        ExtendedFragmentModule.class,
+        WorkerBindingModule.class
 })
 public interface TestAppComponent extends AppComponent {
 
