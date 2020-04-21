@@ -30,7 +30,7 @@ public class TravellerDetails {
     @SerializedName("country")
     private String country;
     @SerializedName("phone_number")
-    private int phoneNumber;
+    private long phoneNumber;
     @SerializedName("source_long")
     private double sourceLong;
     @SerializedName("source_lat")
@@ -148,11 +148,11 @@ public class TravellerDetails {
         this.country = country;
     }
 
-    public int getPhoneNumber() {
+    public long getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(int phoneNumber) {
+    public void setPhoneNumber(long phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
