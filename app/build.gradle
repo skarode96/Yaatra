@@ -141,6 +141,7 @@ dependencies {
     implementation 'org.mapsforge:vtm-android:0.12.0:natives-x86_64'
     implementation 'org.mapsforge:vtm-jts:0.12.0'
     implementation 'org.mapsforge:vtm-themes:0.12.0'
+    implementation 'android.arch.work:work-runtime:1.0.1'
 
 
 }

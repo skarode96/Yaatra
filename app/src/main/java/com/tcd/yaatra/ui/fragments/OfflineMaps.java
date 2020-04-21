@@ -43,9 +43,12 @@ import com.graphhopper.util.StopWatch;
 import com.graphhopper.util.shapes.GHPoint;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.tcd.yaatra.R;
+import com.tcd.yaatra.WifiDirectP2PHelper.FellowTravellersSubscriberFragment;
 import com.tcd.yaatra.WifiDirectP2PHelper.PeerCommunicator;
 import com.tcd.yaatra.databinding.FragmentOfflineMapsBinding;
+import com.tcd.yaatra.repository.models.FellowTravellersCache;
 import com.tcd.yaatra.repository.models.TravellerInfo;
+import com.tcd.yaatra.repository.models.TravellerStatus;
 import com.tcd.yaatra.utils.offlinemaps.GHAsyncTask;
 import com.tcd.yaatra.utils.offlinemaps.InstructionCalculation;
 import com.tcd.yaatra.utils.offlinemaps.KalmanLocationManager;
@@ -87,7 +90,7 @@ import javax.inject.Inject;
 import static com.mapbox.services.android.navigation.ui.v5.feedback.FeedbackBottomSheet.TAG;
 
 
-public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
+public class OfflineMaps extends FellowTravellersSubscriberFragment<FragmentOfflineMapsBinding> {
 
     @Override
     public int getFragmentResourceId() {
@@ -147,11 +150,17 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
     private NavEngine navEngine = new NavEngine(this);
     private InstructionCalculation instructionCalculation = new InstructionCalculation(this);
 
+    private int groupOwnerId = 0;
+    private boolean waitingForGroupOwnerSignal = false;
+
     @Inject
     TravellerInfo ownTravellerInfo;
 
     @Inject
     PeerCommunicator peerCommunicator;
+
+    @Inject
+    FellowTravellersCache fellowTravellersCache;
 
     @Override
     protected void initEventHandlers() {
@@ -258,7 +267,7 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
                                 active = false;
                                 startingPointJourney = false;
                                 startPointReached = true;
-                                // TODO: Start point reached for this user, start point navigation ends for this user and reached starting point is broadcasted.
+                                peerCommunicator.broadcastTravellers(TravellerStatus.ReachedStartPoint);
 
 //                                calcPath(points, getActivity(),modeOfTravel);
 //                                pathLayer = null;
@@ -268,7 +277,8 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
                                 active = false;
                                 LatLng reachedPoint = destPoints.get(destPoints.size()-1);
                                 Log.d(TAG, "onPostExecute: " + reachedPoint);
-                                // TODO: Final Destination reached of the above latitude longitude (reachedPoint), navigation ends for this user and rating screen opens.
+
+                                navigateToRatingScreenIfMyDestinationReached(reachedPoint);
                             }
                         }
                     } else if (uiJob == UiJob.UpdateInstruction) {
@@ -279,11 +289,26 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
                     LatLng reachedPoint = destPoints.get(viaCount-1);
                     Log.d(TAG, "onPostExecute: " + reachedPoint);
                     viaReached = false;
-                    // TODO: Via Destination reached of the above latitude longitude (reachedPoint), navigation ends for this user and rating screen opens.
+
+                    navigateToRatingScreenIfMyDestinationReached(reachedPoint);
+
                     showInstruction(in);
                 }
             }
         };
+    }
+
+    private void navigateToRatingScreenIfMyDestinationReached(LatLng reachedPoint){
+        if(reachedPoint.getLatitude() == ownTravellerInfo.getDestinationLatitude()
+                && reachedPoint.getLongitude() == ownTravellerInfo.getDestinationLongitude()){
+            Bundle bundle = new Bundle();
+            bundle.putString("UserList", getArguments().getString("UserList"));
+
+            UserRatingFragment userRatingFragment = new UserRatingFragment();
+            userRatingFragment.setArguments(bundle);
+
+            fragmentManager.beginTransaction().replace(R.id.fragment_container, userRatingFragment).addToBackStack("offlineMaps").commit();
+        }
     }
 
     public void reloadPage()
@@ -437,6 +462,7 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
             }
             calcPath(points, getActivity(),modeOfTravel);
             layoutDataBinding.fabNav.setEnabled(false);
+            waitingForGroupOwnerSignal = true;
             // TODO: Reached starting point and sent the status. The new path to all the destination is calculated. Waiting for signal from group owner to start navigation. Uncomment below code after adding this
 //            mLastLocation.setLatitude(startingLocation.getLatitude());
 //            mLastLocation.setLongitude(startingLocation.getLongitude());
@@ -516,6 +542,20 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
         }
 
 
+    }
+
+    @Override
+    protected void processFellowTravellersInfo() {
+
+        if(waitingForGroupOwnerSignal &&
+                fellowTravellersCache.getFellowTravellers().get(groupOwnerId).getStatus() == TravellerStatus.JourneyStarted){
+
+            mLastLocation.setLatitude(startingLocation.getLatitude());
+            mLastLocation.setLongitude(startingLocation.getLongitude());
+            handleOnNavClick(view);
+            waitingForGroupOwnerSignal = false;
+            startPointReached = false;
+        }
     }
 
     @Override

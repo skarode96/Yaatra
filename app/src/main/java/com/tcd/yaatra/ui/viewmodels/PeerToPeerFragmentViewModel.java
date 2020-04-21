@@ -28,6 +28,7 @@ public class PeerToPeerFragmentViewModel extends ViewModel {
     private ArrayList<TravellerInfo> filteredPeerTravellers = new ArrayList<>();
     private ArrayList<LatLng> travelPath;
     private boolean isGroupOwner = false;
+    private int groupOwnerId = 0;
 
     @Inject
     public PeerToPeerFragmentViewModel(){}
@@ -35,6 +36,8 @@ public class PeerToPeerFragmentViewModel extends ViewModel {
     public boolean getIsInitialized(){
         return isInitialized;
     }
+
+    public int getGroupOwnerId(){ return groupOwnerId; }
 
     public void setIsInitialized(boolean isInitialized){
         this.isInitialized = isInitialized;
@@ -101,6 +104,7 @@ public class PeerToPeerFragmentViewModel extends ViewModel {
 
         double groupOwnerSourceLat = 0.0;
         double groupOwnerSourceLong = 0.0;
+        groupOwnerId = 0;
 
         Iterator<TravellerInfo> iterator = filteredPeerTravellers.iterator();
 
@@ -110,6 +114,7 @@ public class PeerToPeerFragmentViewModel extends ViewModel {
 
             if(info.getRequestStartTime().isBefore(leastFellowTravellerRequestStartTime)){
                 leastFellowTravellerRequestStartTime = info.getRequestStartTime();
+                groupOwnerId = info.getUserId();
                 groupOwnerSourceLat = info.getSourceLatitude();
                 groupOwnerSourceLong = info.getSourceLongitude();
             }
@@ -129,6 +134,7 @@ public class PeerToPeerFragmentViewModel extends ViewModel {
             travelPath.add(0, groupOwnerSourceLocation);
         }
         else {
+            groupOwnerId = ownTravellerInfo.getUserId();
             destinations = MapUtils.sortDestinationsByDistance(ownTravellerSourceLocation, destinations);
         }
 

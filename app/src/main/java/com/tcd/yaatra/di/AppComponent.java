@@ -8,7 +8,9 @@ import com.tcd.yaatra.di.modules.AppModule;
 import com.tcd.yaatra.di.modules.FragmentModule;
 import com.tcd.yaatra.di.modules.RepositoryModule;
 import com.tcd.yaatra.di.modules.RoomModule;
+import com.tcd.yaatra.di.modules.WorkerBindingModule;
 import com.tcd.yaatra.di.modules.YaatraApiModule;
+import com.tcd.yaatra.synchronizationHelper.RatingSyncWorkerFactory;
 
 import javax.inject.Singleton;
 
@@ -26,10 +28,12 @@ import dagger.android.AndroidInjectionModule;
         RepositoryModule.class,
         ViewModelModule.class,
         AndroidInjectionModule.class,
-        RoomModule.class
+        RoomModule.class,
+        WorkerBindingModule.class
 })
 public interface AppComponent {
 
+    RatingSyncWorkerFactory ratingSyncWorkerFactory();
 
     @Component.Builder
     interface Builder {
