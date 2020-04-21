@@ -3,6 +3,9 @@ package com.tcd.yaatra.di.modules;
 import android.app.Application;
 
 import com.tcd.yaatra.repository.JourneySharingDatabase;
+import com.tcd.yaatra.repository.dao.RatingDao;
+import com.tcd.yaatra.repository.datasource.RatingDataSource;
+import com.tcd.yaatra.repository.datasource.RatingRepository;
 import com.tcd.yaatra.repository.datasource.UserInfoDataSource;
 import com.tcd.yaatra.repository.datasource.UserInfoRepository;
 import com.tcd.yaatra.repository.dao.UserInfoDao;
@@ -36,5 +39,17 @@ public class RoomModule {
     @Provides
     UserInfoRepository userInfoRepository(UserInfoDao userInfoDao){
         return new UserInfoDataSource(userInfoDao);
+    }
+
+    @Singleton
+    @Provides
+    RatingDao providesRatingDao(JourneySharingDatabase journeySharingDatabase) {
+        return journeySharingDatabase.getRatingDao();
+    }
+
+    @Singleton
+    @Provides
+    RatingRepository ratingRepository(RatingDao ratingDao){
+        return new RatingDataSource(ratingDao);
     }
 }

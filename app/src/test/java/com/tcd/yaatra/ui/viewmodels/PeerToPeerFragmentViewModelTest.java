@@ -5,6 +5,7 @@ import com.tcd.yaatra.repository.models.FellowTravellersCache;
 import com.tcd.yaatra.repository.models.Gender;
 import com.tcd.yaatra.repository.models.TravellerInfo;
 import com.tcd.yaatra.services.api.yaatra.models.UserInfo;
+import com.tcd.yaatra.utils.MapUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -96,14 +97,25 @@ public class PeerToPeerFragmentViewModelTest {
         ArrayList<LatLng> travelPath = testObjectPeerToPeerFragmentViewModel.getTravelPath();
 
         Assert.assertEquals(4, travelPath.size());
-        Assert.assertEquals(mockTravellerInfo.getSourceLatitude(), travelPath.get(0).getLatitude(), 0.0);
-        Assert.assertEquals(mockTravellerInfo.getSourceLongitude(), travelPath.get(0).getLongitude(), 0.0);
-        Assert.assertEquals(peerTravellers.get(2).getDestinationLatitude(), travelPath.get(1).getLatitude(), 0.0);
-        Assert.assertEquals(peerTravellers.get(2).getDestinationLongitude(), travelPath.get(1).getLongitude(), 0.0);
-        Assert.assertEquals(peerTravellers.get(3).getDestinationLatitude(), travelPath.get(2).getLatitude(), 0.0);
-        Assert.assertEquals(peerTravellers.get(3).getDestinationLongitude(), travelPath.get(2).getLongitude(), 0.0);
-        Assert.assertEquals(mockTravellerInfo.getDestinationLatitude(), travelPath.get(3).getLatitude(), 0.0);
-        Assert.assertEquals(mockTravellerInfo.getDestinationLongitude(), travelPath.get(3).getLongitude(), 0.0);
+
+        LatLng sourceLocation = new LatLng(mockTravellerInfo.getSourceLatitude(), mockTravellerInfo.getSourceLongitude());
+
+        Assert.assertEquals(sourceLocation.getLatitude(), travelPath.get(0).getLatitude(), 0.0);
+        Assert.assertEquals(sourceLocation.getLongitude(), travelPath.get(0).getLongitude(), 0.0);
+
+        ArrayList<LatLng> destinations = new ArrayList<>();
+        destinations.add(new LatLng(peerTravellers.get(2).getDestinationLatitude(), peerTravellers.get(2).getDestinationLongitude()));
+        destinations.add(new LatLng(peerTravellers.get(3).getDestinationLatitude(), peerTravellers.get(3).getDestinationLongitude()));
+        destinations.add(new LatLng(mockTravellerInfo.getDestinationLatitude(), mockTravellerInfo.getDestinationLongitude()));
+
+        destinations = MapUtils.sortDestinationsByDistance(sourceLocation, destinations);
+
+        Assert.assertEquals(destinations.get(0).getLatitude(), travelPath.get(1).getLatitude(), 0.0);
+        Assert.assertEquals(destinations.get(0).getLongitude(), travelPath.get(1).getLongitude(), 0.0);
+        Assert.assertEquals(destinations.get(1).getLatitude(), travelPath.get(2).getLatitude(), 0.0);
+        Assert.assertEquals(destinations.get(1).getLongitude(), travelPath.get(2).getLongitude(), 0.0);
+        Assert.assertEquals(destinations.get(2).getLatitude(), travelPath.get(3).getLatitude(), 0.0);
+        Assert.assertEquals(destinations.get(2).getLongitude(), travelPath.get(3).getLongitude(), 0.0);
     }
 
     @Test
@@ -135,17 +147,26 @@ public class PeerToPeerFragmentViewModelTest {
         Assert.assertEquals(mockTravellerInfo.getSourceLatitude(), travelPath.get(0).getLatitude(), 0.0);
         Assert.assertEquals(mockTravellerInfo.getSourceLongitude(), travelPath.get(0).getLongitude(), 0.0);
 
+        LatLng groupOwnerSourceLocation = new LatLng(peerTravellers.get(2).getSourceLatitude(), peerTravellers.get(2).getSourceLongitude());
+
+        ArrayList<LatLng> destinations = new ArrayList<>();
+        destinations.add(new LatLng(peerTravellers.get(2).getDestinationLatitude(), peerTravellers.get(2).getDestinationLongitude()));
+        destinations.add(new LatLng(peerTravellers.get(3).getDestinationLatitude(), peerTravellers.get(3).getDestinationLongitude()));
+        destinations.add(new LatLng(mockTravellerInfo.getDestinationLatitude(), mockTravellerInfo.getDestinationLongitude()));
+
+        destinations = MapUtils.sortDestinationsByDistance(groupOwnerSourceLocation, destinations);
+
         //verify group owners source is added as first destination for own traveller
-        Assert.assertEquals(peerTravellers.get(2).getSourceLatitude(), travelPath.get(1).getLatitude(), 0.0);
-        Assert.assertEquals(peerTravellers.get(2).getSourceLongitude(), travelPath.get(1).getLongitude(), 0.0);
+        Assert.assertEquals(groupOwnerSourceLocation.getLatitude(), travelPath.get(1).getLatitude(), 0.0);
+        Assert.assertEquals(groupOwnerSourceLocation.getLongitude(), travelPath.get(1).getLongitude(), 0.0);
 
-        Assert.assertEquals(peerTravellers.get(2).getDestinationLatitude(), travelPath.get(2).getLatitude(), 0.0);
-        Assert.assertEquals(peerTravellers.get(2).getDestinationLongitude(), travelPath.get(2).getLongitude(), 0.0);
-        Assert.assertEquals(peerTravellers.get(3).getDestinationLatitude(), travelPath.get(3).getLatitude(), 0.0);
-        Assert.assertEquals(peerTravellers.get(3).getDestinationLongitude(), travelPath.get(3).getLongitude(), 0.0);
+        Assert.assertEquals(destinations.get(0).getLatitude(), travelPath.get(2).getLatitude(), 0.0);
+        Assert.assertEquals(destinations.get(0).getLongitude(), travelPath.get(2).getLongitude(), 0.0);
+        Assert.assertEquals(destinations.get(1).getLatitude(), travelPath.get(3).getLatitude(), 0.0);
+        Assert.assertEquals(destinations.get(1).getLongitude(), travelPath.get(3).getLongitude(), 0.0);
 
-        Assert.assertEquals(mockTravellerInfo.getDestinationLatitude(), travelPath.get(4).getLatitude(), 0.0);
-        Assert.assertEquals(mockTravellerInfo.getDestinationLongitude(), travelPath.get(4).getLongitude(), 0.0);
+        Assert.assertEquals(destinations.get(2).getLatitude(), travelPath.get(4).getLatitude(), 0.0);
+        Assert.assertEquals(destinations.get(2).getLongitude(), travelPath.get(4).getLongitude(), 0.0);
     }
 
     @Test

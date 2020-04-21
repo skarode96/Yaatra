@@ -1,10 +1,10 @@
 package com.tcd.yaatra.ui.fragments;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,11 +20,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.gson.Gson;
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.databinding.FragmentUserRatingBinding;
+import com.tcd.yaatra.repository.datasource.RatingRepository;
 import com.tcd.yaatra.repository.models.TravellerInfo;
 import com.tcd.yaatra.services.api.yaatra.models.RateRequestBody;
-import com.tcd.yaatra.ui.activities.LaunchActivity;
+import com.tcd.yaatra.services.api.yaatra.models.Rating;
 import com.tcd.yaatra.ui.adapter.UserRatingAdapter;
 import com.tcd.yaatra.ui.viewmodels.UserRatingFragmentViewModel;
+import com.tcd.yaatra.utils.NetworkUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,10 +39,14 @@ public class UserRatingFragment extends BaseFragment<FragmentUserRatingBinding> 
     private RecyclerView recyclerView;
     private RecyclerView.Adapter urAdapter;
     private RecyclerView.LayoutManager layoutManager;
-    private ArrayList<TravellerInfo> user;
+    private ArrayList<TravellerInfo> peerTravellers;
 
     @Inject
     UserRatingFragmentViewModel userRatingActivityViewModel;
+
+    @Inject
+    RatingRepository ratingRepository;
+
     SharedPreferences ratingPreferences;
 
     @Override
@@ -56,13 +62,27 @@ public class UserRatingFragment extends BaseFragment<FragmentUserRatingBinding> 
 
     private void handleOnRateClick() {
 
-        if(!isNetworkAvailable()){
+        if(!NetworkUtils.isInternetAvailable(getActivity())){
+            Runnable runnableTask = () -> {
+
+                for (TravellerInfo travellerInfo : peerTravellers) {
+                    Rating rating = new Rating();
+                    rating.setUsername(travellerInfo.getUserName());
+                    rating.setValue(travellerInfo.getUserRating());
+
+                    ratingRepository.insertRating(rating);
+                }
+            };
+
+            AsyncTask.execute(runnableTask);
+
+            this.getActivity().recreate();
             return;
         }
 
         RateRequestBody rateRequestBody = new RateRequestBody();
         AtomicInteger count = new AtomicInteger();
-        for (TravellerInfo travellerInfo: user) {
+        for (TravellerInfo travellerInfo: peerTravellers) {
             rateRequestBody.setUserName(travellerInfo.getUserName());
             rateRequestBody.setRating(travellerInfo.getUserRating());
 //        rateRequestBody.setUserName("Jay");
@@ -75,7 +95,7 @@ public class UserRatingFragment extends BaseFragment<FragmentUserRatingBinding> 
                         break;
                     case SUCCESS:
                         count.getAndIncrement();
-                        if (count.get() == user.size())
+                        if (count.get() == peerTravellers.size())
                         Toast.makeText(this.getActivity(),"Rating updated", Toast.LENGTH_LONG).show();
                         break;
                     case FAILURE:
@@ -91,9 +111,9 @@ public class UserRatingFragment extends BaseFragment<FragmentUserRatingBinding> 
                 }
             });
         }
-        if (count.get() == user.size()) {
-            Intent backToHome = new Intent(this.getActivity(), LaunchActivity.class);
-            startActivity(backToHome);
+        if (count.get() == peerTravellers.size()) {
+
+            this.getActivity().recreate();
         }
     }
 
@@ -103,22 +123,14 @@ public class UserRatingFragment extends BaseFragment<FragmentUserRatingBinding> 
         //this.ratingPreferences = SharedPreferenceUtils.getRatingSharedPreference();
         Bundle bundle = getArguments();
         Gson gson = new Gson();
-        user = new ArrayList<>(Arrays.asList(gson.fromJson(bundle.getString("UserList"), TravellerInfo[].class)));
+        peerTravellers = new ArrayList<>(Arrays.asList(gson.fromJson(bundle.getString("UserList"), TravellerInfo[].class)));
         recyclerView = (RecyclerView) layoutDataBinding.userList;
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this.getActivity());
         recyclerView.setLayoutManager(layoutManager);
-        urAdapter = new UserRatingAdapter(this.getActivity().getApplicationContext(), user);
+        urAdapter = new UserRatingAdapter(this.getActivity().getApplicationContext(), peerTravellers);
         recyclerView.setAdapter(urAdapter);
 
         return view;
     }
-
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) this.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
-
 }
