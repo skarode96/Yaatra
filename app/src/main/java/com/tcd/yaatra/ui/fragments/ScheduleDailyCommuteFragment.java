@@ -139,11 +139,11 @@ public class ScheduleDailyCommuteFragment extends BaseFragment<FragmentCreateDai
 
             RadioButton transportPrefBtn = (RadioButton) view.findViewById(layoutDataBinding.transportPrefGroup.getCheckedRadioButtonId());
             if (transportPrefBtn.getText().toString().equalsIgnoreCase(noTransportPref.stringLabel))
-                scheduleDailyCommuteRequestBody.setPrefGender(noTransportPref.intValue);
+                scheduleDailyCommuteRequestBody.setPrefModeTravel(noTransportPref.intValue);
             else if (transportPrefBtn.getText().toString().equalsIgnoreCase(walk.stringLabel))
-                scheduleDailyCommuteRequestBody.setPrefGender(walk.intValue);
+                scheduleDailyCommuteRequestBody.setPrefModeTravel(walk.intValue);
             else if (transportPrefBtn.getText().toString().equalsIgnoreCase(taxi.stringLabel))
-                scheduleDailyCommuteRequestBody.setPrefGender(taxi.intValue);
+                scheduleDailyCommuteRequestBody.setPrefModeTravel(taxi.intValue);
 
             RadioButton journeyFreqBtn = (RadioButton) view.findViewById(layoutDataBinding.journeyFreqGroup.getCheckedRadioButtonId());
             if (journeyFreqBtn.getText().toString().equalsIgnoreCase(daily.stringLabel))
