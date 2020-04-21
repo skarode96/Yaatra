@@ -57,9 +57,11 @@ public class DailyTripAdapter extends RecyclerView.Adapter<DailyTripAdapter.Dail
         TextView destination = holder.destination;
         TextView frequency = holder.frequency;
         TextView time = holder.time;
+        TextView startDate = holder.startDate;
         ImageView imageView = holder.imageViewIcon;
 
         title.setText(dataSet.get(listPosition).getJourney_title());
+        startDate.setText(dataSet.get(listPosition).getStartTime());
 
         String sourceName = MapUtils.locationName(context,dataSet.get(listPosition).getSourceLat(),dataSet.get(listPosition).getSourceLong());
         source.setText(sourceName);
@@ -89,6 +91,7 @@ public class DailyTripAdapter extends RecyclerView.Adapter<DailyTripAdapter.Dail
         TextView destination;
         TextView frequency;
         TextView time;
+        TextView startDate;
         ImageView imageViewIcon;
 
         public DailyTripViewHolder(View itemView) {
@@ -98,6 +101,7 @@ public class DailyTripAdapter extends RecyclerView.Adapter<DailyTripAdapter.Dail
             this.destination = (TextView) itemView.findViewById(R.id.Destination);
             this.frequency = (TextView) itemView.findViewById(R.id.Frequency);
             this.time = (TextView) itemView.findViewById(R.id.Time);
+            this.startDate = (TextView) itemView.findViewById(R.id.startDate);
             this.imageViewIcon = (ImageView) itemView.findViewById(R.id.imageView);
         }
     }
