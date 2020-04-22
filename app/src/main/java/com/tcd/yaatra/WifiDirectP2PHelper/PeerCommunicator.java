@@ -1,5 +1,7 @@
 package com.tcd.yaatra.WifiDirectP2PHelper;
 
+import android.util.Log;
+
 import com.tcd.yaatra.repository.models.FellowTravellersCache;
 import com.tcd.yaatra.repository.models.TravellerInfo;
 import com.tcd.yaatra.repository.models.TravellerStatus;
@@ -59,6 +61,8 @@ public class PeerCommunicator implements PeerListener {
         boolean isCacheUpdated = fellowTravellersCache.addOrUpdate(onlyPeerTravellers);
 
         if (isCacheUpdated) {
+
+            Log.e("PeerCommunicator", "Received Peer Update");
 
             parentFragment.processFellowTravellersInfo();
 
