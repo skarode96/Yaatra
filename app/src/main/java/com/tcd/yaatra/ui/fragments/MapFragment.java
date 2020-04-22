@@ -49,6 +49,8 @@ import com.tcd.yaatra.repository.models.FellowTravellersCache;
 import com.tcd.yaatra.ui.activities.MenuContainerActivity;
 import com.tcd.yaatra.repository.models.TravellerInfo;
 import com.tcd.yaatra.ui.viewmodels.MapActivityViewModel;
+import com.tcd.yaatra.utils.DownloadIETown;
+import com.tcd.yaatra.utils.IETownData;
 import com.tcd.yaatra.utils.MyReceiver;
 
 import org.json.JSONException;
@@ -99,6 +101,9 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
 
     @Inject
     FellowTravellersCache fellowTravellersCache;
+
+    @Inject
+    DownloadIETown downloadIETown;
 
     //SharedPreferences loginPreferences;
 
@@ -245,7 +250,26 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
         try{
             startLoc = coder.getFromLocation(locationComponent.getLastKnownLocation().getLatitude(),locationComponent.getLastKnownLocation().getLongitude(),1);
             sourceName = startLoc.get(0).getAddressLine(0);
-        }catch (Exception e){ Toast.makeText(getActivity(), "Error generating geoname", Toast.LENGTH_SHORT).show();}
+        }catch (Exception e){
+
+            double buffer = 0.039;
+            double minLatitude = locationComponent.getLastKnownLocation().getLatitude() - buffer;
+            double maxLatitude = locationComponent.getLastKnownLocation().getLatitude() + buffer;
+            double minLongitude = locationComponent.getLastKnownLocation().getLongitude() - buffer;
+            double maxLongitude = locationComponent.getLastKnownLocation().getLongitude() + buffer;
+
+            List<IETownData> ieTownDataList = downloadIETown.getIeTownDataList();
+            for(int i=0;i<ieTownDataList.size();i++)
+            {
+                if((ieTownDataList.get(i).getLatitude()<maxLatitude && ieTownDataList.get(i).getLatitude()>minLatitude) && (ieTownDataList.get(i).getLongitude()<maxLongitude && ieTownDataList.get(i).getLongitude()>minLongitude))
+                {
+                    sourceName =  ieTownDataList.get(i).getName();
+                }
+            }
+            if(sourceName==null)
+                sourceName =  "Dublin18";
+
+            Toast.makeText(getActivity(), "Error generating geoname", Toast.LENGTH_SHORT).show();}
 
         if(sourceName != null) {
             ownTravellerInfo.setSourceName(sourceName.replace(',','.').substring(0, 10));

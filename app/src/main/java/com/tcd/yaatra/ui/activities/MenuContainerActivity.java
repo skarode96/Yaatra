@@ -28,6 +28,7 @@ import com.tcd.yaatra.repository.models.Gender;
 import com.tcd.yaatra.ui.fragments.DailyFragment;
 import com.tcd.yaatra.ui.fragments.MapFragment;
 import com.tcd.yaatra.ui.fragments.SettingsFragment;
+import com.tcd.yaatra.utils.DownloadIETown;
 import com.tcd.yaatra.utils.SharedPreferenceUtils;
 import com.tcd.yaatra.ui.fragments.OfflineMaps;
 
@@ -39,6 +40,9 @@ public class MenuContainerActivity extends BaseActivity<ActivityMenuBinding> imp
 
     private DrawerLayout drawer;
     SharedPreferences loginPreferences;
+
+    @Inject
+    DownloadIETown downloadIETown;
 
     @Inject
     UserInfoRepository userInfoRepository;
@@ -59,6 +63,7 @@ public class MenuContainerActivity extends BaseActivity<ActivityMenuBinding> imp
 //    @Override
 //    protected void onResume() {
         //super.onResume();
+        downloadIETown.setIeTownDataList(downloadIETown.readCsv(getApplicationContext()));
         ActionBarDrawerToggle toggle = initActionBarDrawer();
         //if (savedInstanceState == null) {
 
