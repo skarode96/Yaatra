@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.repository.models.Gender;
 import com.tcd.yaatra.repository.models.TravellerInfo;
+import com.tcd.yaatra.repository.models.TravellerStatus;
 
 import java.util.ArrayList;
 
@@ -60,7 +61,7 @@ public class PeerListAdapter extends RecyclerView.Adapter<PeerListAdapter.ViewHo
         Gender gender = travellerInfos.get(position).getGender();
         holder.peerUsername.setText(travellerInfos.get(position).getUserName());
         holder.peerSourceName.setText(travellerInfos.get(position).getSourceName());
-        holder.peerStatus.setText(travellerInfos.get(position).getStatus().toString());
+        holder.peerStatus.setText(getStatusToShow(travellerInfos.get(position).getStatus()));
         holder.peerDestinationName.setText(travellerInfos.get(position).getDestinationName());
         holder.peerModeOfTravel.setText(travellerInfos.get(position).getModeOfTravel());
         holder.profileIcon.setImageResource(gender == Gender.MALE ? R.drawable.guy : R.drawable.girl);
@@ -69,6 +70,19 @@ public class PeerListAdapter extends RecyclerView.Adapter<PeerListAdapter.ViewHo
     @Override
     public int getItemCount(){
         return this.travellerInfos != null ? this.travellerInfos.size() : 0;
+    }
+
+    private String getStatusToShow(TravellerStatus status){
+        switch (status){
+            case None: return "Unknown";
+            case SeekingFellowTraveller: return "Seeking Fellow Traveller";
+            case TravellingToStartPoint: return "Travelling to Start Point";
+            case JourneyStarted: return "Journey Started";
+            case ReachedStartPoint: return "Reached Start Point";
+            case ConnectionLost: return "Lost Connection";
+        }
+
+        return "Unknown";
     }
 }
 
