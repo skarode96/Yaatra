@@ -54,6 +54,7 @@ import com.tcd.yaatra.utils.offlinemaps.GHAsyncTask;
 import com.tcd.yaatra.utils.offlinemaps.InstructionCalculation;
 import com.tcd.yaatra.utils.offlinemaps.KalmanLocationManager;
 import com.tcd.yaatra.utils.offlinemaps.NavEngine;
+import com.tcd.yaatra.utils.offlinemaps.NaviDebugSimulator;
 import com.tcd.yaatra.utils.offlinemaps.NaviInstruction;
 import com.tcd.yaatra.utils.offlinemaps.PointPosData;
 import com.tcd.yaatra.utils.offlinemaps.UnitCalculator;
@@ -367,6 +368,9 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = super.onCreateView(inflater, container, savedInstanceState);
         previousIcon=0;
+        uiJob = UiJob.Nothing;
+        nearestP = new PointPosData();
+        NaviDebugSimulator.debug_simulator_points = null;
         mapView = (MapView) this.layoutDataBinding.mapview;
         navTopVP = (ViewGroup) view.findViewById(R.id.navtop_layout);
         navtop_image = (ImageView) this.layoutDataBinding.navtopImage;
@@ -452,6 +456,10 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
         loadMap(zipFile, this);
         checkGpsAvailability();
         ensureLastLocationInit();
+        if(startPointReached){
+            mLastLocation.setLatitude(startingLocation.getLatitude());
+            mLastLocation.setLongitude(startingLocation.getLongitude());
+        }
         updateCurrentLocation(mLastLocation);
         List<GHPoint> points = new ArrayList<>();
 
@@ -464,16 +472,17 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
                 setCustomPoint(getActivity(), destLatLong, destIcon);
             }
             calcPath(points, getActivity(),modeOfTravel);
-            layoutDataBinding.fabNav.setEnabled(false);
+            layoutDataBinding.fabNav.setEnabled(true);
 
             backgroundTaskHandler = new Handler();
             backgroundGroupLeaderMonitor.run();
 
             // TODO: Reached starting point and sent the status. The new path to all the destination is calculated. Waiting for signal from group owner to start navigation. Uncomment below code after adding this
-//            mLastLocation.setLatitude(startingLocation.getLatitude());
-//            mLastLocation.setLongitude(startingLocation.getLongitude());
+            mLastLocation.setLatitude(startingLocation.getLatitude());
+            mLastLocation.setLongitude(startingLocation.getLongitude());
 //            handleOnNavClick(view);
-//            startPointReached = false;
+            startPointReached = false;
+            active = true;
         }
         else {
             if (getArguments() != null) {
@@ -557,19 +566,19 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
         @Override
         public void run() {
 
-            if(fellowTravellersCache.getFellowTravellers().get(groupOwnerId) != null
-                && fellowTravellersCache.getFellowTravellers().get(groupOwnerId).getStatus() == TravellerStatus.JourneyStarted){
-
-                Log.d("Offline Maps", "JourneyStarted");
-                mLastLocation.setLatitude(startingLocation.getLatitude());
-                mLastLocation.setLongitude(startingLocation.getLongitude());
-                handleOnNavClick(view);
-                startPointReached = false;
-            }
-            else{
-                backgroundTaskHandler
-                        .postDelayed(backgroundGroupLeaderMonitor, 200);
-            }
+//            if(fellowTravellersCache.getFellowTravellers().get(groupOwnerId) != null
+//                && fellowTravellersCache.getFellowTravellers().get(groupOwnerId).getStatus() == TravellerStatus.JourneyStarted){
+//
+//                Log.d("Offline Maps", "JourneyStarted");
+//                mLastLocation.setLatitude(startingLocation.getLatitude());
+//                mLastLocation.setLongitude(startingLocation.getLongitude());
+//                handleOnNavClick(view);
+//                startPointReached = false;
+//            }
+//            else{
+//                backgroundTaskHandler
+//                        .postDelayed(backgroundGroupLeaderMonitor, 200);
+//            }
         }
     };
 

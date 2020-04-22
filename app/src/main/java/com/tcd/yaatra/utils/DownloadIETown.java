@@ -34,7 +34,7 @@ public class DownloadIETown {
     public List<IETownData> readCsv(Context context)
     {
         ieTownDataList = new ArrayList<>();
-        InputStream is = context.getResources().openRawResource(R.raw.ie_towns_sample);
+        InputStream is = context.getResources().openRawResource(R.raw.multiuse_community_centres);
         BufferedReader reader = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
         String line = "";
         try
@@ -45,22 +45,9 @@ public class DownloadIETown {
                 String[] tokens = line.split(",");
 
                 IETownData ieTownData = new IETownData();
-//                ieTownData.setId(Integer.parseInt(tokens[0]));
-                ieTownData.setName(tokens[1]);
-//                ieTownData.setIrish_name(tokens[2]);
-//                ieTownData.setCounty(tokens[3]);
-//                ieTownData.setCountry(tokens[4]);
-//                ieTownData.setEircode(tokens[5]);
-//                ieTownData.setGrid_reference(tokens[6]);
-//                ieTownData.setEasting(Long.parseLong(tokens[7]));
-//                ieTownData.setNorthing(Long.parseLong(tokens[8]));
-                ieTownData.setLatitude(Double.parseDouble(tokens[9]));
-                ieTownData.setLongitude(Double.parseDouble(tokens[10]));
-//                ieTownData.setPostal_town(tokens[11]);
-//                ieTownData.setLocal_government_area(tokens[12]);
-//                ieTownData.setProvince(tokens[13]);
-//                ieTownData.setNuts3_region(tokens[14]);
-//                ieTownData.setType(tokens[15]);
+                ieTownData.setLatitude(Double.parseDouble(tokens[1]));
+                ieTownData.setLongitude(Double.parseDouble(tokens[0]));
+                ieTownData.setName(tokens[4]);
 
                 ieTownDataList.add(ieTownData);
             }

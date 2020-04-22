@@ -375,7 +375,25 @@ public class NavEngine {
             }
             long fullTime = countFullTime(partTime);
             Instruction nextIn = null;
-            if (instructions.size() > 1) { nextIn = instructions.get(1); }
+            if (instructions.size() > 1) { nextIn = instructions.get(1);
+                if(nextIn.getExtraInfoJSON().size()!= 0){
+                    Log.d(TAG, "----------#######-------getNewInstruction--------******--------:--------- " + nextIn.getPoints());
+                    if(nextIn.getClass().toString().contains("ViaInstruction")){
+                        offlineMaps.viaReached = true;
+                        offlineMaps.viaCount = ((ViaInstruction) nextIn).getViaCount();
+                    }
+                    else if (nextIn.getClass().toString().contains("FinishInstruction")) {
+                        offlineMaps.uiJob = OfflineMaps.UiJob.Finished;
+                    }
+                }
+            }
+            else if (instructions.size() == 1) {
+                if(instructions.get(0).getExtraInfoJSON().size()!= 0) {
+                    if (instructions.get(0).getClass().toString().contains("FinishInstruction")) {
+                        offlineMaps.uiJob = OfflineMaps.UiJob.Finished;
+                    }
+                }
+            }
             NaviInstruction newIn = new NaviInstruction(in, nextIn, fullTime);
             newIn.updateDist(partDistance);
             if (!naviVoiceSpoken && nearestP.isDirectionOk() && speakDistanceCheck(partDistance))

@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
 import com.tcd.yaatra.R;
+import com.tcd.yaatra.WifiDirectP2PHelper.PeerCommunicator;
 import com.tcd.yaatra.databinding.FragmentUserRatingBinding;
 import com.tcd.yaatra.repository.datasource.RatingRepository;
 import com.tcd.yaatra.repository.models.TravellerInfo;
@@ -47,6 +48,9 @@ public class UserRatingFragment extends BaseFragment<FragmentUserRatingBinding> 
 
     @Inject
     SynchronizationEngine synchronizationEngine;
+
+    @Inject
+    PeerCommunicator peerCommunicator;
 
     SharedPreferences ratingPreferences;
 
@@ -110,6 +114,7 @@ public class UserRatingFragment extends BaseFragment<FragmentUserRatingBinding> 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
+        peerCommunicator.cleanup();
         //this.ratingPreferences = SharedPreferenceUtils.getRatingSharedPreference();
         Bundle bundle = getArguments();
         Gson gson = new Gson();
