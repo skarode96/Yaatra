@@ -157,15 +157,15 @@ public class PeerToPeerFragmentViewModel extends ViewModel {
 
             case MALE: preferredPeers = new ArrayList<>(filteredPeerTravellers
                                                         .stream()
-                                                        .filter(t->t.getGender() == Gender.MALE
-                                                                    && t.getModeOfTravel() == ownTravellerInfo.getModeOfTravel())
+                                                        .filter(t->t.getGender().stringLabel.equalsIgnoreCase(Gender.MALE.stringLabel)
+                                                                    && t.getModeOfTravel().equalsIgnoreCase(ownTravellerInfo.getModeOfTravel()))
                                                         .collect(Collectors.toList()));
                         break;
 
             case FEMALE: preferredPeers = new ArrayList<>(filteredPeerTravellers
                     .stream()
-                    .filter(t->t.getGender() == Gender.FEMALE
-                            && t.getModeOfTravel() == ownTravellerInfo.getModeOfTravel())
+                    .filter(t->t.getGender().stringLabel.equalsIgnoreCase(Gender.FEMALE.stringLabel)
+                            && t.getModeOfTravel().equalsIgnoreCase(ownTravellerInfo.getModeOfTravel()))
                     .collect(Collectors.toList()));
                     break;
 
@@ -173,7 +173,7 @@ public class PeerToPeerFragmentViewModel extends ViewModel {
             case OTHER:
                 preferredPeers = new ArrayList<>(filteredPeerTravellers
                         .stream()
-                        .filter(t -> t.getModeOfTravel() == ownTravellerInfo.getModeOfTravel())
+                        .filter(t -> t.getModeOfTravel().equalsIgnoreCase(ownTravellerInfo.getModeOfTravel()))
                         .collect(Collectors.toList()));
                         break;
         }

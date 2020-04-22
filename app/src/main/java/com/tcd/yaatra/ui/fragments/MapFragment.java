@@ -255,7 +255,7 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
             ownTravellerInfo.setDestinationName(destname.replace(',','.').substring(0, 10));
         }
 
-        setSourceLocationForOwnTraveller(false);
+        setSourceLocationForOwnTraveller(true);
         ownTravellerInfo.setDestinationLatitude(destination.latitude());
         ownTravellerInfo.setDestinationLongitude(destination.longitude());
 
