@@ -152,6 +152,7 @@ public class OfflineMaps extends FellowTravellersSubscriberFragment<FragmentOffl
 
     private int groupOwnerId = 0;
     private boolean waitingForGroupOwnerSignal = false;
+    public boolean isGroupOwner = false;
 
     @Inject
     TravellerInfo ownTravellerInfo;
@@ -181,6 +182,8 @@ public class OfflineMaps extends FellowTravellersSubscriberFragment<FragmentOffl
 
     private void handleOnNavClick(View view) {
 
+        if(isGroupOwner)
+            peerCommunicator.broadcastTravellers(TravellerStatus.JourneyStarted);
         navTopVP.setVisibility(View.VISIBLE);
         layoutDataBinding.fabNav.setEnabled(false);
         navEngine.setNavigating(true);
