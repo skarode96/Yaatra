@@ -247,7 +247,12 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
 
     private void handleStartNavigationClick() {
 
-        peerCommunicator.broadcastTravellers(TravellerStatus.TravellingToStartPoint);
+        if(peerToPeerFragmentViewModel.getAmIGroupOwner()) {
+            peerCommunicator.broadcastTravellers(TravellerStatus.JourneyStarted);
+        }
+        else {
+            peerCommunicator.broadcastTravellers(TravellerStatus.TravellingToStartPoint);
+        }
 
         Bundle bundle = new Bundle();
         bundle.putParcelableArrayList("destLocations", peerToPeerFragmentViewModel.getTravelPath());
