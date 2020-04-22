@@ -17,6 +17,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -90,7 +91,7 @@ import javax.inject.Inject;
 import static com.mapbox.services.android.navigation.ui.v5.feedback.FeedbackBottomSheet.TAG;
 
 
-public class OfflineMaps extends FellowTravellersSubscriberFragment<FragmentOfflineMapsBinding> {
+public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
 
     @Override
     public int getFragmentResourceId() {
@@ -151,7 +152,6 @@ public class OfflineMaps extends FellowTravellersSubscriberFragment<FragmentOffl
     private InstructionCalculation instructionCalculation = new InstructionCalculation(this);
 
     private int groupOwnerId = 0;
-    private boolean waitingForGroupOwnerSignal = false;
     public boolean isGroupOwner = false;
 
     @Inject
@@ -465,7 +465,10 @@ public class OfflineMaps extends FellowTravellersSubscriberFragment<FragmentOffl
             }
             calcPath(points, getActivity(),modeOfTravel);
             layoutDataBinding.fabNav.setEnabled(false);
-            waitingForGroupOwnerSignal = true;
+
+            backgroundTaskHandler = new Handler();
+            backgroundGroupLeaderMonitor.run();
+
             // TODO: Reached starting point and sent the status. The new path to all the destination is calculated. Waiting for signal from group owner to start navigation. Uncomment below code after adding this
 //            mLastLocation.setLatitude(startingLocation.getLatitude());
 //            mLastLocation.setLongitude(startingLocation.getLongitude());
@@ -481,6 +484,7 @@ public class OfflineMaps extends FellowTravellersSubscriberFragment<FragmentOffl
             String modeOfTravel =  ownTravellerInfo.getModeOfTravel();*/
 //            Boolean multiDestination = getArguments().getBoolean("multiDestination");
             Boolean isGroupOwner = getArguments().getBoolean("IsGroupOwner");
+                groupOwnerId = getArguments().getInt("GroupOwnerId");
 //                Boolean isGroupOwner = false;
                 Bundle bundle = getArguments();
                 double latitude = ownTravellerInfo.getDestinationLatitude();
@@ -547,19 +551,27 @@ public class OfflineMaps extends FellowTravellersSubscriberFragment<FragmentOffl
 
     }
 
-    @Override
-    protected void processFellowTravellersInfo() {
+    private Handler backgroundTaskHandler;
 
-        if(waitingForGroupOwnerSignal &&
-                fellowTravellersCache.getFellowTravellers().get(groupOwnerId).getStatus() == TravellerStatus.JourneyStarted){
+    private Runnable backgroundGroupLeaderMonitor = new Runnable() {
+        @Override
+        public void run() {
 
-            mLastLocation.setLatitude(startingLocation.getLatitude());
-            mLastLocation.setLongitude(startingLocation.getLongitude());
-            handleOnNavClick(view);
-            waitingForGroupOwnerSignal = false;
-            startPointReached = false;
+            if(fellowTravellersCache.getFellowTravellers().get(groupOwnerId) != null
+                && fellowTravellersCache.getFellowTravellers().get(groupOwnerId).getStatus() == TravellerStatus.JourneyStarted){
+
+                Log.d("Offline Maps", "JourneyStarted");
+                mLastLocation.setLatitude(startingLocation.getLatitude());
+                mLastLocation.setLongitude(startingLocation.getLongitude());
+                handleOnNavClick(view);
+                startPointReached = false;
+            }
+            else{
+                backgroundTaskHandler
+                        .postDelayed(backgroundGroupLeaderMonitor, 200);
+            }
         }
-    }
+    };
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
