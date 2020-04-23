@@ -82,6 +82,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -154,6 +156,7 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
 
     private int groupOwnerId = 0;
     public boolean isGroupOwner = false;
+    public boolean debugMode = false;
 
     @Inject
     TravellerInfo ownTravellerInfo;
@@ -456,6 +459,31 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
         loadMap(zipFile, this);
         checkGpsAvailability();
         ensureLastLocationInit();
+        setdebugMode(false);
+//        if(debugMode == true){
+//
+//
+//                double currentLatitude = mLastLocation.getLatitude();
+//                double currentLongitude = mLastLocation.getLongitude();
+//
+//                //This code is added only for demo purpose to change the source location of user by around 100 meters
+//                if(debugMode){
+//
+//                    double r_earth_meters = 6371000.0;
+//                    double dy = 100;
+//                    double dx = 100;
+//
+//                    DecimalFormat df = new DecimalFormat("#.#######");
+//                    df.setRoundingMode(RoundingMode.CEILING);
+//
+//                    currentLatitude  = Double.parseDouble(df.format(currentLatitude  + (dy / r_earth_meters) * (180 / Math.PI)));
+//                    currentLongitude = Double.parseDouble(df.format(currentLongitude + (dx / r_earth_meters) * (180 / Math.PI) / Math.cos(currentLatitude * Math.PI/180)));
+//                }
+//
+//            mLastLocation.setLatitude(currentLatitude);
+//            mLastLocation.setLongitude(currentLongitude);
+//            }
+
         if(startPointReached){
             mLastLocation.setLatitude(startingLocation.getLatitude());
             mLastLocation.setLongitude(startingLocation.getLongitude());
@@ -558,6 +586,10 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
         }
 
 
+    }
+
+    private void setdebugMode(boolean b) {
+        debugMode = b;
     }
 
     private Handler backgroundTaskHandler;

@@ -280,7 +280,7 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
             }
             else
             {
-                ownTravellerInfo.setSourceName("Ballawley Park");
+                ownTravellerInfo.setSourceName("Stillorgan");
             }
         }
 
@@ -532,7 +532,7 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
                 ownTravellerInfo.setDestinationName(name[0]);
             }
             else
-                ownTravellerInfo.setDestinationName("Stillorgan");
+                ownTravellerInfo.setDestinationName("Ballawley Park");
         }
         return true;
     }
