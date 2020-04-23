@@ -153,11 +153,11 @@ public class RegisterActivity extends BaseActivity<ActivityRegisterBinding> {
 
             RadioButton transportPrefBtn = (RadioButton)findViewById(layoutDataBinding.transportPrefGroup.getCheckedRadioButtonId());
             if(transportPrefBtn.getText().toString().equalsIgnoreCase(noTransportPref.stringLabel))
-                registerObject.setPrefGender(noTransportPref.intValue);
+                registerObject.setPrefMode(noTransportPref.intValue);
             else if(transportPrefBtn.getText().toString().equalsIgnoreCase(walk.stringLabel))
-                registerObject.setPrefGender(walk.intValue);
+                registerObject.setPrefMode(walk.intValue);
             else if(transportPrefBtn.getText().toString().equalsIgnoreCase(taxi.stringLabel))
-                registerObject.setPrefGender(taxi.intValue);
+                registerObject.setPrefMode(taxi.intValue);
 
 
 

@@ -250,9 +250,12 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
         try{
             startLoc = coder.getFromLocation(locationComponent.getLastKnownLocation().getLatitude(),locationComponent.getLastKnownLocation().getLongitude(),1);
             sourceName = startLoc.get(0).getAddressLine(0);
+            if(sourceName != null) {
+                ownTravellerInfo.setSourceName(sourceName.replace(',','.').substring(0, 10));
+            }
         }catch (Exception e){
 
-            double buffer = 0.039;
+            double buffer = 0.0039;
             double minLatitude = locationComponent.getLastKnownLocation().getLatitude() - buffer;
             double maxLatitude = locationComponent.getLastKnownLocation().getLatitude() + buffer;
             double minLongitude = locationComponent.getLastKnownLocation().getLongitude() - buffer;
@@ -264,20 +267,24 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
                 if((ieTownDataList.get(i).getLatitude()<maxLatitude && ieTownDataList.get(i).getLatitude()>minLatitude) && (ieTownDataList.get(i).getLongitude()<maxLongitude && ieTownDataList.get(i).getLongitude()>minLongitude))
                 {
                     sourceName =  ieTownDataList.get(i).getName();
+                    break;
                 }
             }
             if(sourceName==null)
                 sourceName =  "Dublin18";
 
-            Toast.makeText(getActivity(), "Error generating geoname", Toast.LENGTH_SHORT).show();}
-
-        if(sourceName != null) {
-            ownTravellerInfo.setSourceName(sourceName.replace(',','.').substring(0, 10));
+            if(sourceName.contains(","))
+            {
+                String[] name = sourceName.split(",");
+                ownTravellerInfo.setSourceName(name[0]);
+            }
+            else
+            {
+                ownTravellerInfo.setSourceName("Stillorgan");
+            }
         }
 
-        if(destname != null) {
-            ownTravellerInfo.setDestinationName(destname.replace(',','.').substring(0, 10));
-        }
+
 
         setSourceLocationForOwnTraveller(true);
         ownTravellerInfo.setDestinationLatitude(destination.latitude());
@@ -495,8 +502,38 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
         try{
             destinationName = coder.getFromLocation(point.getLatitude(),point.getLongitude(),1);
             destname = destinationName.get(0).getAddressLine(0);
+            if(destname != null) {
+                ownTravellerInfo.setDestinationName(destname.replace(',','.').substring(0, 10));
+            }
         }catch(Exception e)
-        { Toast.makeText(getActivity(), "Error generating geoname", Toast.LENGTH_SHORT).show();}
+        {
+//            Toast.makeText(getActivity(), "Error generating geoname", Toast.LENGTH_SHORT).show();
+            double buffer = 0.0039;
+            double minLatitude = locationComponent.getLastKnownLocation().getLatitude() - buffer;
+            double maxLatitude = locationComponent.getLastKnownLocation().getLatitude() + buffer;
+            double minLongitude = locationComponent.getLastKnownLocation().getLongitude() - buffer;
+            double maxLongitude = locationComponent.getLastKnownLocation().getLongitude() + buffer;
+
+            List<IETownData> ieTownDataList = downloadIETown.getIeTownDataList();
+            for(int i=0;i<ieTownDataList.size();i++)
+            {
+                if((ieTownDataList.get(i).getLatitude()<maxLatitude && ieTownDataList.get(i).getLatitude()>minLatitude) && (ieTownDataList.get(i).getLongitude()<maxLongitude && ieTownDataList.get(i).getLongitude()>minLongitude))
+                {
+                    destname =  ieTownDataList.get(i).getName();
+                    break;
+                }
+            }
+            if(destname==null)
+                destname =  "Dublin18";
+
+            if(destname.contains(","))
+            {
+                String[] name = destname.split(",");
+                ownTravellerInfo.setDestinationName(name[0]);
+            }
+            else
+                ownTravellerInfo.setDestinationName("Ballawley Park");
+        }
         return true;
     }
 

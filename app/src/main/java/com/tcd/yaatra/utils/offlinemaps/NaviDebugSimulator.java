@@ -21,7 +21,7 @@ public class NaviDebugSimulator {
   private static final int MAX_STEP_DISTANCE = 40;
   private static boolean debug_simulator_run = true;
   private static boolean debug_simulator_from_tracking = false;
-  private static ArrayList<GeoPoint> debug_simulator_points;
+  public static ArrayList<GeoPoint> debug_simulator_points;
   private static NaviDebugSimulator instance;
   GeoPoint checkP = new GeoPoint(0, 0);
   private int navIcon = R.drawable.ic_navigation_black_24dp;
