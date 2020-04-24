@@ -3,7 +3,8 @@
 # ![logo](https://trello-attachments.s3.amazonaws.com/5e9b3762dfe630697c136b9c/5ea33c100871825f327b199c/af631dde2a10ac5a1b091efc3261a878/yaatra.png)
 
 
-[![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger)
+# [![CircleCI](https://circleci.com/gh/skarode96/Yaatra/tree/master.svg?style=svg)](https://circleci.com/gh/skarode96/Yaatra/tree/master)
+
 
 This project is submitted as a part of coursework for CS7CS3 module. It consist of an android app which helps user find a co-traveller to share journey with. This app uses backend services written in Django Framework which is deployed on Heroku
 
