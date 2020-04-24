@@ -76,7 +76,6 @@
                     android:drawableLeft="@drawable/ic_username"
                     android:drawablePadding="5dp"
                     android:hint="User Name"
-                    android:text="@string/test_username"
                     android:paddingStart="10dp"
                     android:textSize="14sp" />
 
@@ -97,7 +96,6 @@
                         android:drawablePadding="5dp"
                         android:hint="Password"
                         android:inputType="textPassword"
-                        android:text="@string/password"
                         android:paddingStart="10dp"
                         android:textSize="14sp" />
 
