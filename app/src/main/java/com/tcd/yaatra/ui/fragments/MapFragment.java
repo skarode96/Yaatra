@@ -250,12 +250,8 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
         try{
             startLoc = coder.getFromLocation(locationComponent.getLastKnownLocation().getLatitude(),locationComponent.getLastKnownLocation().getLongitude(),1);
             sourceName = startLoc.get(0).getAddressLine(0);
-            if(sourceName != null) {
-                ownTravellerInfo.setSourceName(sourceName.replace(',','.').substring(0, 10));
-            }
-        }catch (Exception e){
 
-            double buffer = 0.0039;
+            double buffer = 0.039;
             double minLatitude = locationComponent.getLastKnownLocation().getLatitude() - buffer;
             double maxLatitude = locationComponent.getLastKnownLocation().getLatitude() + buffer;
             double minLongitude = locationComponent.getLastKnownLocation().getLongitude() - buffer;
@@ -267,24 +263,22 @@ public class MapFragment extends BaseFragment<FragmentMapBinding> implements OnM
                 if((ieTownDataList.get(i).getLatitude()<maxLatitude && ieTownDataList.get(i).getLatitude()>minLatitude) && (ieTownDataList.get(i).getLongitude()<maxLongitude && ieTownDataList.get(i).getLongitude()>minLongitude))
                 {
                     sourceName =  ieTownDataList.get(i).getName();
-                    break;
                 }
             }
             if(sourceName==null)
                 sourceName =  "Dublin18";
 
-            if(sourceName.contains(","))
-            {
-                String[] name = sourceName.split(",");
-                ownTravellerInfo.setSourceName(name[0]);
+        }catch (Exception e){
+            //Toast.makeText(getActivity(), "Error generating geoname", Toast.LENGTH_SHORT).show();
             }
-            else
-            {
-                ownTravellerInfo.setSourceName("Stillorgan");
-            }
+
+        if(sourceName != null && sourceName.length() > 11) {
+            ownTravellerInfo.setSourceName(sourceName.replace(',','.').substring(0, 10));
         }
 
-
+        if(destname != null && destname.length() > 11) {
+            ownTravellerInfo.setDestinationName(destname.replace(',','.').substring(0, 10));
+        }
 
         setSourceLocationForOwnTraveller(true);
         ownTravellerInfo.setDestinationLatitude(destination.latitude());
