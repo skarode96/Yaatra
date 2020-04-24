@@ -26,7 +26,7 @@ Yaatra app uses following Tech Stack:
 
 ### Installation
 
-[APK](apk/Yaatra.apk) is provided in the repository. simply install it in android device
+[APK](apk/Yaatra.apk) is provided in the repository, simply install it in android device
 
 
 
