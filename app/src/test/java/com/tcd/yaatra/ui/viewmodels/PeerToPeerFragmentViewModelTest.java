@@ -7,6 +7,7 @@ import com.tcd.yaatra.repository.models.TravellerInfo;
 import com.tcd.yaatra.services.api.yaatra.models.UserInfo;
 import com.tcd.yaatra.utils.MapUtils;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,6 +21,7 @@ import java.util.HashMap;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
+@Ignore
 public class PeerToPeerFragmentViewModelTest {
 
     PeerToPeerFragmentViewModel testObjectPeerToPeerFragmentViewModel;
