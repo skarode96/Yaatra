@@ -259,7 +259,7 @@ public class PeerToPeerFragment extends FellowTravellersSubscriberFragment<Fragm
 
         Gson gson = new Gson();
         bundle.putString("UserList", gson.toJson(peerToPeerFragmentViewModel.getFilteredPeerTravellers()));
-        bundle.putBoolean("multiDestination", true);
+        bundle.putBoolean("multiDestination", peerToPeerFragmentViewModel.getFilteredPeerTravellers().size() > 0);
         bundle.putBoolean("IsGroupOwner", peerToPeerFragmentViewModel.getAmIGroupOwner());
         bundle.putInt("GroupOwnerId", peerToPeerFragmentViewModel.getGroupOwnerId());
 

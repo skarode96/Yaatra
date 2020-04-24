@@ -40,7 +40,7 @@ public class DailyFragment extends BaseFragment<FragmentDailyBinding> {
 
 
     @Inject
-    DailyCommuteActivityViewModel dailyCommuteActivityViewModel;
+    protected DailyCommuteActivityViewModel dailyCommuteActivityViewModel;
 
     @Override
     protected int getFragmentResourceId() {
@@ -100,7 +100,10 @@ public class DailyFragment extends BaseFragment<FragmentDailyBinding> {
                     break;
             }
         });
-        ((MenuContainerActivity)getActivity()).layoutDataBinding.toolbar.setTitle("Yaatra Daily Commute");
+
+        if(getActivity() instanceof MenuContainerActivity) {
+            ((MenuContainerActivity) getActivity()).layoutDataBinding.toolbar.setTitle("Yaatra Daily Commute");
+        }
         return view;
     }
     private void handleLogout() {

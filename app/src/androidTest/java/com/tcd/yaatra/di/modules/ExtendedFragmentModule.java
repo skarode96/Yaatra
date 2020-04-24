@@ -1,5 +1,6 @@
 package com.tcd.yaatra.di.modules;
 
+import com.tcd.yaatra.extendedFragments.ExtendedDailyCommuteFragment;
 import com.tcd.yaatra.extendedFragments.ExtendedPeerToPeerFragment;
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
@@ -9,4 +10,7 @@ public interface ExtendedFragmentModule {
 
     @ContributesAndroidInjector
     ExtendedPeerToPeerFragment contributeTestPeerToPeerFragment();
+
+    @ContributesAndroidInjector
+    ExtendedDailyCommuteFragment contributeTestDailyFragment();
 }

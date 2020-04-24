@@ -85,6 +85,7 @@ import java.io.IOException;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -296,10 +297,9 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
                     LatLng reachedPoint = destPoints.get(viaCount-1);
                     Log.d(TAG, "onPostExecute: " + reachedPoint);
                     viaReached = false;
+                    showInstruction(in);
 
                     navigateToRatingScreenIfMyDestinationReached(reachedPoint);
-
-                    showInstruction(in);
                 }
             }
         };
@@ -308,13 +308,26 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
     private void navigateToRatingScreenIfMyDestinationReached(LatLng reachedPoint){
         if(reachedPoint.getLatitude() == ownTravellerInfo.getDestinationLatitude()
                 && reachedPoint.getLongitude() == ownTravellerInfo.getDestinationLongitude()){
+            handleOnStopNavClick(view);
+            peerCommunicator.cleanup();
+
             Bundle bundle = new Bundle();
-            bundle.putString("UserList", getArguments().getString("UserList"));
+            Gson gson = new Gson();
 
-            UserRatingFragment userRatingFragment = new UserRatingFragment();
-            userRatingFragment.setArguments(bundle);
+            ArrayList<TravellerInfo> peerTravellers = new ArrayList<>(Arrays.asList(gson.fromJson(getArguments().getString("UserList"), TravellerInfo[].class)));
 
-            fragmentManager.beginTransaction().replace(R.id.fragment_container, userRatingFragment).addToBackStack("offlineMaps").commit();
+            if(peerTravellers != null && peerTravellers.size() > 0) {
+
+                bundle.putString("UserList", getArguments().getString("UserList"));
+
+                UserRatingFragment userRatingFragment = new UserRatingFragment();
+                userRatingFragment.setArguments(bundle);
+
+                fragmentManager.beginTransaction().replace(R.id.fragment_container, userRatingFragment).addToBackStack("offlineMaps").commit();
+            }
+            else{
+                this.getActivity().recreate();
+            }
         }
     }
 
@@ -566,6 +579,10 @@ public class OfflineMaps extends BaseFragment<FragmentOfflineMapsBinding> {
                         setCustomPoint(getActivity(), destLatLong, destIcon);
                     }
                 } else {
+
+                    layoutDataBinding.fabRate.setVisibility(View.INVISIBLE);
+
+                    destPoints.add(travelPath.get(1));
 
                     points.add(new GHPoint(latitude, longitude));
                     GeoPoint destLatLong = new GeoPoint(latitude, longitude);
