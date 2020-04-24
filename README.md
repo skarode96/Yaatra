@@ -11,7 +11,7 @@ This project is submitted as a part of coursework for CS7CS3 module. It consist 
 ### Features
 - Offline Maps and Routing
 - Peer-2-Peer Decision Making using WiFi-Direct
-- RMultiHop Routing
+- MultiHop Routing
 - Data synchronisation in case of no Internet
 - Backed up with Highly availble and secure service written in Django Framework
 
