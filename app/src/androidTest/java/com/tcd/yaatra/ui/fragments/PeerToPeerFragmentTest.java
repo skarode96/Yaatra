@@ -122,7 +122,7 @@ public class PeerToPeerFragmentTest {
         Mockito.when(peerToPeerFragmentViewModel.getFilteredPeerTravellers()).thenReturn(filteredPeerTravellers);
 
         Mockito.when(mockFragmentManager.beginTransaction()).thenReturn(fragmentTransaction);
-        Mockito.when(fragmentTransaction.replace(eq(R.id.fragment_container), Mockito.any(RouteInfoFragment.class))).thenReturn(fragmentTransaction);
+        Mockito.when(fragmentTransaction.replace(eq(R.id.fragment_container), Mockito.any(OfflineMaps.class))).thenReturn(fragmentTransaction);
         Mockito.when(fragmentTransaction.addToBackStack("peerFrag")).thenReturn(fragmentTransaction);
 
         onView(withId(R.id.startNavigation)).perform(click());
@@ -164,7 +164,7 @@ public class PeerToPeerFragmentTest {
                     .check(matches((hasDescendant(withText(travellerInfo.getUserName())))));
             onView(withRecyclerView(R.id.peer_recycler_view)
                     .atPosition(position))
-                    .check(matches((hasDescendant(withText(travellerInfo.getStatus().toString())))));
+                    .check(matches((hasDescendant(withText(getStatusToShow(travellerInfo.getStatus()))))));
             onView(withRecyclerView(R.id.peer_recycler_view)
                     .atPosition(position))
                     .check(matches((hasDescendant(withText(travellerInfo.getModeOfTravel())))));
@@ -208,6 +208,19 @@ public class PeerToPeerFragmentTest {
 
     private static RecyclerViewMatcher withRecyclerView(int id){
         return new RecyclerViewMatcher(id);
+    }
+
+    private String getStatusToShow(TravellerStatus status){
+        switch (status){
+            case None: return "Unknown";
+            case SeekingFellowTraveller: return "Seeking Fellow Traveller";
+            case TravellingToStartPoint: return "Travelling to Start Point";
+            case JourneyStarted: return "Journey Started";
+            case ReachedStartPoint: return "Reached Start Point";
+            case ConnectionLost: return "Lost Connection";
+        }
+
+        return "Unknown";
     }
 }
 

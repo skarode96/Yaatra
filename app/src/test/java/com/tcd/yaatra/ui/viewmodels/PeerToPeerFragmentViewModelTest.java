@@ -80,6 +80,7 @@ public class PeerToPeerFragmentViewModelTest {
         //Own Traveller Starts the request before everyone
         //Own Traveller should be selected as group owner
         setupOwnTravellerInfo(requestTime.minusSeconds(2));
+        Mockito.when(mockTravellerInfo.getModeOfTravel()).thenReturn("Walk");
 
         HashMap<Integer, TravellerInfo> peerTravellers = getPeerTravellers(requestTime);
 
@@ -127,6 +128,7 @@ public class PeerToPeerFragmentViewModelTest {
 
         //Own Traveller should not be selected as group owner
         setupOwnTravellerInfo(requestTime.plusSeconds(10));
+        Mockito.when(mockTravellerInfo.getModeOfTravel()).thenReturn("Walk");
 
         HashMap<Integer, TravellerInfo> peerTravellers = getPeerTravellers(requestTime);
 
@@ -176,6 +178,7 @@ public class PeerToPeerFragmentViewModelTest {
 
         LocalDateTime requestTime = LocalDateTime.now();
         setupOwnTravellerInfo(requestTime.minusSeconds(2));
+        Mockito.when(mockTravellerInfo.getModeOfTravel()).thenReturn("Walk");
 
         HashMap<Integer, TravellerInfo> peerTravellers = getPeerTravellers(requestTime);
 
@@ -278,6 +281,8 @@ public class PeerToPeerFragmentViewModelTest {
         firstTraveller.setSourceLatitude(sourceLat);
         firstTraveller.setSourceLongitude(sourceLong);
         firstTraveller.setRequestStartTime(firstRequestTime);
+        firstTraveller.setModeOfTravel("walk");
+        firstTraveller.setGender(Gender.MALE);
 
         TravellerInfo secondTraveller = new TravellerInfo();
         secondTraveller.setUserId(3);
@@ -286,6 +291,8 @@ public class PeerToPeerFragmentViewModelTest {
         secondTraveller.setSourceLatitude(sourceLat);
         secondTraveller.setSourceLongitude(sourceLong);
         secondTraveller.setRequestStartTime(firstRequestTime.plusSeconds(2));
+        secondTraveller.setModeOfTravel("walk");
+        secondTraveller.setGender(Gender.MALE);
 
         //PeerTraveller with destination outside 1 km acceptable range
         TravellerInfo thirdTraveller = new TravellerInfo();
@@ -295,6 +302,8 @@ public class PeerToPeerFragmentViewModelTest {
         thirdTraveller.setSourceLatitude(sourceLat);
         thirdTraveller.setSourceLongitude(sourceLong);
         thirdTraveller.setRequestStartTime(firstRequestTime.plusSeconds(4));
+        thirdTraveller.setModeOfTravel("walk");
+        thirdTraveller.setGender(Gender.MALE);
 
         HashMap<Integer, TravellerInfo> peerTravellers = new HashMap<>();
         peerTravellers.put(firstTraveller.getUserId(), firstTraveller);

@@ -1,4 +1,4 @@
-package com.tcd.yaatra.di;
+package com.tcd.yaatra.di.modules;
 
 import androidx.lifecycle.ViewModelProvider;
 

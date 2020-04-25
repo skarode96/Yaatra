@@ -19,15 +19,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.tcd.yaatra.R;
 import com.tcd.yaatra.databinding.FragmentDailyBinding;
 import com.tcd.yaatra.services.api.yaatra.models.JourneyDetails;
-import com.tcd.yaatra.ui.activities.DailyCommuteMapFragment;
 import com.tcd.yaatra.ui.activities.LoginActivity;
 import com.tcd.yaatra.ui.activities.MenuContainerActivity;
 import com.tcd.yaatra.ui.adapters.DailyTripAdapter;
 import com.tcd.yaatra.ui.viewmodels.DailyCommuteActivityViewModel;
 import com.tcd.yaatra.utils.SharedPreferenceUtils;
-import com.tcd.yaatra.ui.activities.LoginActivity;
 import java.util.ArrayList;
-
 import javax.inject.Inject;
 
 public class DailyFragment extends BaseFragment<FragmentDailyBinding> {

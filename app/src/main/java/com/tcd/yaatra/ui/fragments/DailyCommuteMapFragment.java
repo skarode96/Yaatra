@@ -1,4 +1,4 @@
-package com.tcd.yaatra.ui.activities;
+package com.tcd.yaatra.ui.fragments;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;

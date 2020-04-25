@@ -8,6 +8,7 @@ import com.tcd.yaatra.di.modules.AppModule;
 import com.tcd.yaatra.di.modules.FragmentModule;
 import com.tcd.yaatra.di.modules.RepositoryModule;
 import com.tcd.yaatra.di.modules.RoomModule;
+import com.tcd.yaatra.di.modules.ViewModelModule;
 import com.tcd.yaatra.di.modules.WorkerBindingModule;
 import com.tcd.yaatra.di.modules.YaatraApiModule;
 import com.tcd.yaatra.synchronizationHelper.RatingSyncWorkerFactory;
