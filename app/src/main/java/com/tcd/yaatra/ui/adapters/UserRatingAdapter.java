@@ -1,4 +1,4 @@
-package com.tcd.yaatra.ui.adapter;
+package com.tcd.yaatra.ui.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;

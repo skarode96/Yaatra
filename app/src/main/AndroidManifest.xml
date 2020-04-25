@@ -38,7 +38,7 @@
         <activity android:name=".ui.fragments.MapFragment"/>
         <activity android:name=".ui.fragments.RouteInfoFragment"
             android:label="Route Information"/>
-        <activity android:name=".ui.activities.DailyCommuteMapFragment"/>
+        <activity android:name=".ui.fragments.DailyCommuteMapFragment"/>
         <activity android:name=".ui.fragments.UserRatingFragment"
             android:label="Rating"/>
         <activity

@@ -23,7 +23,7 @@ import com.tcd.yaatra.repository.models.TravellerInfo;
 import com.tcd.yaatra.services.api.yaatra.models.RateRequestBody;
 import com.tcd.yaatra.services.api.yaatra.models.Rating;
 import com.tcd.yaatra.synchronizationHelper.SynchronizationEngine;
-import com.tcd.yaatra.ui.adapter.UserRatingAdapter;
+import com.tcd.yaatra.ui.adapters.UserRatingAdapter;
 import com.tcd.yaatra.ui.viewmodels.UserRatingFragmentViewModel;
 import com.tcd.yaatra.utils.NetworkUtils;
 

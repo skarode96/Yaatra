@@ -1,6 +1,6 @@
 package com.tcd.yaatra.di.modules;
 
-import com.tcd.yaatra.ui.activities.DailyCommuteMapFragment;
+import com.tcd.yaatra.ui.fragments.DailyCommuteMapFragment;
 import com.tcd.yaatra.ui.fragments.RouteInfoFragment;
 import com.tcd.yaatra.ui.fragments.PeerToPeerFragment;
 import com.tcd.yaatra.ui.fragments.DailyCommuteDetailsFragment;
