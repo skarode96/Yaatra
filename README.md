@@ -9,7 +9,8 @@
 This project is submitted as a part of coursework for CS7CS3 module. It consist of an android app which helps user find a co-traveller to share journey with. This app uses backend services written in Django Framework which is deployed on Heroku
 
 ### Demo 
-# ![DemoGif](https://drive.google.com/file/d/1yYvbTzYxFcRqE5MjUbALvqS4kgi_WSaS/view)
+# [![ase.gif](https://s4.gifyu.com/images/ase.gif)](https://gifyu.com/image/l1sO)
+
 
 
 
