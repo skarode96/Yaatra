@@ -13,8 +13,6 @@ This project is submitted as a part of coursework for CS7CS3 module. It consist 
 
 
 
-
-
 ### Features
 - Offline Maps and Routing
 - Peer-2-Peer Decision Making using WiFi-Direct
