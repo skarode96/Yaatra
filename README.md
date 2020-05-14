@@ -19,7 +19,7 @@ This project is submitted as a part of coursework for CS7CS3 module. It consist 
 - Peer-2-Peer Decision Making using WiFi-Direct
 - MultiHop Routing
 - Data synchronisation in case of no Internet
-- Backed up with Highly availble and secure service written in Django Framework
+- Backed up with Highly available and secure service written in Django Framework
 
 ### Technology Stack
 
